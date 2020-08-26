@@ -189,9 +189,9 @@ namespace EDITgui
             for (int i = 0; i < points.Count; i++)
             {
                 Ellipse ellipse = new Ellipse();
-                ellipse.Fill = Brushes.Yellow;
-                ellipse.Width = 1;
-                ellipse.Height = 1;
+                ellipse.Fill = Brushes.Cyan;
+                ellipse.Width = 2;
+                ellipse.Height = 2;
                 canvas1.Children.Add(ellipse);
                 Canvas.SetLeft(ellipse, points.ElementAt(i).X);
                 Canvas.SetTop(ellipse, points.ElementAt(i).Y);
@@ -206,20 +206,24 @@ namespace EDITgui
             {
                 Polyline pl = new Polyline();
                 pl.FillRule = FillRule.EvenOdd;
-                pl.StrokeThickness = 0.2;
+                pl.StrokeThickness = 0.5;
                 pl.Points.Add(points.ElementAt(i));
                 pl.Points.Add(points.ElementAt(i + 1));
-                pl.Stroke = System.Windows.Media.Brushes.White;
+                pl.Stroke = System.Windows.Media.Brushes.Yellow;
                 canvas1.Children.Add(pl);
                 polylines.Add(pl);
             }
-            //Polyline plast = new Polyline();
-            //plast.FillRule = FillRule.EvenOdd;
-            //plast.StrokeThickness = 0.2;
-            //plast.Points.Add(points.ElementAt(points.Count - 1));
-            //plast.Points.Add(points.ElementAt(0));
-            //plast.Stroke = System.Windows.Media.Brushes.White;
-            //canvas1.Children.Add(plast);
+            if (contourSeg.Equals(ContourSegmentation.CORRECTION))
+            {
+                Polyline plast = new Polyline();
+                plast.FillRule = FillRule.EvenOdd;
+                plast.StrokeThickness = 0.5;
+                plast.Points.Add(points.ElementAt(points.Count - 1));
+                plast.Points.Add(points.ElementAt(0));
+                plast.Stroke = System.Windows.Media.Brushes.Yellow;
+                canvas1.Children.Add(plast);
+                polylines.Add(plast);
+            }
         }
 
         private void Canvas1_MouseDown(object sender, MouseButtonEventArgs e)
@@ -284,6 +288,7 @@ namespace EDITgui
         bool isPressed1 = false;
         Point initialPoisition1;
         Point startPosition1;
+        int a = 0, b = 1;
 
         private void Canvas1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -294,7 +299,14 @@ namespace EDITgui
                     Ellipse ellipse = (Ellipse)e.OriginalSource;
                     initialPoisition1.Y = (double)ellipse.GetValue(Canvas.TopProperty);//ellipse.GetValue(Canvas.TopProperty);
                     initialPoisition1.X = (double)ellipse.GetValue(Canvas.LeftProperty);
-                    //initialPoisition = e.GetPosition(ellipse.);//
+                    
+                    //find the polylines which contain the pressed point
+                    for(int i=0; i<polylines.Count; i++)
+                    {
+                        if (polylines[i].Points[1].Equals(initialPoisition1)) a = i;
+                        
+                        if (polylines[i].Points[0].Equals(initialPoisition1)) b = i;
+                    }
                     ellipse.Opacity = 0.5;
                     if (e.ClickCount == 2)
                     {
@@ -367,6 +379,11 @@ namespace EDITgui
                         double daltaX = position.X - startPosition1.X;
                         ClickedRectangle.SetValue(Canvas.TopProperty, (double)ClickedRectangle.GetValue(Canvas.TopProperty) + daltaY);
                         ClickedRectangle.SetValue(Canvas.LeftProperty, (double)ClickedRectangle.GetValue(Canvas.LeftProperty) + daltaX);
+
+                        //manage move of polylines
+                        polylines[a].Points[1] = e.GetPosition(image);
+                        polylines[b].Points[0] = e.GetPosition(image);
+
                         startPosition1 = position;
                     }
                 }
@@ -436,6 +453,7 @@ namespace EDITgui
             this.switch_auto_manual.Content = "Correction";
             contourSeg = ContourSegmentation.CORRECTION;
             enableCorrection = true;
+            clear_canvas();
             display();
         }
 
