@@ -210,6 +210,8 @@ namespace EDITgui
                 pl.Points.Add(points.ElementAt(i));
                 pl.Points.Add(points.ElementAt(i + 1));
                 pl.Stroke = System.Windows.Media.Brushes.Yellow;
+                pl.StrokeStartLineCap = PenLineCap.Round;
+                pl.StrokeEndLineCap = PenLineCap.Round;
                 canvas1.Children.Add(pl);
                 polylines.Add(pl);
             }
@@ -221,6 +223,8 @@ namespace EDITgui
                 plast.Points.Add(points.ElementAt(points.Count - 1));
                 plast.Points.Add(points.ElementAt(0));
                 plast.Stroke = System.Windows.Media.Brushes.Yellow;
+                plast.StrokeStartLineCap = PenLineCap.Round;
+                plast.StrokeEndLineCap = PenLineCap.Round;
                 canvas1.Children.Add(plast);
                 polylines.Add(plast);
             }
@@ -233,8 +237,9 @@ namespace EDITgui
                 Point point = e.GetPosition(image); //position relative to the image
 
                 Ellipse ellipse = new Ellipse();
-                ellipse.Width = 3;
-                ellipse.Height = 3;
+               
+                ellipse.Width = 5;
+                ellipse.Height = 5;
 
                 if (e.ChangedButton == MouseButton.Left)
                 {
@@ -245,13 +250,14 @@ namespace EDITgui
 
                         if (userPoints.Count == 0)
                         {
+
                             ellipse.Fill = Brushes.Yellow;
                             userPoints.Add(point);
                             startingFrame = slider_value;
                         }
                         else if (userPoints.Count > 0 && userPoints.Count < 2)
                         {
-                            ellipse.Fill = Brushes.Green;
+                            ellipse.Fill = Brushes.Red;
                             userPoints.Add(point);
                             endingFrame = slider_value;
                         }
