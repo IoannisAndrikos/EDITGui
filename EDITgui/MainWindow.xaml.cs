@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 using Microsoft.Win32;
 
 
@@ -21,6 +22,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.UI;
 using Microsoft.Win32;
 using OpenCvSharp.Extensions;
+using System.Windows.Media.Animation;
 
 namespace EDITgui
 {
@@ -62,34 +64,33 @@ namespace EDITgui
         List<List<Point>> bladder;
         string imagesDir;
 
-        public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
- 
+        coreFunctionality coreFunctionality = new coreFunctionality();
+
         public MainWindow()
         {
             InitializeComponent();
-
             chechBox_Logger.IsChecked = true;
-            editPro.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+            coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
 
 
-        private void LoadDicom_Click(object sender, RoutedEventArgs e)
+        private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
+                startSpinner();
                 if (bladder != null) bladder.Clear();
                 clear_canvas();
-                editPro.repeatSegmentation();
+                coreFunctionality.repeatSegmentation();
                 string dcmfile = openFileDialog.FileName;
                 bool enablelogging = chechBox_Logger.IsChecked.Value;
-                imagesDir = editPro.exportImages(dcmfile, enablelogging);
+                await Task.Run(() => { imagesDir = coreFunctionality.exportImages(dcmfile, enablelogging); });
                 image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
                 ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                 frame_num_label.Content = "Frame:" + " " + "0";
                 fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                Console.WriteLine(fileCount);
                 slider.TickFrequency = 1 / (double)fileCount;
                 slider.Minimum = 0;
                 slider.Maximum = fileCount - 1;
@@ -97,35 +98,42 @@ namespace EDITgui
                 slider.Visibility = Visibility.Visible;
                 calibration_x = image.Source.Width / canvas1.Width;
                 calibration_y = image.Source.Height / canvas1.Height;
+                stopSpinner();
             }
         }
 
 
-        private void Extract_bladder_Click(object sender, RoutedEventArgs e)
+        private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
         {
+            startSpinner();
+
             int repeats = int.Parse(Repeats.Text);
             int smoothing = int.Parse(Smoothing.Text);
             double lamda1 = double.Parse(Lamda1.Text);
             double lamda2 = double.Parse(Lamda2.Text);
             int levelsetSize = int.Parse(LevelsetSize.Text);
             bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-            editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
-            bladderCvPoints = editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
-            bladder = editCVPointToWPFPoint(bladderCvPoints);
+
+            // Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist)
+            await Task.Run(() => {
+                bladderCvPoints = coreFunctionality.Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
+                bladder = editCVPointToWPFPoint(bladderCvPoints);
+            });
+
             clear_canvas();
             contourSeg = ContourSegmentation.CORRECTION;
             switch_auto_manual.Content = "Correction";
             enableCorrection = true;
             display();
+            stopSpinner();
         }
-
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
         {
             userPoints.Clear();
             bladder.Clear();
             bladderCvPoints.Clear();
-            editPro.repeatSegmentation();
+            coreFunctionality.repeatSegmentation();
             startingFrame = 0;
             endingFrame = 0;
             clear_canvas();
@@ -134,21 +142,27 @@ namespace EDITgui
         }
 
 
-        private void Extract_STL_Click(object sender, RoutedEventArgs e)
+        private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
+            startSpinner();
             bladderCvPoints = WPFPointToCVPoint(bladder);
-            editPro.extractBladderSTL(bladderCvPoints);
+            await Task.Run(() => {coreFunctionality.extractBladderSTL(bladderCvPoints);});
+            stopSpinner();
         }
 
 
-        private void Export_Points_Click(object sender, RoutedEventArgs e)
+        private async void Export_Points_Click(object sender, RoutedEventArgs e)
         {
-            editPro.writePointsAndImages();
+            startSpinner();
+            await Task.Run(() => { coreFunctionality.writePointsAndImages(); });
+            stopSpinner();
         }
 
-        private void Export_Skin_Click(object sender, RoutedEventArgs e)
+        private async void Export_Skin_Click(object sender, RoutedEventArgs e)
         {
-            editPro.extractSkin();
+            startSpinner();
+            await Task.Run(() => { coreFunctionality.extractSkin(); });
+            stopSpinner();
         }
 
 
@@ -453,6 +467,17 @@ namespace EDITgui
             }
         }
 
+        private void startSpinner()
+        {
+            ((Storyboard)FindResource("WaitStoryboard")).Begin();
+            Wait.Visibility = Visibility.Visible;
+        }
+
+        private void stopSpinner()
+        {
+            ((Storyboard)FindResource("WaitStoryboard")).Stop();
+            Wait.Visibility = Visibility.Hidden;
+        }
 
         private void doCorrection()
         {
@@ -504,6 +529,7 @@ namespace EDITgui
             }
             return points;
         }
+
 
 
         //Convert EDITCore.CVPoint to Point

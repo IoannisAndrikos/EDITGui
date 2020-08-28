@@ -332,8 +332,18 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Storyboard x:Key="WaitStoryboard">
+            <DoubleAnimation
+            Storyboard.TargetName="Wait"
+            Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)"
+            From="0"
+            To="360"
+            Duration="0:0:2"
+            RepeatBehavior="Forever" />
+        </Storyboard>
     </Window.Resources>
     <Grid Background="#FF1C1F1F">
+
         <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="24,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
         <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="699.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
         <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="24,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
@@ -376,6 +386,23 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
+
+        <Grid Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368,252.96,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
+            <Grid.RenderTransform>
+                <RotateTransform Angle="0" />
+            </Grid.RenderTransform>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="12.516" Margin="32.467,4.821,0,0" VerticalAlignment="Top" Width="12.8" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="10.733" Margin="19.434,0,0,0" VerticalAlignment="Top" Width="11.067" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="8.933" Margin="6.567,6.654,0,0" VerticalAlignment="Top" Width="9.1" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="1.784,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="7.517,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="21.417,41.058,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="35.312,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
+            <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
+        </Grid>
+        
+       
+        
 
     </Grid>
 </Window>
