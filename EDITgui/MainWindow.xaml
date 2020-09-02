@@ -342,7 +342,7 @@
             RepeatBehavior="Forever" />
         </Storyboard>
     </Window.Resources>
-    <Grid Background="#FF1C1F1F">
+    <Grid x:Name="applicationGrid" Background="#FF1C1F1F">
 
         <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="24,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
         <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="699.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
@@ -387,7 +387,7 @@
             </Slider.RenderTransform>
         </Slider>
 
-        <Grid Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368,252.96,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
+        <Grid Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368.402,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
             <Grid.RenderTransform>
                 <RotateTransform Angle="0" />
             </Grid.RenderTransform>

@@ -87,18 +87,28 @@ namespace EDITgui
                 string dcmfile = openFileDialog.FileName;
                 bool enablelogging = chechBox_Logger.IsChecked.Value;
                 await Task.Run(() => { imagesDir = coreFunctionality.exportImages(dcmfile, enablelogging); });
-                image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
-                ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                frame_num_label.Content = "Frame:" + " " + "0";
-                fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                slider.TickFrequency = 1 / (double)fileCount;
-                slider.Minimum = 0;
-                slider.Maximum = fileCount - 1;
-                slider.TickFrequency = 1;
-                slider.Visibility = Visibility.Visible;
-                calibration_x = image.Source.Width / canvas1.Width;
-                calibration_y = image.Source.Height / canvas1.Height;
-                stopSpinner();
+                if (imagesDir != null)
+                {
+                    image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
+                    ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    frame_num_label.Content = "Frame:" + " " + "0";
+                    fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
+                    slider.TickFrequency = 1 / (double)fileCount;
+                    slider.Minimum = 0;
+                    slider.Maximum = fileCount - 1;
+                    slider.TickFrequency = 1;
+                    slider.Visibility = Visibility.Visible;
+                    calibration_x = image.Source.Width / canvas1.Width;
+                    calibration_y = image.Source.Height / canvas1.Height;
+                    stopSpinner();
+                }
+                else
+                {
+                    stopSpinner();
+                    MessageBox.Show("Cannot load the selected DICOM file");
+                }
+                
+               
             }
         }
 
@@ -141,12 +151,11 @@ namespace EDITgui
             enableCorrection = false;
         }
 
-
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
             startSpinner();
-            bladderCvPoints = WPFPointToCVPoint(bladder);
-            await Task.Run(() => {coreFunctionality.extractBladderSTL(bladderCvPoints);});
+            bladderCvPoints = WPFPointToCVPoint(bladder);   
+            await Task.Run(() => { coreFunctionality.extractBladderSTL(bladderCvPoints); });
             stopSpinner();
         }
 
@@ -470,12 +479,14 @@ namespace EDITgui
         private void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
+            applicationGrid.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         private void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
+            applicationGrid.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 

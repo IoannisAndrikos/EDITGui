@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Runtime.ExceptionServices;
 
 namespace EDITgui
 {
@@ -11,28 +12,47 @@ namespace EDITgui
     class coreFunctionality
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
-
-
+ 
         public void setExaminationsDirectory(String path)
         {
-            editPro.setExaminationsDirectory(path);
+            try
+            {
+                editPro.setExaminationsDirectory(path);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
         }
 
-
+        [HandleProcessCorruptedStateExceptions]
         public string exportImages(string dcmfile, bool enablelogging)
         {
-
-            string imagesDir = editPro.exportImages(dcmfile, enablelogging);
-            return imagesDir;
+            try
+            {
+                string imagesDir = editPro.exportImages(dcmfile, enablelogging);
+                return imagesDir;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return null;
         }
 
-
+        [HandleProcessCorruptedStateExceptions]
         public List<List<EDITCore.CVPoint>> Bladder2DExtraction(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
             int startingFrame, int endingFrame, List<Point> userPoints)
         {
-            editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
-            List<List<EDITCore.CVPoint>> bladderCvPoints = editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
-            return bladderCvPoints;
+            try
+            {
+                editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
+                List<List<EDITCore.CVPoint>> bladderCvPoints = editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
+                return bladderCvPoints;
+            }catch(Exception e){
+                MessageBox.Show("Problem!");
+            }
+            return new List<List<EDITCore.CVPoint>>();
         }
 
         public void repeatSegmentation()
@@ -40,21 +60,48 @@ namespace EDITgui
             editPro.repeatSegmentation();
         }
 
-
+        [HandleProcessCorruptedStateExceptions]
         public void extractBladderSTL(List<List<EDITCore.CVPoint>> bladderCvPoints)
         {
-            editPro.extractBladderSTL(bladderCvPoints);
+            try
+            {
+                editPro.extractBladderSTL(bladderCvPoints);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Cannot produce the .stl object! There is an issue on segmnetation");
+            }
         }
 
+
+        [HandleProcessCorruptedStateExceptions]
         public void writePointsAndImages()
         {
-            editPro.writePointsAndImages();
+            try
+            {
+                editPro.writePointsAndImages();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Problem!");
+            }
         }
 
+
+        [HandleProcessCorruptedStateExceptions]
         public void extractSkin()
         {
-            editPro.extractSkin();
+            try
+            {
+                editPro.extractSkin();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Problem!");
+            }
         }
+
+
 
 
     }
