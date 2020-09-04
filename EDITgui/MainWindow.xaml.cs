@@ -23,6 +23,7 @@ using Emgu.CV.UI;
 using Microsoft.Win32;
 using OpenCvSharp.Extensions;
 using System.Windows.Media.Animation;
+using OpenCvSharp;
 
 namespace EDITgui
 {
@@ -37,6 +38,7 @@ namespace EDITgui
             INSERT_USER_POINTS,
             CORRECTION,
             MANUAL,
+            FILL_POINTS
         }
 
         //-----------for slider----------
@@ -51,17 +53,21 @@ namespace EDITgui
         int endingFrame = 0;
         //--------------------------------------------------
 
+        //------------diplay aspects---------
+        bool closeCurve = true;
+        //-----------------------------------
+
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
-        bool enableCorrection = false;
+
 
         double calibration_x;
         double calibration_y; 
 
         List<Point> points = new List<Point>();
         List<Polyline> polylines = new List<Polyline>();
-        List<List<EDITCore.CVPoint>> bladderCvPoints;
-        List<List<Point>> bladder;
+        List<List<EDITCore.CVPoint>> bladderCvPoints = new List<List<EDITCore.CVPoint>>();
+        List<List<Point>> bladder = new List<List<Point>>();
         string imagesDir;
 
         coreFunctionality coreFunctionality = new coreFunctionality();
@@ -133,7 +139,7 @@ namespace EDITgui
             clear_canvas();
             contourSeg = ContourSegmentation.CORRECTION;
             switch_auto_manual.Content = "Correction";
-            enableCorrection = true;
+        
             display();
             stopSpinner();
         }
@@ -148,7 +154,7 @@ namespace EDITgui
             endingFrame = 0;
             clear_canvas();
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
-            enableCorrection = false;
+       
         }
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
@@ -227,35 +233,44 @@ namespace EDITgui
             //draw polylines of centerline
             for (int i = 0; i < points.Count - 1; i++)
             {
-                Polyline pl = new Polyline();
-                pl.FillRule = FillRule.EvenOdd;
-                pl.StrokeThickness = 0.5;
-                pl.Points.Add(points.ElementAt(i));
-                pl.Points.Add(points.ElementAt(i + 1));
-                pl.Stroke = System.Windows.Media.Brushes.Yellow;
-                pl.StrokeStartLineCap = PenLineCap.Round;
-                pl.StrokeEndLineCap = PenLineCap.Round;
-                canvas1.Children.Add(pl);
-                polylines.Add(pl);
+                if (contourSeg != ContourSegmentation.FILL_POINTS || i != indexA - 1)
+                {
+                    Polyline pl = new Polyline();
+                    pl.FillRule = FillRule.EvenOdd;
+                    pl.StrokeThickness = 0.5;
+                    pl.Points.Add(points.ElementAt(i));
+                    pl.Points.Add(points.ElementAt(i + 1));
+                    pl.Stroke = System.Windows.Media.Brushes.Yellow;
+                    pl.StrokeStartLineCap = PenLineCap.Round;
+                    pl.StrokeEndLineCap = PenLineCap.Round;
+                    canvas1.Children.Add(pl);
+                    polylines.Add(pl);
+                }
             }
-            if (contourSeg.Equals(ContourSegmentation.CORRECTION))
+
+            Console.WriteLine(closeCurve);
+
+            if (closeCurve)
             {
-                Polyline plast = new Polyline();
-                plast.FillRule = FillRule.EvenOdd;
-                plast.StrokeThickness = 0.5;
-                plast.Points.Add(points.ElementAt(points.Count - 1));
-                plast.Points.Add(points.ElementAt(0));
-                plast.Stroke = System.Windows.Media.Brushes.Yellow;
-                plast.StrokeStartLineCap = PenLineCap.Round;
-                plast.StrokeEndLineCap = PenLineCap.Round;
-                canvas1.Children.Add(plast);
-                polylines.Add(plast);
+                if (contourSeg != ContourSegmentation.FILL_POINTS || indexA != 0)
+                {
+                    Polyline plast = new Polyline();
+                    plast.FillRule = FillRule.EvenOdd;
+                    plast.StrokeThickness = 0.5;
+                    plast.Points.Add(points.ElementAt(points.Count - 1));
+                    plast.Points.Add(points.ElementAt(0));
+                    plast.Stroke = System.Windows.Media.Brushes.Yellow;
+                    plast.StrokeStartLineCap = PenLineCap.Round;
+                    plast.StrokeEndLineCap = PenLineCap.Round;
+                    canvas1.Children.Add(plast);
+                    polylines.Add(plast);
+                }
             }
         }
 
         private void Canvas1_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!enableCorrection)
+            if (!contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
                 Point point = e.GetPosition(image); //position relative to the image
 
@@ -288,6 +303,12 @@ namespace EDITgui
                         Canvas.SetLeft(ellipse, point.X);
                         Canvas.SetTop(ellipse, point.Y);
                     }
+                    else if(contourSeg == ContourSegmentation.FILL_POINTS)
+                    {
+                        clear_canvas();
+                        bladder[slider_value].Insert(indexA++, point);
+                        display();
+                    }
                     else if (contourSeg == ContourSegmentation.MANUAL)
                     {
                         clear_canvas();
@@ -295,7 +316,7 @@ namespace EDITgui
                         display();
                     }
                 }
-                else if (e.ChangedButton == MouseButton.Right)
+                else if (e.ChangedButton == MouseButton.Right && contourSeg == ContourSegmentation.MANUAL)
                 {
                     if (bladder[slider_value].Any())
                     {
@@ -321,7 +342,7 @@ namespace EDITgui
 
         private void Canvas1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (enableCorrection)
+            if (contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
                 if (e.OriginalSource is Ellipse)
                 {
@@ -354,7 +375,7 @@ namespace EDITgui
 
         private void Canvas1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (enableCorrection)
+            if (contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
                 if (e.OriginalSource is Ellipse)
                 {
@@ -387,9 +408,70 @@ namespace EDITgui
             }
         }
 
+        Point _start;
+        Rectangle rectRemovePoints;
+        private void Canvas1_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
+
+            _start = Mouse.GetPosition(image);
+            rectRemovePoints = new Rectangle();
+            rectRemovePoints.Stroke = System.Windows.Media.Brushes.Red;
+            rectRemovePoints.StrokeThickness = 0.5;
+            Canvas.SetLeft(rectRemovePoints, _start.X);
+            Canvas.SetTop(rectRemovePoints, _start.Y);
+            canvas1.Children.Add(rectRemovePoints);
+            
+        }
+
+
+        int indexA;
+        private void Canvas1_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
+
+            List<Point> pointsToRemove = new List<Point>();
+            int count = 0;
+            for (int i=0; i<bladder[slider_value].Count; i++)
+            {
+                if (bladder[slider_value][i].X >= Canvas.GetLeft(rectRemovePoints) && bladder[slider_value][i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                    bladder[slider_value][i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && bladder[slider_value][i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                {
+                    pointsToRemove.Add(bladder[slider_value][i]);
+                    if(count==0) indexA = i;
+                    count++;
+                }
+               
+            }
+
+            if(count == bladder[slider_value].Count)
+            {
+                closeCurve = false;
+            }
+
+
+            bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
+            canvas1.Children.Remove(rectRemovePoints);
+            if(!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
+        }
+
+
         private void Canvas1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (enableCorrection)
+            if (!areTherePoints()) return;
+
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                var mouse = Mouse.GetPosition(image);
+                Canvas.SetLeft(rectRemovePoints, _start.X > mouse.X ? mouse.X : _start.X);
+                Canvas.SetTop(rectRemovePoints, _start.Y > mouse.Y ? mouse.Y : _start.Y);
+
+                rectRemovePoints.Width = Math.Abs(mouse.X - _start.X);
+                rectRemovePoints.Height = Math.Abs(mouse.Y - _start.Y);
+            }
+
+
+            if (e.LeftButton == MouseButtonState.Pressed && contourSeg.Equals(ContourSegmentation.CORRECTION)) ///--------------> (enableCorrection)
             {
                 if (e.OriginalSource is Ellipse)
                 {
@@ -417,7 +499,7 @@ namespace EDITgui
                     }
                 }
             }
-           
+
         }
 
         void clear_canvas()
@@ -474,6 +556,10 @@ namespace EDITgui
             {
                 doManual();
             }
+            else if (this.switch_auto_manual.Content.Equals("Fill Points"))
+            {
+                doCorrection();
+            }
         }
 
         private void startSpinner()
@@ -494,17 +580,27 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Correction";
             contourSeg = ContourSegmentation.CORRECTION;
-            enableCorrection = true;
+            closeCurve = true;
             clear_canvas();
             display();
         }
 
+
+       
         private void doManual()
         {
             this.switch_auto_manual.Content = "Manual";
             contourSeg = ContourSegmentation.MANUAL;
-            enableCorrection = false;
             if (areTherePoints()) bladder[slider_value].Clear();
+            closeCurve = false;
+            clear_canvas();
+            display();
+        }
+
+        private void doFillPoints()
+        {
+            this.switch_auto_manual.Content = "Fill Points";
+            contourSeg = ContourSegmentation.FILL_POINTS;
             clear_canvas();
             display();
         }
@@ -540,6 +636,7 @@ namespace EDITgui
             }
             return points;
         }
+
 
 
 
