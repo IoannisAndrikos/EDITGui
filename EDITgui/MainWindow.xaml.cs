@@ -248,9 +248,7 @@ namespace EDITgui
                 }
             }
 
-            Console.WriteLine(closeCurve);
-
-            if (closeCurve)
+            if (contourSeg != ContourSegmentation.MANUAL)
             {
                 if (contourSeg != ContourSegmentation.FILL_POINTS || indexA != 0)
                 {
@@ -264,6 +262,42 @@ namespace EDITgui
                     plast.StrokeEndLineCap = PenLineCap.Round;
                     canvas1.Children.Add(plast);
                     polylines.Add(plast);
+                }
+            }
+        }
+
+
+        private void draw_polylineTest(List<Point> points)
+        {
+            List<Point> closeCurvePoints = points.ToList();//new List<Point>();
+
+            switch (contourSeg)
+            {
+                case ContourSegmentation.CORRECTION:
+                    closeCurvePoints.Add(points[0]);
+                    break;
+                case ContourSegmentation.FILL_POINTS:
+                    if (indexA != 0)
+                    {
+                        closeCurvePoints.Add(points[0]);
+                    }
+                    break;
+            }
+
+            for (int i = 0; i < closeCurvePoints.Count - 1; i++)
+            {
+                if (contourSeg != ContourSegmentation.FILL_POINTS || i != indexA - 1)
+                {
+                    Polyline pl = new Polyline();
+                    pl.FillRule = FillRule.EvenOdd;
+                    pl.StrokeThickness = 0.5;
+                    pl.Points.Add(closeCurvePoints.ElementAt(i));
+                    pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
+                    pl.Stroke = System.Windows.Media.Brushes.Yellow;
+                    pl.StrokeStartLineCap = PenLineCap.Round;
+                    pl.StrokeEndLineCap = PenLineCap.Round;
+                    canvas1.Children.Add(pl);
+                    polylines.Add(pl);
                 }
             }
         }
@@ -306,7 +340,30 @@ namespace EDITgui
                     else if(contourSeg == ContourSegmentation.FILL_POINTS)
                     {
                         clear_canvas();
-                        bladder[slider_value].Insert(indexA++, point);
+                       // bladder[slider_value].Insert(indexA++, point);
+                        double d1, d2;
+                        if (indexA != 0)
+                        {
+                            d1 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][indexA - 1].X, 2) + Math.Pow(point.Y - bladder[slider_value][indexA - 1].Y, 2));
+                        }
+                        else
+                        {
+                            int num = bladder[slider_value].Count - 1;
+                            d1 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][num].X, 2) + Math.Pow(point.Y - bladder[slider_value][num].Y, 2));
+                        }
+                        d2 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][indexA].X, 2) + Math.Pow(point.Y - bladder[slider_value][indexA].Y, 2));
+
+                        if (d2 > d1)
+                        {
+                            bladder[slider_value].Insert(indexA++, point);
+                        }
+                        else
+                        {
+
+                            bladder[slider_value].Insert(indexA, point);
+                        }
+
+
                         display();
                     }
                     else if (contourSeg == ContourSegmentation.MANUAL)
@@ -446,9 +503,9 @@ namespace EDITgui
 
             if(count == bladder[slider_value].Count)
             {
-                closeCurve = false;
+                doManual();
+                return;
             }
-
 
             bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
             canvas1.Children.Remove(rectRemovePoints);
@@ -512,7 +569,7 @@ namespace EDITgui
         {
             if (areTherePoints()) {
                 draw_points(bladder[slider_value]);
-                draw_polyline(bladder[slider_value]);
+                draw_polylineTest(bladder[slider_value]);
             }
         }
 
@@ -601,6 +658,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Fill Points";
             contourSeg = ContourSegmentation.FILL_POINTS;
+            closeCurve = true;
             clear_canvas();
             display();
         }
