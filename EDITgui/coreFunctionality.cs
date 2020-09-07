@@ -12,6 +12,7 @@ namespace EDITgui
     class coreFunctionality
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
+        public static ErrorMessages errorMessages = new ErrorMessages();
  
         public void setExaminationsDirectory(String path)
         {
@@ -69,7 +70,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                MessageBox.Show("Cannot produce the .stl object! There is an issue on segmnetation");
+                MessageBox.Show(errorMessages.problemToProduceSTL);
             }
         }
 
