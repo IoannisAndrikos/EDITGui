@@ -104,6 +104,12 @@ namespace EDITgui
                     slider.Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
+
+                    //mange starting and ending frame
+                    userPoints.Clear();
+                    startingFrame = -1;
+                    endingFrame = -1;
+                    contourSeg = ContourSegmentation.INSERT_USER_POINTS;
                     stopSpinner();
                 }
                 else
@@ -152,8 +158,8 @@ namespace EDITgui
             bladder.Clear();
             bladderCvPoints.Clear();
             coreFunctionality.repeatSegmentation();
-            startingFrame = 0;
-            endingFrame = 0;
+            startingFrame = -1;
+            endingFrame = -1;
             clear_canvas();
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
        
@@ -282,10 +288,9 @@ namespace EDITgui
             {
                 Point point = e.GetPosition(image); //position relative to the image
 
-                Ellipse ellipse = new Ellipse();
-               
-                ellipse.Width = 5;
-                ellipse.Height = 5;
+                //Ellipse ellipse = new Ellipse();
+                //ellipse.Width = 5;
+                //ellipse.Height = 5;
 
                 if (e.ChangedButton == MouseButton.Left)
                 {
@@ -296,20 +301,31 @@ namespace EDITgui
 
                         if (userPoints.Count == 0)
                         {
+                            canvasUltrasound.Children.Add(startingFrameMarker);
+                            Canvas.SetLeft(startingFrameMarker, point.X - startingFrameMarker.Width/2);
+                            Canvas.SetTop(startingFrameMarker, point.Y - startingFrameMarker.Height/2);
+                            startingFrameMarker.Visibility = Visibility.Visible;
+                            
 
-                            ellipse.Fill = Brushes.Yellow;
+                            //ellipse.Fill = Brushes.Yellow;
                             userPoints.Add(point);
                             startingFrame = slider_value;
                         }
                         else if (userPoints.Count > 0 && userPoints.Count < 2)
                         {
-                            ellipse.Fill = Brushes.Red;
+                            // ellipse.Fill = Brushes.Red;
+                            canvasUltrasound.Children.Add(endingFrameMarker);
+                            Canvas.SetLeft(endingFrameMarker, point.X - endingFrameMarker.Width / 2);
+                            Canvas.SetTop(endingFrameMarker, point.Y - endingFrameMarker.Height / 2);
+                            endingFrameMarker.Visibility = Visibility.Visible;
                             userPoints.Add(point);
                             endingFrame = slider_value;
                         }
-                        canvasUltrasound.Children.Add(ellipse);
-                        Canvas.SetLeft(ellipse, point.X);
-                        Canvas.SetTop(ellipse, point.Y);
+                        clear_canvas();
+                        display();
+                        //canvasUltrasound.Children.Add(ellipse);
+                        //Canvas.SetLeft(ellipse, point.X);
+                        //Canvas.SetTop(ellipse, point.Y);
                     }
                     else if(contourSeg == ContourSegmentation.FILL_POINTS)
                     {
@@ -359,6 +375,9 @@ namespace EDITgui
                             clear_canvas();                         }
                         else if (contourSeg == ContourSegmentation.CORRECTION)
                         {
+                            Ellipse ellipse = new Ellipse();
+                            ellipse.Width = 5;
+                            ellipse.Height = 5;
                             canvasUltrasound.Children.Remove(ellipse);
                         }
                         display();
@@ -490,7 +509,7 @@ namespace EDITgui
 
         private void canvasUltrasound_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!areTherePoints()) return;
+            if (!areTherePoints() || contourSeg.Equals(ContourSegmentation.MANUAL)) return;
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
@@ -551,10 +570,17 @@ namespace EDITgui
 
         void display()
         {
-            if (areTherePoints()) {
+            if (areTherePoints())
+            {
                 draw_polyline(bladder[slider_value]);
                 draw_points(bladder[slider_value]);
             }
+            else //if there are no points mean that the user has to define starting and ending frame
+            {
+                if (slider_value == startingFrame) canvasUltrasound.Children.Add(startingFrameMarker);
+                if (slider_value == endingFrame) canvasUltrasound.Children.Add(endingFrameMarker);
+            }
+            
         }
 
         protected List<Matrix> zoom_out = new List<Matrix>();

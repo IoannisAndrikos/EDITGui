@@ -349,6 +349,62 @@
         <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="24,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="25,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
+
+
+
+
+                <Grid x:Name="startingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
+                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.064" ScaleX="0.94"/>
+                                <SkewTransform AngleX="-4.903"/>
+                                <RotateTransform Angle="53.643"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.066" ScaleX="0.938"/>
+                                <SkewTransform AngleY="4.985"/>
+                                <RotateTransform Angle="122.656"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                </Grid>
+
+
+
+
+                <Grid x:Name="endingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
+                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Red" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.064" ScaleX="0.94"/>
+                                <SkewTransform AngleX="-4.903"/>
+                                <RotateTransform Angle="53.643"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Red" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.066" ScaleX="0.938"/>
+                                <SkewTransform AngleY="4.985"/>
+                                <RotateTransform Angle="122.656"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                </Grid>
+
+
+
+
                 <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
@@ -400,9 +456,9 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="35.312,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
-        
-       
-        
+
+
+
 
     </Grid>
 </Window>
