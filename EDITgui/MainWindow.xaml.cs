@@ -96,6 +96,7 @@ namespace EDITgui
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = "Frame:" + " " + "0";
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
+                    slider.Value = 0;
                     slider.TickFrequency = 1 / (double)fileCount;
                     slider.Minimum = 0;
                     slider.Maximum = fileCount - 1;
@@ -108,7 +109,7 @@ namespace EDITgui
                 else
                 {
                     stopSpinner();
-                    MessageBox.Show("Cannot load the selected DICOM file");
+                    MessageBox.Show(errorMessages.cannotLoadDicom);
                 }
                 
                
@@ -313,7 +314,10 @@ namespace EDITgui
                     else if(contourSeg == ContourSegmentation.FILL_POINTS)
                     {
                         clear_canvas();
-                       // bladder[slider_value].Insert(indexA++, point);
+                        // bladder[slider_value].Insert(indexA++, point);
+
+                        if (indexA > bladder[slider_value].Count - 1) indexA = 0;
+                       
                         double d1, d2;
                         if (indexA != 0)
                         {
@@ -336,8 +340,7 @@ namespace EDITgui
                             bladder[slider_value].Insert(indexA, point);
                         }
 
-
-                        display();
+                            display();
                     }
                     else if (contourSeg == ContourSegmentation.MANUAL)
                     {
