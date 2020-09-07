@@ -342,14 +342,14 @@
             RepeatBehavior="Forever" />
         </Storyboard>
     </Window.Resources>
-    <Grid x:Name="applicationGrid" Background="#FF1C1F1F">
+    <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp">
 
         <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="24,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
         <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="699.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
         <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="24,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="25,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvas1" Height="512" Margin="0,0,0,0" Width="736" MouseDown="Canvas1_MouseDown" MouseLeftButtonDown="Canvas1_MouseLeftButtonDown" MouseLeftButtonUp="Canvas1_MouseLeftButtonUp" MouseMove="Canvas1_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="Canvas1_MouseWheel" MouseRightButtonDown="Canvas1_MouseRightButtonDown" MouseRightButtonUp="Canvas1_MouseRightButtonUp">
-                <Image x:Name="image" Height="512" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
+                <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
         <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="24,568,0,0" VerticalAlignment="Top" Width="266">

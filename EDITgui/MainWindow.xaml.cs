@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using OpenCvSharp.Extensions;
 using System.Windows.Media.Animation;
 using OpenCvSharp;
+using Emgu.CV.Shape;
 
 namespace EDITgui
 {
@@ -52,11 +53,6 @@ namespace EDITgui
         int startingFrame = 0;
         int endingFrame = 0;
         //--------------------------------------------------
-
-        //------------diplay aspects---------
-        bool closeCurve = true;
-        //-----------------------------------
-
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
 
@@ -121,8 +117,13 @@ namespace EDITgui
 
         private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
         {
-            startSpinner();
+            if (userPoints.Count < 2)
+            {
+                MessageBox.Show("You have to specify the initial and last frame by clicking on the ultrasound sequence!");
+                return;
+            }
 
+            startSpinner();
             int repeats = int.Parse(Repeats.Text);
             int smoothing = int.Parse(Smoothing.Text);
             double lamda1 = double.Parse(Lamda1.Text);
@@ -501,14 +502,13 @@ namespace EDITgui
                
             }
 
-            if(count == bladder[slider_value].Count)
+            canvas1.Children.Remove(rectRemovePoints);
+            if (count == bladder[slider_value].Count)
             {
                 doManual();
                 return;
             }
-
             bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
-            canvas1.Children.Remove(rectRemovePoints);
             if(!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
         }
 
@@ -558,6 +558,15 @@ namespace EDITgui
             }
 
         }
+
+        private void ApplicationGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (rectRemovePoints != null && rectRemovePoints.GetType() == typeof(Rectangle))
+            {
+                canvas1.Children.Remove(rectRemovePoints);
+            }
+        }
+
 
         void clear_canvas()
         {
@@ -637,7 +646,6 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Correction";
             contourSeg = ContourSegmentation.CORRECTION;
-            closeCurve = true;
             clear_canvas();
             display();
         }
@@ -649,7 +657,6 @@ namespace EDITgui
             this.switch_auto_manual.Content = "Manual";
             contourSeg = ContourSegmentation.MANUAL;
             if (areTherePoints()) bladder[slider_value].Clear();
-            closeCurve = false;
             clear_canvas();
             display();
         }
@@ -658,7 +665,6 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Fill Points";
             contourSeg = ContourSegmentation.FILL_POINTS;
-            closeCurve = true;
             clear_canvas();
             display();
         }
@@ -695,8 +701,7 @@ namespace EDITgui
             return points;
         }
 
-
-
+      
 
         //Convert EDITCore.CVPoint to Point
         List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
