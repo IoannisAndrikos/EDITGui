@@ -41,6 +41,23 @@ namespace EDITgui
             return null;
         }
 
+
+        [HandleProcessCorruptedStateExceptions]
+        public List<double> getPixelSpacing()
+        {
+            try
+            {
+                List<double> pixelSpacing = editPro.getPixelSpacing();
+                return pixelSpacing;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return null;
+        }
+
+
         [HandleProcessCorruptedStateExceptions]
         public List<List<EDITCore.CVPoint>> Bladder2DExtraction(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
             int startingFrame, int endingFrame, List<Point> userPoints)
@@ -101,9 +118,6 @@ namespace EDITgui
                 MessageBox.Show("Problem!");
             }
         }
-
-
-
 
     }
 
