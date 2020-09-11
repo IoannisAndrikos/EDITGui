@@ -388,7 +388,7 @@
                 <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
-        <Label x:Name="metrics_label" Content="" Foreground="#FF2BEDEE" FontFamily="Math" Margin="625.89,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413"/>
+        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="625.89,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413" Background="{x:Null}"/>
         <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="24,568,0,0" VerticalAlignment="Top" Width="266">
             <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="93.49,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
             <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="93.49,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>

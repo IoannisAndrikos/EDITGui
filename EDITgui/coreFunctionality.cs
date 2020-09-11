@@ -12,7 +12,7 @@ namespace EDITgui
     class coreFunctionality
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
-        public static ErrorMessages errorMessages = new ErrorMessages();
+        public static Messages errorMessages = new Messages();
  
         public void setExaminationsDirectory(String path)
         {

@@ -54,7 +54,7 @@ namespace EDITgui
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
 
-        List<double> pixelSpacing; //x=pixelSpacing[0] y=pixelSpacing[1]
+        List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
         double calibration_x;
         double calibration_y;
 
@@ -66,8 +66,10 @@ namespace EDITgui
         List<double> bladderPerimeter = new List<double>();
         string imagesDir;
 
-        ErrorMessages errorMessages = new ErrorMessages();
+        //create objects of the other classes
+        Messages warningMessages = new Messages();
         coreFunctionality coreFunctionality = new coreFunctionality();
+        metricsCalculations metrics = new metricsCalculations();
 
         public UltrasoundPart()
         {
@@ -96,6 +98,7 @@ namespace EDITgui
                 if (imagesDir != null)
                 {
                     metrics_label.Visibility = Visibility.Hidden;
+                    metrics.setPixelSpacing(pixelSpacing);
                     image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = "Frame:" + " " + "0";
@@ -119,7 +122,7 @@ namespace EDITgui
                 else
                 {
                     stopSpinner();
-                    MessageBox.Show(errorMessages.cannotLoadDicom);
+                    MessageBox.Show(warningMessages.cannotLoadDicom);
                 }
 
 
@@ -131,7 +134,7 @@ namespace EDITgui
         {
             if (userPoints.Count < 2)
             {
-                MessageBox.Show(errorMessages.notEnoughUserPoints);
+                MessageBox.Show(warningMessages.notEnoughUserPoints);
                 return;
             }
 
@@ -186,7 +189,7 @@ namespace EDITgui
         {
             if (!areTherePoints())
             {
-                MessageBox.Show(errorMessages.noBladderSegmentation);
+                MessageBox.Show(warningMessages.noBladderSegmentation);
                 return;
             }
 
@@ -208,7 +211,7 @@ namespace EDITgui
         {
             if (!areTherePoints())
             {
-                MessageBox.Show(errorMessages.noBladderSegmentation);
+                MessageBox.Show(warningMessages.noBladderSegmentation);
                 return;
             }
             startSpinner();
@@ -250,8 +253,10 @@ namespace EDITgui
         {
             for (int i = 0; i < points.Count; i++)
             {
+                //Color color = (Color)ColorConverter.ConvertFromString("#FF2BEDED");
                 Ellipse ellipse = new Ellipse();
-                ellipse.Fill = Brushes.Cyan;
+               // ellipse.Fill = Brushes.Cyan;
+                ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
                 ellipse.Width = 2;
                 ellipse.Height = 2;
                 canvasUltrasound.Children.Add(ellipse);
@@ -287,7 +292,8 @@ namespace EDITgui
                     pl.StrokeThickness = 0.5;
                     pl.Points.Add(closeCurvePoints.ElementAt(i));
                     pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
-                    pl.Stroke = System.Windows.Media.Brushes.Yellow;
+                    //pl.Stroke = System.Windows.Media.Brushes.Yellow;
+                    pl.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
                     pl.StrokeStartLineCap = PenLineCap.Round;
                     pl.StrokeEndLineCap = PenLineCap.Round;
                     canvasUltrasound.Children.Add(pl);
@@ -300,8 +306,8 @@ namespace EDITgui
         {
             if (recalculate)
             {
-                bladderArea[slider_value] = calulateArea(bladder[slider_value]);
-                bladderPerimeter[slider_value] = calulatePerimeter(bladder[slider_value]);
+                bladderArea[slider_value] = metrics.calulateArea(bladder[slider_value]);
+                bladderPerimeter[slider_value] = metrics.calulatePerimeter(bladder[slider_value]);
             }
             try {
                 if (slider_value>=startingFrame && slider_value<=endingFrame && contourSeg == ContourSegmentation.CORRECTION)
@@ -752,11 +758,11 @@ namespace EDITgui
                 points[count++] = contour;
             }
 
-
+            //after extracting the 2D bladder segmentation we calculate and some metrics
             for (int i = 0; i < points.Count; i++)
             {
-                bladderArea.Add(calulateArea(points[i]));
-                bladderPerimeter.Add(calulatePerimeter(points[i]));
+                bladderArea.Add(metrics.calulateArea(points[i]));
+                bladderPerimeter.Add(metrics.calulatePerimeter(points[i]));
             }
             return points;
         }
@@ -777,54 +783,6 @@ namespace EDITgui
                 cvp.Add(contour);
             }
             return cvp;
-        }
-
-
-
-        //---------------------------------------------------M E T R I C S----------------------------------------------------------------
-        double calulateArea(List<Point> inputContour)
-        {
-            List<Point> contour = inputContour.ToList();
-
-            if (contour.Count >= 3)
-            {
-                contour.Add(contour[0]);
-                var area = Math.Abs(contour.Take(contour.Count - 1)
-                   .Select((p, i) => (contour[i + 1].X*pixelSpacing[0] - p.X*pixelSpacing[0]) * (contour[i + 1].Y*pixelSpacing[1] + p.Y*pixelSpacing[1]))
-                   .Sum() / 2);
-
-
-               
-                var perimeter = Math.Abs(contour.Take(contour.Count - 1)
-                    .Select((p, i) => (Math.Sqrt(Math.Pow(contour[i + 1].X * pixelSpacing[0] - p.X * pixelSpacing[0], 2) + Math.Pow(contour[i + 1].Y * pixelSpacing[1] - p.Y * pixelSpacing[1],2))))
-                   .Sum());
-
-               
-                return area;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-
-        double calulatePerimeter(List<Point> inputContour)
-        {
-            List<Point> contour = inputContour.ToList();
-
-            if (contour.Count >= 3)
-            {
-                var perimeter = Math.Abs(contour.Take(contour.Count - 1)
-                   .Select((p, i) => (Math.Sqrt(Math.Pow(contour[i + 1].X * pixelSpacing[0] - p.X * pixelSpacing[0], 2) + Math.Pow(contour[i + 1].Y * pixelSpacing[1] - p.Y * pixelSpacing[1], 2))))
-                  .Sum());
-
-                return perimeter;
-            }
-            else
-            {
-                return 0;
-            }
         }
 
 

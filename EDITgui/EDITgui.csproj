@@ -129,6 +129,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="metricsCalculations.cs" />
     <Compile Include="PhotoAccousticPart.xaml.cs">
       <DependentUpon>PhotoAccousticPart.xaml</DependentUpon>
     </Compile>
@@ -143,7 +144,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ErrorMessages.cs" />
+    <Compile Include="Messages.cs" />
     <Compile Include="coreFunctionality.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

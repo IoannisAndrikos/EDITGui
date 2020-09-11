@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace EDITgui
 {
-    class ErrorMessages
+    class Messages
     {
         public string cannotLoadDicom = "Cannot load the selected DICOM file";
 

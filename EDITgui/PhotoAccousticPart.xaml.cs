@@ -65,7 +65,7 @@ namespace EDITgui
         List<List<Point>> bladder = new List<List<Point>>();
         string imagesDir;
 
-        ErrorMessages errorMessages = new ErrorMessages();
+        Messages errorMessages = new Messages();
         coreFunctionality coreFunctionality = new coreFunctionality();
 
         public PhotoAccousticPart()
