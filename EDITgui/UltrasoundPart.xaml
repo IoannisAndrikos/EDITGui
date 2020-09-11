@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDITgui"
              mc:Ignorable="d" 
-             d:DesignHeight="779.5" Width="800.667" HorizontalAlignment="Left">
+             d:DesignHeight="779.5" Width="776.334" HorizontalAlignment="Left">
     <UserControl.Resources>
         <Style x:Key="RadioButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
@@ -336,10 +336,10 @@
 
 
 
-        <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="24,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="699.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
-        <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="24,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
-        <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="25,40,0,0" VerticalAlignment="Top" Width="736">
+        <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
+        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="675.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
+        <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
+        <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
                 <Grid x:Name="startingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
                     <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
@@ -388,8 +388,8 @@
                 <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
-        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="625.89,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413" Background="{x:Null}"/>
-        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="24,568,0,0" VerticalAlignment="Top" Width="266">
+        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="601.89,39,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413" Background="{x:Null}"/>
+        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="266">
             <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="93.49,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
             <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="93.49,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
             <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="93.49,60.075,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
@@ -403,7 +403,7 @@
             <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="27.333" Margin="162.156,10,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
             <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
         </Grid>
-        <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="470,568,0,0" VerticalAlignment="Top" Width="295">
+        <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">
             <Button x:Name="switch_auto_manual" Content="Correction" HorizontalAlignment="Left" Height="39.5" Margin="164.147,56.11,0,0" Style="{DynamicResource RadioButtonStyle}" VerticalAlignment="Top" Width="111.314" Foreground="White" Click="Switch_auto_manual_Click"/>
             <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
             <Button x:Name="extract_bladder" Content="Extract Bladder" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
@@ -426,7 +426,7 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="35.312,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
-        <Slider x:Name="ultrasound_slider" HorizontalAlignment="Left" Height="514" Margin="771.5,39,0,0" VerticalAlignment="Top" Width="29.167" Orientation="Vertical" Initialized="Ultrasound_slider_Initialized" ValueChanged="Ultrasound_slider_ValueChanged" Style="{DynamicResource SliderStyle1}" Visibility="Hidden"/>
+        <Slider x:Name="ultrasound_slider" HorizontalAlignment="Left" Height="514" Margin="742,39,0,0" VerticalAlignment="Top" Width="29.167" Orientation="Vertical" Initialized="Ultrasound_slider_Initialized" ValueChanged="Ultrasound_slider_ValueChanged" Style="{DynamicResource SliderStyle1}" Visibility="Hidden"/>
 
 
 

@@ -6,16 +6,16 @@
         xmlns:local="clr-namespace:EDITgui"
         mc:Ignorable="d"
         Title="MainWindow"
-        Height="{Binding SystemParameters.PrimaryScreenHeight}" 
-        Width="{Binding SystemParameters.PrimaryScreenWidth}" d:DesignWidth="1690.5" d:DesignHeight="902.5">
+        Height="886.5" 
+        Width="1618.5">
 
     <Window.Resources>
 
     </Window.Resources>
-    <Grid Margin="0,0,-8,-21" Background="#FF1C1F1F">
-        <local:UltrasoundPart Width="811.5"/>
-        <!-- <local:PhotoAccousticPart HorizontalAlignment="Right" Margin="0,0,20,0"  />  -->
-        
+    <Grid x:Name="application" Margin="0,0,-8,-5" Background="#FF1C1F1F">
+        <local:UltrasoundPart Width="811.5" Margin="10,0,0,0"/>
+        <local:PhotoAccousticPart HorizontalAlignment="Left" Margin="786,0,0,0"  /> 
+
     </Grid>
 
 </Window>

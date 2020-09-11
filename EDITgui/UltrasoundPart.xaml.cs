@@ -730,7 +730,6 @@ namespace EDITgui
         {
             return (bladder.Any() && bladder[slider_value].Any());
         }
-
         //--------------------------------------M A N A G E - P O I N T S---------------------------------
 
         //Convert Point to EDITCore.CVPoint

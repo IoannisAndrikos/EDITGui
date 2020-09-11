@@ -25,13 +25,14 @@ using OpenCvSharp.Extensions;
 using System.Windows.Media.Animation;
 using OpenCvSharp;
 using Emgu.CV.Shape;
+using System.ComponentModel;
 
 namespace EDITgui
 {
     /// <summary>
     /// Interaction logic for UltrasoundPart.xaml
     /// </summary>
-    public partial class PhotoAccousticPart : UserControl
+    public partial class PhotoAccousticPart : UserControl 
     {
         enum ContourSegmentation
         {
@@ -54,7 +55,7 @@ namespace EDITgui
         //--------------------------------------------------
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
-
+        List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
 
         double calibration_x;
         double calibration_y;
@@ -65,13 +66,14 @@ namespace EDITgui
         List<List<Point>> bladder = new List<List<Point>>();
         string imagesDir;
 
-        Messages errorMessages = new Messages();
+        Messages warningMessages = new Messages();
         coreFunctionality coreFunctionality = new coreFunctionality();
+        UltrasoundPart ultrasoundPart = new UltrasoundPart();
 
         public PhotoAccousticPart()
         {
             InitializeComponent();
-            chechBox_Logger.IsChecked = true;
+            //chechBox_Logger.IsChecked = true;
             coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
@@ -87,20 +89,19 @@ namespace EDITgui
                 clear_canvas();
                 coreFunctionality.repeatSegmentation();
                 string dcmfile = openFileDialog.FileName;
-                bool enablelogging = chechBox_Logger.IsChecked.Value;
-                await Task.Run(() => { imagesDir = coreFunctionality.exportImages(dcmfile, enablelogging); });
+            
+                await Task.Run(() => {
+                    imagesDir = coreFunctionality.exportImages(dcmfile, true); //enablelogging = true
+                    pixelSpacing = coreFunctionality.getPixelSpacing();
+                });
                 if (imagesDir != null)
                 {
-                    image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
+                    Console.WriteLine(ultrasoundPart.slider_value);
+
+                    image.Source = new BitmapImage(new Uri(imagesDir + "/" + ultrasoundPart.slider_value + ".bmp")); //imagesDir + "/0.bmp"
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = "Frame:" + " " + "0";
+                    frame_num_label.Content = "Frame:" + " " + ultrasoundPart.slider_value;
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                    slider.Value = 0;
-                    slider.TickFrequency = 1 / (double)fileCount;
-                    slider.Minimum = 0;
-                    slider.Maximum = fileCount - 1;
-                    slider.TickFrequency = 1;
-                    slider.Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
 
@@ -114,7 +115,7 @@ namespace EDITgui
                 else
                 {
                     stopSpinner();
-                    MessageBox.Show(errorMessages.cannotLoadDicom);
+                    MessageBox.Show(warningMessages.cannotLoadDicom);
                 }
 
 
@@ -122,43 +123,9 @@ namespace EDITgui
         }
 
 
-        private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
+        private void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
-            if (userPoints.Count < 2)
-            {
-                MessageBox.Show(errorMessages.notEnoughUserPoints);
-                return;
-            }
 
-            startSpinner();
-            int repeats = int.Parse(Repeats.Text);
-            int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text);
-            double lamda2 = double.Parse(Lamda2.Text);
-            int levelsetSize = int.Parse(LevelsetSize.Text);
-            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-
-            //this to avoid an issue when user marks the starting frame after the ending frame
-            if (endingFrame < startingFrame)
-            {
-                int temp = startingFrame;
-                startingFrame = endingFrame;
-                endingFrame = temp;
-            }
-
-
-
-            await Task.Run(() => {
-                bladderCvPoints = coreFunctionality.Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
-                bladder = editCVPointToWPFPoint(bladderCvPoints);
-            });
-
-            clear_canvas();
-            contourSeg = ContourSegmentation.CORRECTION;
-            switch_auto_manual.Content = "Correction";
-
-            display();
-            stopSpinner();
         }
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
@@ -178,7 +145,7 @@ namespace EDITgui
         {
             if (!areTherePoints())
             {
-                MessageBox.Show(errorMessages.noBladderSegmentation);
+                MessageBox.Show(warningMessages.noBladderSegmentation);
                 return;
             }
 
@@ -200,7 +167,7 @@ namespace EDITgui
         {
             if (!areTherePoints())
             {
-                MessageBox.Show(errorMessages.noBladderSegmentation);
+                MessageBox.Show(warningMessages.noBladderSegmentation);
                 return;
             }
             startSpinner();
@@ -208,32 +175,6 @@ namespace EDITgui
             stopSpinner();
         }
 
-
-        private void Ultrasound_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            try
-            {
-                slider_value = (int)slider.Value;
-                string I = imagesDir + "/" + slider_value.ToString() + ".bmp"; //path
-                image.Source = new BitmapImage(new Uri(I));
-                frame_num_label.Content = "Frame:" + " " + slider_value.ToString();
-                clear_canvas();
-                if (userPoints.Count == 2)
-                {
-                    doCorrection();
-                }
-                else
-                {
-                    display();
-                }
-            }
-            catch { }
-        }
-
-        private void Ultrasound_slider_Initialized(object sender, EventArgs e)
-        {
-            slider = sender as Slider;
-        }
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
 
@@ -707,7 +648,6 @@ namespace EDITgui
             }
             return points;
         }
-
 
         //Convert EDITCore.CVPoint to Point
         List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
