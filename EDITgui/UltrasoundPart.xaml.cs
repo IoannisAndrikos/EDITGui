@@ -308,7 +308,7 @@ namespace EDITgui
                 {
                     metrics_label.Visibility = Visibility.Visible;
                     metrics_label.Content = "perimenter = " + Math.Round(bladderPerimeter[slider_value], 2) + " mm" + Environment.NewLine +
-                                            "      area = " + Math.Round(bladderArea[slider_value], 2) + "mm\xB2";
+                                            "area = " + Math.Round(bladderArea[slider_value], 2) + "mm\xB2";
                   
                 }
                 else
