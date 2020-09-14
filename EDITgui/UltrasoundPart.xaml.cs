@@ -32,6 +32,10 @@ namespace EDITgui
     /// </summary>
     public partial class UltrasoundPart : UserControl
     {
+
+        public delegate void PropertyChangedHandler(int obj);
+        public static event PropertyChangedHandler sliderValueChanged = delegate { };
+
         enum ContourSegmentation
         {
             INSERT_USER_POINTS,
@@ -79,7 +83,6 @@ namespace EDITgui
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
 
-
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -104,6 +107,7 @@ namespace EDITgui
                     frame_num_label.Content = "Frame:" + " " + "0";
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     slider.Value = 0;
+                    sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
                     slider.TickFrequency = 1 / (double)fileCount;
                     slider.Minimum = 0;
                     slider.Maximum = fileCount - 1;
@@ -225,6 +229,7 @@ namespace EDITgui
             try
             {
                 slider_value = (int)slider.Value;
+                sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
                 string I = imagesDir + "/" + slider_value.ToString() + ".bmp"; //path
                 image.Source = new BitmapImage(new Uri(I)); 
                 frame_num_label.Content = "Frame:" + " " + slider_value.ToString();
@@ -551,6 +556,7 @@ namespace EDITgui
             if (count == bladder[slider_value].Count)
             {
                 doManual();
+                diplayMetrics(true);
                 return;
             }
             bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
@@ -702,6 +708,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Correction";
             contourSeg = ContourSegmentation.CORRECTION;
+            diplayMetrics();
             clear_canvas();
             display();
         }
@@ -722,6 +729,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Fill Points";
             contourSeg = ContourSegmentation.FILL_POINTS;
+            diplayMetrics();
             clear_canvas();
             display();
         }
