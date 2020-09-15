@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDITgui"
              mc:Ignorable="d" 
-             d:DesignHeight="779.5" Width="776.334" HorizontalAlignment="Left">
+             d:DesignHeight="779.5" Width="776.334" HorizontalAlignment="Left" Margin="1,0,0,0">
     <UserControl.Resources>
         <Style x:Key="RadioButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">

@@ -37,7 +37,26 @@ namespace EDITgui
         public MainWindow()
         {
             InitializeComponent();
-            //this.DataContext = new SharedVariables();
+            coreFunctionality core = new coreFunctionality();
+            core.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+
+
+            UltrasoundPart ultrasound = new UltrasoundPart();
+            PhotoAccousticPart photoAccoustic = new PhotoAccousticPart();
+            ultrasound.InitializeCoreFunctionality = core;
+            photoAccoustic.InitializeCoreFunctionality = core;
+
+            ultrasound.Width = 811;
+            ultrasound.Margin = new Thickness(0, 0, 0, 0);
+            ultrasound.HorizontalAlignment = HorizontalAlignment.Left;
+
+            photoAccoustic.HorizontalAlignment = HorizontalAlignment.Right;
+            ultrasound.Margin = new Thickness(0, 0, 0, 0);
+
+            //ultrasound.Margin = new Thickness(10, 0, 0, 0);
+            //photoAccoustic.Margin = new Thickness(786, 0, 0, 0);
+            this.Rat.Children.Add(ultrasound);
+            this.Rat.Children.Add(photoAccoustic);
         }
 
     }

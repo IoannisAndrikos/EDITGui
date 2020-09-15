@@ -7,15 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow"
         Height="886.5" 
-        Width="1618.5">
+        Width="1618.5" Background="#FF1C1F1F">
 
     <Window.Resources>
 
     </Window.Resources>
-    <Grid x:Name="application" Margin="0,0,-8,-5" Background="#FF1C1F1F">
-        <local:UltrasoundPart Width="811.5" Margin="10,0,0,0"/>
-        <local:PhotoAccousticPart HorizontalAlignment="Left" Margin="786,0,0,0"  /> 
-
+    <Grid x:Name="Rat" Margin="10,0,10,0" Background="#FF1C1F1F" Width="1513.084">
+        <!-- -->
+        <!--  <local:UltrasoundPart Width="811" Margin="0" HorizontalAlignment="Left"/>
+        <local:PhotoAccousticPart HorizontalAlignment="Right" Margin="0"  /> -->
     </Grid>
 
 </Window>

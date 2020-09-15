@@ -33,8 +33,12 @@ namespace EDITgui
     public partial class UltrasoundPart : UserControl
     {
 
-        public delegate void PropertyChangedHandler(int obj);
-        public static event PropertyChangedHandler sliderValueChanged = delegate { };
+        public delegate void sliderValueChangedHandler(int obj);
+        public static event sliderValueChangedHandler sliderValueChanged = delegate { };
+
+        public delegate void zoomUltrasoundChangedHandler(List<Matrix> obj);
+        public static event zoomUltrasoundChangedHandler zoomUltrasoundChanged = delegate { };
+
 
         enum ContourSegmentation
         {
@@ -72,16 +76,32 @@ namespace EDITgui
 
         //create objects of the other classes
         Messages warningMessages = new Messages();
-        coreFunctionality coreFunctionality = new coreFunctionality();
+        coreFunctionality coreFunctionality;// = new coreFunctionality();
         metricsCalculations metrics = new metricsCalculations();
 
         public UltrasoundPart()
         {
             InitializeComponent();
+            PhotoAccousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             chechBox_Logger.IsChecked = true;
-            coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+           // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
+
+        public coreFunctionality InitializeCoreFunctionality
+        {
+            get { return coreFunctionality; }
+            set { coreFunctionality = value; }
+        }
+
+
+        public void OnPhotoAccousticZoomChanged(List<Matrix> obj)
+        {
+            var element = canvasUltrasound;
+            element.RenderTransform = new MatrixTransform(obj.LastOrDefault());
+            zoom_out = obj;
+        }
+
 
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
@@ -654,22 +674,29 @@ namespace EDITgui
             //Console.WriteLine(transform);
             //Console.WriteLine(e.Delta);
 
-            if (e.Delta > 0)
-            {
-                zoom_out.Add(matrix);
-            }
+
+
+            //if (e.Delta > 0)
+            //{
+            //    zoom_out.Add(matrix);
+            //}
 
             if ((matrix.M11 >= 1 && e.Delta > 0))//((matrix.M11 >= 1 && cout_wh == 0) || (matrix.M11 >= 1.1 && cout_wh > 0))
             {
                 matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(matrix);
+                zoom_out.Add(matrix);
+                zoomUltrasoundChanged(zoom_out);
             }
             else if ((matrix.M11 >= 1.1 && e.Delta < 0))
             {
-                matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+               // matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(zoom_out.LastOrDefault());
-                zoom_out.RemoveAt(zoom_out.Count - 1);
+               // Console.WriteLine(zoom_out.LastOrDefault());
+                zoomUltrasoundChanged(zoom_out);
+                if (zoom_out.Any()) zoom_out.RemoveAt(zoom_out.Count - 1);
             }
+            
         }
 
         private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)

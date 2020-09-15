@@ -35,6 +35,9 @@ namespace EDITgui
     public partial class PhotoAccousticPart : UserControl
     {
 
+        public delegate void zoomPhotoAccousticChangedHandler(List<Matrix> obj);
+        public static event zoomPhotoAccousticChangedHandler zoomPhotoAccousticChanged = delegate { };
+
         //-----------for slider----------
         bool photoaccousticDicomWasLoaded = false;
         int slider_value = 0;
@@ -45,16 +48,22 @@ namespace EDITgui
         string imagesDir;
 
         Messages warningMessages = new Messages();
-        coreFunctionality coreFunctionality = new coreFunctionality();
+        coreFunctionality coreFunctionality;// = new coreFunctionality();
 
         public PhotoAccousticPart()
         {
             InitializeComponent();
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
+            UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             //chechBox_Logger.IsChecked = true;
-            coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
 
+        public coreFunctionality InitializeCoreFunctionality
+        {
+            get { return coreFunctionality; }
+            set { coreFunctionality = value; }
+        }
 
         public void OnUltrasoundSliderValueChanged(int obj)
         {
@@ -65,6 +74,14 @@ namespace EDITgui
                 frame_num_label.Content = "Frame:" + " " + slider_value;
             }
         }
+
+        public void OnUltrasoundZoomChanged(List<Matrix> obj)
+        {
+            var element = canvasUltrasound;
+            element.RenderTransform = new MatrixTransform(obj.LastOrDefault());
+            zoom_out = obj;
+        }
+    
 
 
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
@@ -212,22 +229,27 @@ namespace EDITgui
             //Console.WriteLine(transform);
             //Console.WriteLine(e.Delta);
 
-            if (e.Delta > 0)
-            {
-                zoom_out.Add(matrix);
-            }
+            //if (e.Delta >= 0)
+            //{
+            //    zoom_out.Add(matrix);
+            //}
 
             if ((matrix.M11 >= 1 && e.Delta > 0))//((matrix.M11 >= 1 && cout_wh == 0) || (matrix.M11 >= 1.1 && cout_wh > 0))
             {
                 matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(matrix);
+                zoom_out.Add(matrix);
+                zoomPhotoAccousticChanged(zoom_out);
             }
             else if ((matrix.M11 >= 1.1 && e.Delta < 0))
             {
-                matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+               // matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(zoom_out.LastOrDefault());
-                zoom_out.RemoveAt(zoom_out.Count - 1);
+                zoomPhotoAccousticChanged(zoom_out);
+                if (zoom_out.Any()) zoom_out.RemoveAt(zoom_out.Count - 1);
             }
+
+           
         }
 
         private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)

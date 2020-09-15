@@ -9,7 +9,7 @@ using System.Runtime.ExceptionServices;
 namespace EDITgui
 {
     //here is the core functionality of backend
-    class coreFunctionality
+    public class coreFunctionality
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
         public static Messages errorMessages = new Messages();
