@@ -671,32 +671,20 @@ namespace EDITgui
             var matrix = transform.Matrix;
             var scale = e.Delta > 0 ? 1.1 : (1.0 / 1.1); // choose appropriate scaling factor
 
-            //Console.WriteLine(transform);
-            //Console.WriteLine(e.Delta);
-
-
-
-            //if (e.Delta > 0)
-            //{
-            //    zoom_out.Add(matrix);
-            //}
+            if(e.Delta < 0) zoom_out.Remove(zoom_out.LastOrDefault());
 
             if ((matrix.M11 >= 1 && e.Delta > 0))//((matrix.M11 >= 1 && cout_wh == 0) || (matrix.M11 >= 1.1 && cout_wh > 0))
             {
                 matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(matrix);
                 zoom_out.Add(matrix);
-                zoomUltrasoundChanged(zoom_out);
             }
             else if ((matrix.M11 >= 1.1 && e.Delta < 0))
             {
-               // matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+                //matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(zoom_out.LastOrDefault());
-               // Console.WriteLine(zoom_out.LastOrDefault());
-                zoomUltrasoundChanged(zoom_out);
-                if (zoom_out.Any()) zoom_out.RemoveAt(zoom_out.Count - 1);
             }
-            
+            zoomUltrasoundChanged(zoom_out);
         }
 
         private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)
