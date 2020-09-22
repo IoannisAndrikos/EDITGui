@@ -119,6 +119,58 @@ namespace EDITgui
             }
         }
 
+        //------------------------------------PHOTOACOUSTIC----------------------------
+
+        [HandleProcessCorruptedStateExceptions]
+        public string exportPhotoAcousticImages(string dcmfile, bool enablelogging)
+        {
+            try
+            {
+                string imagesDir = editPro.exportPhotoAcousticImages(dcmfile, enablelogging);
+                return imagesDir;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return null;
+        }
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints)
+        {
+            try
+            {
+                List<List<EDITCore.CVPoint>> thicknessCvPoints = editPro.extractThickness(bladderCvPoints);
+                return thicknessCvPoints;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return new List<List<EDITCore.CVPoint>>();
+        }
+
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public void writeThicknessPoints()
+        {
+            try
+            {
+                editPro.writeThicknessPoints();
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+
+        }
+
+
+
     }
 
 }

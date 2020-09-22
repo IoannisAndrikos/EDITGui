@@ -42,7 +42,7 @@ namespace EDITgui
 
 
             UltrasoundPart ultrasound = new UltrasoundPart();
-            PhotoAccousticPart photoAccoustic = new PhotoAccousticPart();
+            PhotoAccousticPart photoAccoustic = new PhotoAccousticPart(ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
             ultrasound.InitializeCoreFunctionality = core;
             photoAccoustic.InitializeCoreFunctionality = core;
 

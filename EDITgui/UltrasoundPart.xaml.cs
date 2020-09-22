@@ -102,7 +102,6 @@ namespace EDITgui
             zoom_out = obj;
         }
 
-
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -807,6 +806,25 @@ namespace EDITgui
             return cvp;
         }
 
+
+
+        //------- SOME GETTERS---------------
+
+       public List<List<EDITCore.CVPoint>> getBladderCVPoints()
+        {
+            bladderCvPoints = WPFPointToCVPoint(bladder);
+            return bladderCvPoints;
+        }
+
+        public int getStartingFrame()
+        {
+            return startingFrame;
+        }
+
+        public int getEndingFrame()
+        {
+            return endingFrame;
+        }
 
     }
 }

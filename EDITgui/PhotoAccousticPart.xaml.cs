@@ -38,13 +38,18 @@ namespace EDITgui
         public delegate void zoomPhotoAccousticChangedHandler(List<Matrix> obj);
         public static event zoomPhotoAccousticChangedHandler zoomPhotoAccousticChanged = delegate { };
 
+        UltrasoundPart ultrasound;
+
         //-----------for slider----------
         bool photoaccousticDicomWasLoaded = false;
         int slider_value = 0;
         int fileCount;
         //-------------------------------
 
-
+        List<Point> points = new List<Point>();
+        List<Polyline> polylines = new List<Polyline>();
+        List<List<EDITCore.CVPoint>> thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
+        List<List<Point>> thickness = new List<List<Point>>();
         string imagesDir;
 
         Messages warningMessages = new Messages();
@@ -53,6 +58,17 @@ namespace EDITgui
         public PhotoAccousticPart()
         {
             InitializeComponent();
+            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
+            UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
+            //chechBox_Logger.IsChecked = true;
+            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+        }
+
+        //my constructor ...I have to pass the ultrasound instance in order to get some data
+        public PhotoAccousticPart(UltrasoundPart ultrasoundPart)
+        {
+            InitializeComponent();
+            this.ultrasound = ultrasoundPart;
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             //chechBox_Logger.IsChecked = true;
@@ -72,6 +88,8 @@ namespace EDITgui
             {
                 image.Source = new BitmapImage(new Uri(imagesDir + "/" + obj + ".bmp"));
                 frame_num_label.Content = "Frame:" + " " + slider_value;
+                clear_canvas();
+                display();
             }
         }
 
@@ -98,7 +116,7 @@ namespace EDITgui
 
                 await Task.Run(() =>
                 {
-                    imagesDir = coreFunctionality.exportImages(dcmfile, true); //enablelogging = true
+                    imagesDir = coreFunctionality.exportPhotoAcousticImages(dcmfile, true); //enablelogging = true
 
                 });
                 if (imagesDir != null)
@@ -121,9 +139,15 @@ namespace EDITgui
         }
 
 
-        private void Extract_thikness_Click(object sender, RoutedEventArgs e)
+        private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
-
+            await Task.Run(() =>
+            {
+                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints());
+                thickness = editCVPointToWPFPoint(thicknessCvPoints);
+            });
+            clear_canvas();
+            display();
         }
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
@@ -140,6 +164,11 @@ namespace EDITgui
 
         private async void Export_Points_Click(object sender, RoutedEventArgs e)
         {
+            await Task.Run(() =>
+            {
+                coreFunctionality.writeThicknessPoints();
+
+            });
         }
 
         private async void Export_Skin_Click(object sender, RoutedEventArgs e)
@@ -149,16 +178,56 @@ namespace EDITgui
 
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
+        bool areTherePoints()
+        {
+            return (thickness.Any() && thickness[slider_value].Any());
+        }
+
+        void display()
+        {
+            if (areTherePoints())
+            {
+                draw_polyline(thickness[slider_value]);
+                draw_points(thickness[slider_value]);
+            }
+
+        }
+
 
         private void draw_points(List<Point> points)
         {
-
+            for (int i = 0; i < points.Count; i++)
+            {
+                Ellipse ellipse = new Ellipse();
+                //ellipse.Fill = Brushes.Blue;
+                ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
+                ellipse.Width = 2;
+                ellipse.Height = 2;
+                canvasUltrasound.Children.Add(ellipse);
+                Canvas.SetLeft(ellipse, points.ElementAt(i).X);
+                Canvas.SetTop(ellipse, points.ElementAt(i).Y);
+            }
 
         }
 
         private void draw_polyline(List<Point> points)
         {
-
+            List<Point> closeCurvePoints = points.ToList();//new List<Point>();
+            closeCurvePoints.Add(points[0]);
+            for (int i = 0; i < closeCurvePoints.Count - 1; i++)
+            {
+                    Polyline pl = new Polyline();
+                    pl.FillRule = FillRule.EvenOdd;
+                    pl.StrokeThickness = 0.5;
+                    pl.Points.Add(closeCurvePoints.ElementAt(i));
+                    pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
+                    //pl.Stroke = System.Windows.Media.Brushes.Green;
+                    pl.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
+                    pl.StrokeStartLineCap = PenLineCap.Round;
+                    pl.StrokeEndLineCap = PenLineCap.Round;
+                    canvasUltrasound.Children.Add(pl);
+                    polylines.Add(pl);
+            }
         }
 
         private void canvasUltrasound_MouseDown(object sender, MouseButtonEventArgs e)
@@ -208,14 +277,10 @@ namespace EDITgui
 
         void clear_canvas()
         {
-
+            canvasUltrasound.Children.Clear();
+            canvasUltrasound.Children.Add(image);
         }
 
-        void display()
-        {
-
-
-        }
 
         protected List<Matrix> zoom_out = new List<Matrix>();
         private void canvasUltrasound_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -276,7 +341,61 @@ namespace EDITgui
         private void doFillPoints()
         {
 
-        }      
+        }
+
+
+
+        //--------------------------------------M A N A G E - P O I N T S---------------------------------
+
+        //Convert Point to EDITCore.CVPoint
+        List<List<Point>> editCVPointToWPFPoint(List<List<EDITCore.CVPoint>> cvp)
+        {
+            thickness = new List<List<Point>>();
+            //bladderArea = new List<double>();
+            //bladderPerimeter = new List<double>();
+
+            List<List<Point>> points = new List<List<Point>>(fileCount);
+            for (int i = 0; i < fileCount; i++)
+            {
+                points.Add(new List<Point>(cvp[0].Count));
+            }
+            int count = ultrasound.getStartingFrame();
+            for (int i = 0; i < cvp.Count; i++)
+            {
+                List<Point> contour = new List<Point>();
+                for (int j = 0; j < cvp[i].Count(); j++)
+                {
+                    contour.Add(new Point(cvp[i][j].X, cvp[i][j].Y)); // * (1 / calibration_x)
+                }
+                points[count++] = contour;
+            }
+
+            //after extracting the 2D bladder segmentation we calculate and some metrics
+            //for (int i = 0; i < points.Count; i++)
+            //{
+            //    bladderArea.Add(metrics.calulateArea(points[i]));
+            //    bladderPerimeter.Add(metrics.calulatePerimeter(points[i]));
+            //}
+            return points;
+        }
+
+
+        //Convert EDITCore.CVPoint to Point
+        List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
+        {
+            thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
+            List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
+            for (int i = ultrasound.getStartingFrame(); i <= ultrasound.getEndingFrame(); i++)
+            {
+                List<EDITCore.CVPoint> contour = new List<EDITCore.CVPoint>();
+                for (int j = 0; j < points[i].Count(); j++)
+                {
+                    contour.Add(new EDITCore.CVPoint(points[i][j].X, points[i][j].Y));
+                }
+                cvp.Add(contour);
+            }
+            return cvp;
+        }
 
     }
 
