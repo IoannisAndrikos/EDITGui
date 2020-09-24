@@ -24,47 +24,36 @@ using Microsoft.Win32;
 using OpenCvSharp.Extensions;
 using System.Windows.Media.Animation;
 using OpenCvSharp;
+using Emgu.CV.Shape;
+using System.ComponentModel;
 
 namespace EDITgui
 {
     /// <summary>
     /// Interaction logic for UltrasoundPart.xaml
     /// </summary>
-    public partial class UltrasoundPart : UserControl
+    public partial class PhotoAcousticPart : UserControl
     {
 
-        public delegate void repeatProcessHandler();
-        public static event repeatProcessHandler repeatProcess = delegate { };
+        public delegate void zoomPhotoAccousticChangedHandler(List<Matrix> obj);
+        public static event zoomPhotoAccousticChangedHandler zoomPhotoAccousticChanged = delegate { };
 
-        public delegate void bladderPointChangedHandler(List<List<Point>> newBladder);
-        public static event bladderPointChangedHandler bladderPointChanged = delegate { };
-
-        public delegate void sliderValueChangedHandler(int obj);
-        public static event sliderValueChangedHandler sliderValueChanged = delegate { };
-
-        public delegate void zoomUltrasoundChangedHandler(List<Matrix> obj);
-        public static event zoomUltrasoundChangedHandler zoomUltrasoundChanged = delegate { };
-
+        UltrasoundPart ultrasound;
 
         enum ContourSegmentation
         {
-            INSERT_USER_POINTS,
             CORRECTION,
             MANUAL,
             FILL_POINTS
         }
 
+
         //-----------for slider----------
-        Slider slider;
-        public int slider_value = 0;
+        bool photoaccousticDicomWasLoaded = false;
+        int slider_value = 0;
         int fileCount;
         //-------------------------------
 
-        //------------user set intial points on images------
-        List<Point> userPoints = new List<Point>(2);//
-        int startingFrame = 0;
-        int endingFrame = 0;
-        //--------------------------------------------------
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
 
@@ -72,26 +61,39 @@ namespace EDITgui
         double calibration_x;
         double calibration_y;
 
+
         List<Point> points = new List<Point>();
         List<Polyline> polylines = new List<Polyline>();
-        List<List<EDITCore.CVPoint>> bladderCvPoints = new List<List<EDITCore.CVPoint>>();
-        List<List<Point>> bladder = new List<List<Point>>();
-        List<double> bladderArea = new List<double>();
-        List<double> bladderPerimeter = new List<double>();
+        List<List<EDITCore.CVPoint>> thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
+        List<List<Point>> thickness = new List<List<Point>>();
+        List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
+        List<double> meanThickness = new List<double>();
+        List<List<Point>> bladderUltrasound = new List<List<Point>>();
         string imagesDir;
 
-        //create objects of the other classes
         Messages warningMessages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
-        metricsCalculations metrics = new metricsCalculations();
 
-        public UltrasoundPart()
+        public PhotoAcousticPart()
         {
             InitializeComponent();
-            PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
-            chechBox_Logger.IsChecked = true;
-           // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
-            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
+            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
+            UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
+            //chechBox_Logger.IsChecked = true;
+            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+        }
+
+        //my constructor ...I have to pass the ultrasound instance in order to get some data
+        public PhotoAcousticPart(UltrasoundPart ultrasoundPart)
+        {
+            InitializeComponent();
+            this.ultrasound = ultrasoundPart;
+            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
+            UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
+            UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
+            UltrasoundPart.repeatProcess += OnrepeatProcess;
+            //chechBox_Logger.IsChecked = true;
+            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
 
         public coreFunctionality InitializeCoreFunctionality
@@ -100,52 +102,71 @@ namespace EDITgui
             set { coreFunctionality = value; }
         }
 
-
-        public void OnPhotoAccousticZoomChanged(List<Matrix> obj)
+        public void OnUltrasoundSliderValueChanged(int obj)
         {
-            var element = canvasUltrasound;
+            slider_value = (int)obj;
+            if (photoaccousticDicomWasLoaded)
+            {
+                image.Source = new BitmapImage(new Uri(imagesDir + "/" + obj + ".bmp"));
+                frame_num_label.Content = "Frame:" + " " + slider_value;
+                doCorrection();
+                clear_canvas();
+                display();
+            }
+        }
+
+        public void OnUltrasoundZoomChanged(List<Matrix> obj)
+        {
+            var element = canvasPhotoAcoustic;
             element.RenderTransform = new MatrixTransform(obj.LastOrDefault());
             zoom_out = obj;
         }
 
+        public void OnBladderPointChanged(List<List<Point>> newBladder)
+        {
+            if (!areTherePoints()) return;
+            
+            bladderUltrasound = newBladder;
+            clear_canvas();
+            display();
+        }
+
+        public void OnrepeatProcess()
+        {
+            thickness.Clear();
+            thicknessCvPoints.Clear();
+            bladderUltrasound.Clear();
+            meanThickness.Clear();
+            metrics_label.Visibility = Visibility.Hidden;
+            contourSeg = ContourSegmentation.CORRECTION;
+            clear_canvas();
+            display();
+        }
+
+
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
+            photoaccousticDicomWasLoaded = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
-                if (bladder != null) bladder.Clear();
                 clear_canvas();
                 coreFunctionality.repeatSegmentation();
                 string dcmfile = openFileDialog.FileName;
-                bool enablelogging = chechBox_Logger.IsChecked.Value;
-                await Task.Run(() => {
-                    imagesDir = coreFunctionality.exportImages(dcmfile, enablelogging);
-                    pixelSpacing = coreFunctionality.pixelSpacing;
+
+                await Task.Run(() =>
+                {
+                    imagesDir = coreFunctionality.exportPhotoAcousticImages(dcmfile, true); //enablelogging = true
+
                 });
                 if (imagesDir != null)
                 {
-                    metrics_label.Visibility = Visibility.Hidden;
-                    metrics.setPixelSpacing(pixelSpacing);
-                    image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
-                    ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = "Frame:" + " " + "0";
+                    photoaccousticDicomWasLoaded = true;
+                    image.Source = new BitmapImage(new Uri(imagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
+                    photoAcoustic_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    frame_num_label.Content = "Frame:" + " " + slider_value;
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                    slider.Value = 0;
-                    sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
-                    slider.TickFrequency = 1 / (double)fileCount;
-                    slider.Minimum = 0;
-                    slider.Maximum = fileCount - 1;
-                    slider.TickFrequency = 1;
-                    slider.Visibility = Visibility.Visible;
-                    calibration_x = image.Source.Width / canvasUltrasound.Width;
-                    calibration_y = image.Source.Height / canvasUltrasound.Height;
-
-                    //mange starting and ending frame
-                    userPoints.Clear();
-                    startingFrame = -1;
-                    endingFrame = -1;
-                    contourSeg = ContourSegmentation.INSERT_USER_POINTS;
                     stopSpinner();
                 }
                 else
@@ -159,59 +180,33 @@ namespace EDITgui
         }
 
 
-        private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
+        private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
-            if (userPoints.Count < 2)
+            await Task.Run(() =>
             {
-                MessageBox.Show(warningMessages.notEnoughUserPoints);
-                return;
-            }
-
-            startSpinner();
-            int repeats = int.Parse(Repeats.Text);
-            int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text);
-            double lamda2 = double.Parse(Lamda2.Text);
-            int levelsetSize = int.Parse(LevelsetSize.Text);
-            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-
-            //this to avoid an issue when user marks the starting frame after the ending frame
-            if (endingFrame < startingFrame)
-            {
-                int temp = startingFrame;
-                startingFrame = endingFrame;
-                endingFrame = temp;
-            }
-
-                
-
-            await Task.Run(() => {
-                bladderCvPoints = coreFunctionality.Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
-                bladder = editCVPointToWPFPoint(bladderCvPoints);
+                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints());
+                thickness = editCVPointToWPFPoint(thicknessCvPoints);
+                fillmeanThicknessList(coreFunctionality.meanThickness);
             });
-
-            clear_canvas();
-            contourSeg = ContourSegmentation.CORRECTION;
-            switch_auto_manual.Content = "Correction";
+            bladderUltrasound = ultrasound.getBladderPoints();
             diplayMetrics();
-
+            clear_canvas();
             display();
-            stopSpinner();
         }
 
-        private void Repeat_process_Click(object sender, RoutedEventArgs e)
+        private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
-            userPoints.Clear();
-            bladder.Clear();
-            bladderCvPoints.Clear();
-            bladderArea.Clear();
-            metrics_label.Visibility = Visibility.Hidden;
-            coreFunctionality.repeatSegmentation();
-            startingFrame = -1;
-            endingFrame = -1;
+            bladderUltrasound = ultrasound.getBladderPoints();
+            await Task.Run(() =>
+            {
+                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]));
+                thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
+                //contourForFix.Clear();
+                meanThickness.AddRange(coreFunctionality.meanThickness);
+            });
+            Console.WriteLine("contour size: " + contourForFix.Count);
             clear_canvas();
-            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
-            repeatProcess(); //trigger repeat process of photoAcousticPart 
+            display();
         }
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
@@ -223,70 +218,66 @@ namespace EDITgui
             }
 
             startSpinner();
-            bladderCvPoints = WPFPointToCVPoint(bladder);
-            await Task.Run(() => { coreFunctionality.extractBladderSTL(bladderCvPoints); });
+            thicknessCvPoints = WPFPointToCVPoint(thickness);
+            await Task.Run(() => { coreFunctionality.extractThicknessSTL(thicknessCvPoints); });
             stopSpinner();
         }
 
 
         private async void Export_Points_Click(object sender, RoutedEventArgs e)
         {
-            startSpinner();
-            await Task.Run(() => { coreFunctionality.writePointsAndImages(); });
-            stopSpinner();
-        }
-
-        private async void Export_Skin_Click(object sender, RoutedEventArgs e)
-        {
-            if (!areTherePoints())
+            await Task.Run(() =>
             {
-                MessageBox.Show(warningMessages.noBladderSegmentation);
-                return;
-            }
-            startSpinner();
-            await Task.Run(() => { coreFunctionality.extractSkin(); });
-            stopSpinner();
-        }
+                coreFunctionality.writeThicknessPoints();
 
-
-        private void Ultrasound_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            try
-            {
-                slider_value = (int)slider.Value;
-                sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
-                string I = imagesDir + "/" + slider_value.ToString() + ".bmp"; //path
-                image.Source = new BitmapImage(new Uri(I)); 
-                frame_num_label.Content = "Frame:" + " " + slider_value.ToString();
-                diplayMetrics();
-                clear_canvas();
-                if (userPoints.Count == 2)
-                {
-                    doCorrection();
-                }
-                else
-                {
-                    display();
-                }
-            }
-            catch { }
-        }
-
-        private void Ultrasound_slider_Initialized(object sender, EventArgs e)
-        {
-            slider = sender as Slider;
+            });
         }
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
+        bool areTherePoints()
+        {
+            return (thickness.Any() && thickness[slider_value].Any());
+        }
+
+        void display()
+        {
+            if (areTherePoints())
+            {
+                draw_polyline(thickness[slider_value]);
+                draw_points(thickness[slider_value]);
+            }
+            if (ultrasound.areTherePoints() && bladderUltrasound.Any())
+            {
+                draw_polyline_ultrasound(bladderUltrasound[slider_value]);
+                //draw_points_ultrasound(bladderUltrasound[slider_value]);
+            }
+
+        }
+
 
         private void draw_points(List<Point> points)
         {
             for (int i = 0; i < points.Count; i++)
             {
-                //Color color = (Color)ColorConverter.ConvertFromString("#FF2BEDED");
                 Ellipse ellipse = new Ellipse();
-               // ellipse.Fill = Brushes.Cyan;
+                //ellipse.Fill = Brushes.Blue;
                 ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
+                ellipse.Width = 2;
+                ellipse.Height = 2;
+                canvasPhotoAcoustic.Children.Add(ellipse);
+                Canvas.SetLeft(ellipse, points.ElementAt(i).X);
+                Canvas.SetTop(ellipse, points.ElementAt(i).Y);
+            }
+
+        }
+
+        private void draw_points_ultrasound(List<Point> points)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                Ellipse ellipse = new Ellipse();
+                ellipse.Fill = Brushes.Pink;
+                //ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
                 ellipse.Width = 2;
                 ellipse.Height = 2;
                 canvasUltrasound.Children.Add(ellipse);
@@ -326,40 +317,62 @@ namespace EDITgui
                     pl.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
                     pl.StrokeStartLineCap = PenLineCap.Round;
                     pl.StrokeEndLineCap = PenLineCap.Round;
-                    canvasUltrasound.Children.Add(pl);
+                    canvasPhotoAcoustic.Children.Add(pl);
                     polylines.Add(pl);
                 }
             }
         }
 
+        private void draw_polyline_ultrasound(List<Point> points)
+        {
+            List<Point> closeCurvePoints = points.ToList();//new List<Point>();
+            closeCurvePoints.Add(points[0]);
+
+            for (int i = 0; i < closeCurvePoints.Count - 1; i++)
+            {
+                Polyline pl = new Polyline();
+                pl.FillRule = FillRule.EvenOdd;
+                pl.StrokeThickness = 0.5;
+                pl.Points.Add(closeCurvePoints.ElementAt(i));
+                pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
+                pl.Stroke = System.Windows.Media.Brushes.Silver;
+                //pl.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
+                pl.StrokeStartLineCap = PenLineCap.Round;
+                pl.StrokeEndLineCap = PenLineCap.Round;
+                canvasPhotoAcoustic.Children.Add(pl);
+                polylines.Add(pl);
+            }
+        }
+
         private void diplayMetrics(bool recalculate = false)
         {
-            if (recalculate)
+            //if (recalculate)
+            //{
+            //    bladderArea[slider_value] = metrics.calulateArea(bladder[slider_value]);
+            //    bladderPerimeter[slider_value] = metrics.calulatePerimeter(bladder[slider_value]);
+            //}
+            try
             {
-                bladderArea[slider_value] = metrics.calulateArea(bladder[slider_value]);
-                bladderPerimeter[slider_value] = metrics.calulatePerimeter(bladder[slider_value]);
-            }
-            try {
-                if (slider_value>=startingFrame && slider_value<=endingFrame && contourSeg == ContourSegmentation.CORRECTION)
+                if (slider_value >= ultrasound.getStartingFrame() && slider_value <= ultrasound.getEndingFrame() && contourSeg == ContourSegmentation.CORRECTION)
                 {
                     metrics_label.Visibility = Visibility.Visible;
-                    metrics_label.Content = "perimenter = " + Math.Round(bladderPerimeter[slider_value], 2) + " mm" + Environment.NewLine +
-                                            "area = " + Math.Round(bladderArea[slider_value], 2) + "mm\xB2";
-                  
+                    metrics_label.Content = "mean thickness = " + Math.Round(meanThickness[slider_value], 2) + " mm";                    
                 }
                 else
                 {
                     metrics_label.Visibility = Visibility.Hidden;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //TO DO
             }
         }
 
 
-        private void canvasUltrasound_MouseDown(object sender, MouseButtonEventArgs e)
+
+
+        private void canvasPhotoAcoustic_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
@@ -371,84 +384,50 @@ namespace EDITgui
 
                 if (e.ChangedButton == MouseButton.Left)
                 {
-                    if (contourSeg == ContourSegmentation.INSERT_USER_POINTS && userPoints.Count < 2)
-                    {
-                        clear_canvas();
-                        points.Clear();
-
-                        if (userPoints.Count == 0)
-                        {
-                            canvasUltrasound.Children.Add(startingFrameMarker);
-                            Canvas.SetLeft(startingFrameMarker, point.X - startingFrameMarker.Width / 2);
-                            Canvas.SetTop(startingFrameMarker, point.Y - startingFrameMarker.Height / 2);
-                            startingFrameMarker.Visibility = Visibility.Visible;
-
-
-                            //ellipse.Fill = Brushes.Yellow;
-                            userPoints.Add(point);
-                            startingFrame = slider_value;
-                        }
-                        else if (userPoints.Count > 0 && userPoints.Count < 2)
-                        {
-                            // ellipse.Fill = Brushes.Red;
-                            canvasUltrasound.Children.Add(endingFrameMarker);
-                            Canvas.SetLeft(endingFrameMarker, point.X - endingFrameMarker.Width / 2);
-                            Canvas.SetTop(endingFrameMarker, point.Y - endingFrameMarker.Height / 2);
-                            endingFrameMarker.Visibility = Visibility.Visible;
-                            userPoints.Add(point);
-                            endingFrame = slider_value;
-                        }
-                        clear_canvas();
-                        display();
-                        //canvasUltrasound.Children.Add(ellipse);
-                        //Canvas.SetLeft(ellipse, point.X);
-                        //Canvas.SetTop(ellipse, point.Y);
-                    }
-                    else if (contourSeg == ContourSegmentation.FILL_POINTS)
+                    if (contourSeg == ContourSegmentation.FILL_POINTS)
                     {
                         clear_canvas();
                         // bladder[slider_value].Insert(indexA++, point);
 
-                        if (indexA > bladder[slider_value].Count - 1) indexA = 0;
+                        if (indexA > thickness[slider_value].Count - 1) indexA = 0;
 
                         double d1, d2;
                         if (indexA != 0)
                         {
-                            d1 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][indexA - 1].X, 2) + Math.Pow(point.Y - bladder[slider_value][indexA - 1].Y, 2));
+                            d1 = Math.Sqrt(Math.Pow(point.X - thickness[slider_value][indexA - 1].X, 2) + Math.Pow(point.Y - thickness[slider_value][indexA - 1].Y, 2));
                         }
                         else
                         {
-                            int num = bladder[slider_value].Count - 1;
-                            d1 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][num].X, 2) + Math.Pow(point.Y - bladder[slider_value][num].Y, 2));
+                            int num = thickness[slider_value].Count - 1;
+                            d1 = Math.Sqrt(Math.Pow(point.X - thickness[slider_value][num].X, 2) + Math.Pow(point.Y - thickness[slider_value][num].Y, 2));
                         }
-                        d2 = Math.Sqrt(Math.Pow(point.X - bladder[slider_value][indexA].X, 2) + Math.Pow(point.Y - bladder[slider_value][indexA].Y, 2));
+                        d2 = Math.Sqrt(Math.Pow(point.X - thickness[slider_value][indexA].X, 2) + Math.Pow(point.Y - thickness[slider_value][indexA].Y, 2));
 
                         if (d2 > d1)
                         {
-                            bladder[slider_value].Insert(indexA++, point);
+                            thickness[slider_value].Insert(indexA++, point);
                         }
                         else
                         {
 
-                            bladder[slider_value].Insert(indexA, point);
+                            thickness[slider_value].Insert(indexA, point);
                         }
                         display();
-                       // diplayMetrics(true);
-                    }
-                    else if (contourSeg == ContourSegmentation.MANUAL)
+                         diplayMetrics(true);
+                    }else if (contourSeg == ContourSegmentation.MANUAL)
                     {
                         clear_canvas();
-                        bladder[slider_value].Add(point);
+                        thickness[slider_value].Add(point);
                         display();
-                       // diplayMetrics(true);
+                        diplayMetrics(true);
                     }
                 }
                 else if (e.ChangedButton == MouseButton.Right && contourSeg == ContourSegmentation.MANUAL)
                 {
-                    if (bladder[slider_value].Any())
+                    if (thickness[slider_value].Any())
                     {
-                        bladder[slider_value].RemoveAt(bladder[slider_value].Count - 1);
-                      //  diplayMetrics(true);
+                        thickness[slider_value].RemoveAt(thickness[slider_value].Count - 1);
+                        diplayMetrics(true);
                         if (contourSeg == ContourSegmentation.MANUAL)
                         {
                             clear_canvas();
@@ -458,7 +437,7 @@ namespace EDITgui
                             Ellipse ellipse = new Ellipse();
                             ellipse.Width = 5;
                             ellipse.Height = 5;
-                            canvasUltrasound.Children.Remove(ellipse);
+                            canvasPhotoAcoustic.Children.Remove(ellipse);
                         }
                         display();
                     }
@@ -472,7 +451,7 @@ namespace EDITgui
         Point startPosition1;
         int a = 0, b = 1;
 
-        private void canvasUltrasound_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void canvasPhotoAcoustic_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
@@ -492,7 +471,7 @@ namespace EDITgui
                     ellipse.Opacity = 0.5;
                     if (e.ClickCount == 2)
                     {
-                        canvasUltrasound.Children.Remove(ellipse);
+                        canvasPhotoAcoustic.Children.Remove(ellipse);
                     }
                     else
                     {
@@ -505,7 +484,7 @@ namespace EDITgui
 
         }
 
-        private void canvasUltrasound_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void canvasPhotoAcoustic_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (contourSeg.Equals(ContourSegmentation.CORRECTION))
             {
@@ -528,9 +507,8 @@ namespace EDITgui
 
                     try
                     {
-                        int j = bladder[slider_value].IndexOf(initialPoisition1);
-                        bladder[slider_value][j] = final_position;
-                        bladderPointChanged(bladder);
+                        int j = thickness[slider_value].IndexOf(initialPoisition1);
+                        thickness[slider_value][j] = final_position;
                         diplayMetrics(true);
                         //update_centerline();
                     }
@@ -544,7 +522,7 @@ namespace EDITgui
 
         Point _start;
         Rectangle rectRemovePoints;
-        private void canvasUltrasound_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void canvasPhotoAcoustic_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
@@ -554,45 +532,45 @@ namespace EDITgui
             rectRemovePoints.StrokeThickness = 0.5;
             Canvas.SetLeft(rectRemovePoints, _start.X);
             Canvas.SetTop(rectRemovePoints, _start.Y);
-            canvasUltrasound.Children.Add(rectRemovePoints);
+            canvasPhotoAcoustic.Children.Add(rectRemovePoints);
 
         }
 
 
         int indexA;
-        private void canvasUltrasound_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void canvasPhotoAcoustic_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
             List<Point> pointsToRemove = new List<Point>();
             int count = 0;
-            for (int i = 0; i < bladder[slider_value].Count; i++)
+            for (int i = 0; i < thickness[slider_value].Count; i++)
             {
-                if (bladder[slider_value][i].X >= Canvas.GetLeft(rectRemovePoints) && bladder[slider_value][i].Y >= Canvas.GetTop(rectRemovePoints) &&
-                    bladder[slider_value][i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && bladder[slider_value][i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                if (thickness[slider_value][i].X >= Canvas.GetLeft(rectRemovePoints) && thickness[slider_value][i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                    thickness[slider_value][i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && thickness[slider_value][i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
                 {
-                    pointsToRemove.Add(bladder[slider_value][i]);
+                    pointsToRemove.Add(thickness[slider_value][i]);
                     if (count == 0) indexA = i;
                     count++;
                 }
 
             }
 
-            canvasUltrasound.Children.Remove(rectRemovePoints);
-            if (count == bladder[slider_value].Count)
+            canvasPhotoAcoustic.Children.Remove(rectRemovePoints);
+            if (count == thickness[slider_value].Count)
             {
                 doManual();
-                diplayMetrics(true);
+               diplayMetrics(true);
                 return;
             }
-            bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
+            thickness[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
             if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
 
             diplayMetrics();
         }
 
 
-        private void canvasUltrasound_MouseMove(object sender, MouseEventArgs e)
+        private void canvasPhotoAcoustic_MouseMove(object sender, MouseEventArgs e)
         {
             if (!areTherePoints() || contourSeg.Equals(ContourSegmentation.MANUAL)) return;
 
@@ -617,9 +595,9 @@ namespace EDITgui
                         Point position = e.GetPosition(image);
 
                         //some code to grag points only into canvas-image area
-                        if (position.Y > canvasUltrasound.Height) position.Y = canvasUltrasound.Height;
+                        if (position.Y > canvasPhotoAcoustic.Height) position.Y = canvasPhotoAcoustic.Height;
                         if (position.Y < 0) position.Y = 0;
-                        if (position.X > canvasUltrasound.Width) position.X = canvasUltrasound.Width;
+                        if (position.X > canvasPhotoAcoustic.Width) position.X = canvasPhotoAcoustic.Width;
                         if (position.X < 0) position.X = 0;
 
                         double daltaY = position.Y - startPosition1.Y;
@@ -635,14 +613,13 @@ namespace EDITgui
                     }
                 }
             }
-
         }
 
         private void ApplicationGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (rectRemovePoints != null && rectRemovePoints.GetType() == typeof(Rectangle))
             {
-                canvasUltrasound.Children.Remove(rectRemovePoints);
+                canvasPhotoAcoustic.Children.Remove(rectRemovePoints);
             }
         }
 
@@ -650,26 +627,14 @@ namespace EDITgui
         void clear_canvas()
         {
             canvasUltrasound.Children.Clear();
-            canvasUltrasound.Children.Add(image);
+            canvasPhotoAcoustic.Children.Clear();
+            canvasPhotoAcoustic.Children.Add(image);
+            canvasPhotoAcoustic.Children.Add(canvasUltrasound);
         }
 
-        void display()
-        {
-            if (areTherePoints())
-            {
-                draw_polyline(bladder[slider_value]);
-                draw_points(bladder[slider_value]);
-            }
-            else //if there are no points mean that the user has to define starting and ending frame
-            {
-                if (slider_value == startingFrame) canvasUltrasound.Children.Add(startingFrameMarker);
-                if (slider_value == endingFrame) canvasUltrasound.Children.Add(endingFrameMarker);
-            }
-
-        }
 
         protected List<Matrix> zoom_out = new List<Matrix>();
-        private void canvasUltrasound_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void canvasPhotoAcoustic_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var element = sender as UIElement;
             var position = e.GetPosition(element);
@@ -677,7 +642,7 @@ namespace EDITgui
             var matrix = transform.Matrix;
             var scale = e.Delta > 0 ? 1.1 : (1.0 / 1.1); // choose appropriate scaling factor
 
-            if(e.Delta < 0) zoom_out.Remove(zoom_out.LastOrDefault());
+            if (e.Delta < 0) zoom_out.Remove(zoom_out.LastOrDefault());
 
             if ((matrix.M11 >= 1 && e.Delta > 0))//((matrix.M11 >= 1 && cout_wh == 0) || (matrix.M11 >= 1.1 && cout_wh > 0))
             {
@@ -687,10 +652,10 @@ namespace EDITgui
             }
             else if ((matrix.M11 >= 1.1 && e.Delta < 0))
             {
-                //matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+               // matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
                 element.RenderTransform = new MatrixTransform(zoom_out.LastOrDefault());
             }
-            zoomUltrasoundChanged(zoom_out);
+            zoomPhotoAccousticChanged(zoom_out);
         }
 
         private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)
@@ -707,7 +672,7 @@ namespace EDITgui
             else if (this.switch_auto_manual.Content.Equals("Fill Points"))
             {
                 doCorrection();
-                diplayMetrics(true);
+               diplayMetrics(true);
             }
         }
 
@@ -729,7 +694,6 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Correction";
             contourSeg = ContourSegmentation.CORRECTION;
-            bladderPointChanged(bladder);
             diplayMetrics();
             clear_canvas();
             display();
@@ -741,7 +705,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.Content = "Manual";
             contourSeg = ContourSegmentation.MANUAL;
-            if (areTherePoints()) bladder[slider_value].Clear();
+            if (areTherePoints()) thickness[slider_value].Clear();
             diplayMetrics();
             clear_canvas();
             display();
@@ -756,27 +720,22 @@ namespace EDITgui
             display();
         }
 
-        public bool areTherePoints()
-        {
-            return (bladder.Any() && bladder[slider_value].Any());
-        }
+
+
         //--------------------------------------M A N A G E - P O I N T S---------------------------------
 
-        //Convert Point to EDITCore.CVPoint
+        //Convert Point to EDITCore.CVPoint //for many contours
         List<List<Point>> editCVPointToWPFPoint(List<List<EDITCore.CVPoint>> cvp)
         {
-            bladder = new List<List<Point>>();
-            bladderArea = new List<double>();
-            bladderPerimeter = new List<double>();
-
-
+            thickness = new List<List<Point>>();
+            //bladderPerimeter = new List<double>();
 
             List<List<Point>> points = new List<List<Point>>(fileCount);
             for (int i = 0; i < fileCount; i++)
             {
                 points.Add(new List<Point>(cvp[0].Count));
             }
-            int count = startingFrame;
+            int count = ultrasound.getStartingFrame();
             for (int i = 0; i < cvp.Count; i++)
             {
                 List<Point> contour = new List<Point>();
@@ -787,22 +746,16 @@ namespace EDITgui
                 points[count++] = contour;
             }
 
-            //after extracting the 2D bladder segmentation we calculate and some metrics
-            for (int i = 0; i < points.Count; i++)
-            {
-                bladderArea.Add(metrics.calulateArea(points[i]));
-                bladderPerimeter.Add(metrics.calulatePerimeter(points[i]));
-            }
             return points;
         }
 
-
+       
         //Convert EDITCore.CVPoint to Point
         List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
         {
-            bladderCvPoints = new List<List<EDITCore.CVPoint>>();
+            thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
-            for (int i = startingFrame; i <= endingFrame; i++)
+            for (int i = ultrasound.getStartingFrame(); i <= ultrasound.getEndingFrame(); i++)
             {
                 List<EDITCore.CVPoint> contour = new List<EDITCore.CVPoint>();
                 for (int j = 0; j < points[i].Count(); j++)
@@ -814,30 +767,54 @@ namespace EDITgui
             return cvp;
         }
 
-
-
-        //------- SOME GETTERS---------------
-
-       public List<List<EDITCore.CVPoint>> getBladderCVPoints()
+        //----------------ONLY ONE CONTOUR----------------
+        List<Point> editCVPointToWPFPoint(List<EDITCore.CVPoint> cvp)
         {
-            bladderCvPoints = WPFPointToCVPoint(bladder);
-            return bladderCvPoints;
+            thickness[slider_value].Clear();
+            for (int i = 0; i < cvp.Count; i++)
+            {
+                thickness[slider_value].Add(new Point(cvp[i].X, cvp[i].Y)); // * (1 / calibration_x)
+            }
+            return points;
         }
 
-        public int getStartingFrame()
+        //Convert EDITCore.CVPoint to Point
+        List<EDITCore.CVPoint> WPFPointToCVPoint(List<Point> points)
         {
-            return startingFrame;
+            List<EDITCore.CVPoint> cvp = new List<EDITCore.CVPoint>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                cvp.Add(new EDITCore.CVPoint(points[i].X, points[i].Y));
+           
+            }
+            return cvp;
         }
 
-        public int getEndingFrame()
-        {
-            return endingFrame;
-        }
+        //-----------------------------------------------
 
-        public List<List<Point>> getBladderPoints()
+
+        void fillmeanThicknessList(List<double> values)
         {
-            return bladder;
+            meanThickness.Clear();
+            meanThickness = new List<double>();
+
+            for(int i=0; i<fileCount; i++)
+            {
+                meanThickness.Add(0.0);
+            }
+            int start = ultrasound.getStartingFrame();
+            int end = ultrasound.getEndingFrame();
+            for (int i=start; i<=end; i++)
+            {
+                Console.WriteLine(i);
+                Console.WriteLine(start);
+                Console.WriteLine(values.Count);
+                meanThickness[i] = values[i - start];
+            }
+
         }
 
     }
+
+        
 }

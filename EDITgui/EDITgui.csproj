@@ -130,8 +130,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="metricsCalculations.cs" />
-    <Compile Include="PhotoAccousticPart.xaml.cs">
-      <DependentUpon>PhotoAccousticPart.xaml</DependentUpon>
+    <Compile Include="PhotoAcousticPart.xaml.cs">
+      <DependentUpon>PhotoAcousticPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
@@ -150,7 +150,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PhotoAccousticPart.xaml">
+    <Page Include="PhotoAcousticPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

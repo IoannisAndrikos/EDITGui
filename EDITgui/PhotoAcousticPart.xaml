@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EDITgui.PhotoAccousticPart"
+﻿<UserControl x:Class="EDITgui.PhotoAcousticPart"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -92,65 +92,24 @@
 
 
 
-        <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
+        <Label x:Name="photoAcoustic_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
         <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="675.167,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
         <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
-            <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
-                <Grid x:Name="startingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
-                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleY="1.064" ScaleX="0.94"/>
-                                <SkewTransform AngleX="-4.903"/>
-                                <RotateTransform Angle="53.643"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleY="1.066" ScaleX="0.938"/>
-                                <SkewTransform AngleY="4.985"/>
-                                <RotateTransform Angle="122.656"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                </Grid>
-                <Grid x:Name="endingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
-                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Red" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleY="1.064" ScaleX="0.94"/>
-                                <SkewTransform AngleX="-4.903"/>
-                                <RotateTransform Angle="53.643"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                    <Rectangle HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Red" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleY="1.066" ScaleX="0.938"/>
-                                <SkewTransform AngleY="4.985"/>
-                                <RotateTransform Angle="122.656"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                </Grid>
-                <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
+            <Canvas x:Name="canvasPhotoAcoustic" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasPhotoAcoustic_MouseDown" MouseLeftButtonDown="canvasPhotoAcoustic_MouseLeftButtonDown" MouseLeftButtonUp="canvasPhotoAcoustic_MouseLeftButtonUp" MouseMove="canvasPhotoAcoustic_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasPhotoAcoustic_MouseWheel" MouseRightButtonDown="canvasPhotoAcoustic_MouseRightButtonDown" MouseRightButtonUp="canvasPhotoAcoustic_MouseRightButtonUp">
+                <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image x:Name="image" Height="512" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </Canvas>
             </Canvas>
         </Border>
-        <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,-0.333,0" VerticalAlignment="Top" Width="295">
-            <Button x:Name="switch_auto_manual" Content="Correction" HorizontalAlignment="Left" Height="39.5" Margin="164.147,56.11,0,0" Style="{DynamicResource RadioButtonStyle}" VerticalAlignment="Top" Width="111.314" Foreground="White" Click="Switch_auto_manual_Click"/>
+        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="579.89,41.5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="157.11" Height="54.413" Background="{x:Null}"/>
+        <Grid x:Name="photoAcoustic_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,-0.333,0" VerticalAlignment="Top" Width="295">
+            <Button x:Name="switch_auto_manual" Content="Correction" HorizontalAlignment="Left" Height="39.5" Margin="164.147,47.163,0,0" Style="{DynamicResource RadioButtonStyle}" VerticalAlignment="Top" Width="111.314" Foreground="White" Click="Switch_auto_manual_Click"/>
             <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDicom_Click"/>
             <Button x:Name="extract_thickness" Content="Extract Thickness" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
             <Button x:Name="Extract_STL" Content="Extract STL" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Points" Content="Export Points" HorizontalAlignment="Left" Height="26" Margin="164.147,109.167,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Points_Click"/>
-            <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
+            <Button x:Name="Export_Points" Content="Export Points" HorizontalAlignment="Left" Height="26" Margin="164.147,133.667,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Points_Click"/>
+            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Recalculate_Click"/>
         </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368.402,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">

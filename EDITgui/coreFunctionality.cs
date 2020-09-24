@@ -13,7 +13,11 @@ namespace EDITgui
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
         public static Messages errorMessages = new Messages();
- 
+
+
+        public List<double> meanThickness;
+        public List<double> pixelSpacing;
+
         public void setExaminationsDirectory(String path)
         {
             try
@@ -32,6 +36,7 @@ namespace EDITgui
             try
             {
                 string imagesDir = editPro.exportImages(dcmfile, enablelogging);
+                pixelSpacing = editPro.getPixelSpacing();
                 return imagesDir;
             }
             catch (Exception)
@@ -42,20 +47,20 @@ namespace EDITgui
         }
 
 
-        [HandleProcessCorruptedStateExceptions]
-        public List<double> getPixelSpacing()
-        {
-            try
-            {
-                List<double> pixelSpacing = editPro.getPixelSpacing();
-                return pixelSpacing;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Problem!");
-            }
-            return null;
-        }
+        //[HandleProcessCorruptedStateExceptions]
+        //public List<double> getPixelSpacing()
+        //{
+        //    try
+        //    {
+        //        List<double> pixelSpacing = editPro.getPixelSpacing();
+        //        return pixelSpacing;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("Problem!");
+        //    }
+        //    return null;
+        //}
 
 
         [HandleProcessCorruptedStateExceptions]
@@ -143,6 +148,7 @@ namespace EDITgui
             try
             {
                 List<List<EDITCore.CVPoint>> thicknessCvPoints = editPro.extractThickness(bladderCvPoints);
+                meanThickness = editPro.getMeanThickness();
                 return thicknessCvPoints;
             }
             catch (Exception)
@@ -150,6 +156,37 @@ namespace EDITgui
                 MessageBox.Show("Problem!");
             }
             return new List<List<EDITCore.CVPoint>>();
+        }
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public List<EDITCore.CVPoint> recalculateThicknessOfContour(int frame, List<EDITCore.CVPoint> thicknessCvPoints)
+        {
+            try
+            {
+                List<EDITCore.CVPoint> newThicknessCvPoints = editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
+                meanThickness = editPro.getMeanThickness();
+                return newThicknessCvPoints;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return new List<EDITCore.CVPoint>();
+        }
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public void extractThicknessSTL(List<List<EDITCore.CVPoint>> thicknessCvPoints)
+        {
+            try
+            {
+                editPro.extractThicknessSTL(thicknessCvPoints);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(errorMessages.problemToProduceSTL);
+            }
         }
 
 

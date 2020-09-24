@@ -42,21 +42,21 @@ namespace EDITgui
 
 
             UltrasoundPart ultrasound = new UltrasoundPart();
-            PhotoAccousticPart photoAccoustic = new PhotoAccousticPart(ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
+            PhotoAcousticPart photoAcoustic = new PhotoAcousticPart(ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
             ultrasound.InitializeCoreFunctionality = core;
-            photoAccoustic.InitializeCoreFunctionality = core;
+            photoAcoustic.InitializeCoreFunctionality = core;
 
             ultrasound.Width = 811;
             ultrasound.Margin = new Thickness(0, 0, 0, 0);
             ultrasound.HorizontalAlignment = HorizontalAlignment.Left;
 
-            photoAccoustic.HorizontalAlignment = HorizontalAlignment.Right;
+            photoAcoustic.HorizontalAlignment = HorizontalAlignment.Right;
             ultrasound.Margin = new Thickness(0, 0, 0, 0);
 
             //ultrasound.Margin = new Thickness(10, 0, 0, 0);
             //photoAccoustic.Margin = new Thickness(786, 0, 0, 0);
             this.Rat.Children.Add(ultrasound);
-            this.Rat.Children.Add(photoAccoustic);
+            this.Rat.Children.Add(photoAcoustic);
         }
 
     }
