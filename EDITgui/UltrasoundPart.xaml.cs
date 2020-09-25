@@ -205,6 +205,7 @@ namespace EDITgui
             bladder.Clear();
             bladderCvPoints.Clear();
             bladderArea.Clear();
+            bladderPerimeter.Clear();
             metrics_label.Visibility = Visibility.Hidden;
             coreFunctionality.repeatSegmentation();
             startingFrame = -1;
@@ -588,6 +589,8 @@ namespace EDITgui
             bladder[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
             if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
 
+            pointsToRemove.Clear();
+
             diplayMetrics();
         }
 
@@ -765,11 +768,12 @@ namespace EDITgui
         //Convert Point to EDITCore.CVPoint
         List<List<Point>> editCVPointToWPFPoint(List<List<EDITCore.CVPoint>> cvp)
         {
-            bladder = new List<List<Point>>();
-            bladderArea = new List<double>();
-            bladderPerimeter = new List<double>();
-
-
+            bladder.Clear();
+            bladderArea.Clear();
+            bladderPerimeter.Clear();
+            //bladder = new List<List<Point>>();
+            //bladderArea = new List<double>();
+            //bladderPerimeter = new List<double>();
 
             List<List<Point>> points = new List<List<Point>>(fileCount);
             for (int i = 0; i < fileCount; i++)
@@ -784,7 +788,8 @@ namespace EDITgui
                 {
                     contour.Add(new Point(cvp[i][j].X, cvp[i][j].Y)); // * (1 / calibration_x)
                 }
-                points[count++] = contour;
+                points[count++] = contour.ToList();
+                contour.Clear();
             }
 
             //after extracting the 2D bladder segmentation we calculate and some metrics
@@ -800,7 +805,8 @@ namespace EDITgui
         //Convert EDITCore.CVPoint to Point
         List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
         {
-            bladderCvPoints = new List<List<EDITCore.CVPoint>>();
+            bladderCvPoints.Clear();
+            //bladderCvPoints = new List<List<EDITCore.CVPoint>>();
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
             for (int i = startingFrame; i <= endingFrame; i++)
             {
@@ -809,7 +815,8 @@ namespace EDITgui
                 {
                     contour.Add(new EDITCore.CVPoint(points[i][j].X, points[i][j].Y));
                 }
-                cvp.Add(contour);
+                cvp.Add(contour.ToList());
+                contour.Clear();
             }
             return cvp;
         }

@@ -125,6 +125,12 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="35.312,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
+        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="266">
+            <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.2"/>
+            <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.8"/>
+            <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+            <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+        </Grid>
 
 
 

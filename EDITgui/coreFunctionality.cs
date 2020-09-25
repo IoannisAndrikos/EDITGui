@@ -143,10 +143,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints)
+        public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints, double minThickness, double maxThickness)
         {
             try
             {
+                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
                 List<List<EDITCore.CVPoint>> thicknessCvPoints = editPro.extractThickness(bladderCvPoints);
                 meanThickness = editPro.getMeanThickness();
                 return thicknessCvPoints;
@@ -160,10 +161,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public List<EDITCore.CVPoint> recalculateThicknessOfContour(int frame, List<EDITCore.CVPoint> thicknessCvPoints)
+        public List<EDITCore.CVPoint> recalculateThicknessOfContour(int frame, List<EDITCore.CVPoint> thicknessCvPoints, double minThickness, double maxThickness)
         {
             try
             {
+                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
                 List<EDITCore.CVPoint> newThicknessCvPoints = editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
                 meanThickness = editPro.getMeanThickness();
                 return newThicknessCvPoints;

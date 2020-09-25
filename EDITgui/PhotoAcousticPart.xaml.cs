@@ -182,9 +182,19 @@ namespace EDITgui
 
         private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
+
+            if (!ultrasound.areTherePoints())
+            {
+                MessageBox.Show(warningMessages.noBladderSegmentation);
+                return;
+            }
+
+            double minThick = double.Parse(minThickness.Text);
+            double maxThick = double.Parse(maxThickness.Text);
+
             await Task.Run(() =>
             {
-                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints());
+                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints(), minThick, maxThick);
                 thickness = editCVPointToWPFPoint(thicknessCvPoints);
                 fillmeanThicknessList(coreFunctionality.meanThickness);
             });
@@ -197,15 +207,21 @@ namespace EDITgui
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
             bladderUltrasound = ultrasound.getBladderPoints();
+
+            double minThick = double.Parse(minThickness.Text);
+            double maxThick = double.Parse(maxThickness.Text);
+
+
             await Task.Run(() =>
             {
-                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]));
+                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick);
                 thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
                 //contourForFix.Clear();
-                meanThickness.AddRange(coreFunctionality.meanThickness);
+               // meanThickness.AddRange(coreFunctionality.meanThickness);
+                fillmeanThicknessList(coreFunctionality.meanThickness);
             });
-            Console.WriteLine("contour size: " + contourForFix.Count);
             clear_canvas();
+            diplayMetrics();
             display();
         }
 
@@ -566,6 +582,8 @@ namespace EDITgui
             thickness[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
             if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
 
+
+            pointsToRemove.Clear();
             diplayMetrics();
         }
 
@@ -727,7 +745,8 @@ namespace EDITgui
         //Convert Point to EDITCore.CVPoint //for many contours
         List<List<Point>> editCVPointToWPFPoint(List<List<EDITCore.CVPoint>> cvp)
         {
-            thickness = new List<List<Point>>();
+               thickness.Clear();
+               //thickness = new List<List<Point>>();
             //bladderPerimeter = new List<double>();
 
             List<List<Point>> points = new List<List<Point>>(fileCount);
@@ -743,7 +762,8 @@ namespace EDITgui
                 {
                     contour.Add(new Point(cvp[i][j].X, cvp[i][j].Y)); // * (1 / calibration_x)
                 }
-                points[count++] = contour;
+                points[count++] = contour.ToList();
+                contour.Clear();
             }
 
             return points;
@@ -753,7 +773,8 @@ namespace EDITgui
         //Convert EDITCore.CVPoint to Point
         List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
         {
-            thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
+            thicknessCvPoints.Clear();
+            //thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
             for (int i = ultrasound.getStartingFrame(); i <= ultrasound.getEndingFrame(); i++)
             {
@@ -762,7 +783,8 @@ namespace EDITgui
                 {
                     contour.Add(new EDITCore.CVPoint(points[i][j].X, points[i][j].Y));
                 }
-                cvp.Add(contour);
+                cvp.Add(contour.ToList());
+                contour.Clear();
             }
             return cvp;
         }
@@ -796,7 +818,7 @@ namespace EDITgui
         void fillmeanThicknessList(List<double> values)
         {
             meanThickness.Clear();
-            meanThickness = new List<double>();
+            //meanThickness = new List<double>();
 
             for(int i=0; i<fileCount; i++)
             {
@@ -806,9 +828,6 @@ namespace EDITgui
             int end = ultrasound.getEndingFrame();
             for (int i=start; i<=end; i++)
             {
-                Console.WriteLine(i);
-                Console.WriteLine(start);
-                Console.WriteLine(values.Count);
                 meanThickness[i] = values[i - start];
             }
 
