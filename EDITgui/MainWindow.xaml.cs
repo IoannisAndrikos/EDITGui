@@ -41,8 +41,8 @@ namespace EDITgui
             core.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
 
 
-            UltrasoundPart ultrasound = new UltrasoundPart();
-            PhotoAcousticPart photoAcoustic = new PhotoAcousticPart(ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
+            UltrasoundPart ultrasound = new UltrasoundPart(this);
+            PhotoAcousticPart photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
             ultrasound.InitializeCoreFunctionality = core;
             photoAcoustic.InitializeCoreFunctionality = core;
 

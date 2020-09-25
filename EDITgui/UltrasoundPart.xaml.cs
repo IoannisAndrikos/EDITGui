@@ -80,6 +80,8 @@ namespace EDITgui
         List<double> bladderPerimeter = new List<double>();
         string imagesDir;
 
+        MainWindow mainWindow;
+
         //create objects of the other classes
         Messages warningMessages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
@@ -93,6 +95,17 @@ namespace EDITgui
            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
+
+        public UltrasoundPart(MainWindow mainWindow)
+        {
+            InitializeComponent();
+            this.mainWindow = mainWindow;
+            PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
+            chechBox_Logger.IsChecked = true;
+            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
+        }
+
 
         public coreFunctionality InitializeCoreFunctionality
         {
@@ -313,6 +326,8 @@ namespace EDITgui
                     }
                     break;
             }
+
+            polylines.Clear();
 
             for (int i = 0; i < closeCurvePoints.Count - 1; i++)
             {
@@ -717,14 +732,16 @@ namespace EDITgui
         private void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
-            applicationGrid.IsEnabled = false;
+            //applicationGrid.IsEnabled = false;
+            mainWindow.Rat.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         private void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
-            applicationGrid.IsEnabled = true;
+            //applicationGrid.IsEnabled = true;
+            mainWindow.Rat.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 

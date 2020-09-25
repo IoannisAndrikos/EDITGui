@@ -38,6 +38,7 @@ namespace EDITgui
         public delegate void zoomPhotoAccousticChangedHandler(List<Matrix> obj);
         public static event zoomPhotoAccousticChangedHandler zoomPhotoAccousticChanged = delegate { };
 
+        MainWindow mainWindow;
         UltrasoundPart ultrasound;
 
         enum ContourSegmentation
@@ -84,10 +85,11 @@ namespace EDITgui
         }
 
         //my constructor ...I have to pass the ultrasound instance in order to get some data
-        public PhotoAcousticPart(UltrasoundPart ultrasoundPart)
+        public PhotoAcousticPart(MainWindow mainWindow, UltrasoundPart ultrasoundPart)
         {
             InitializeComponent();
             this.ultrasound = ultrasoundPart;
+            this.mainWindow = mainWindow;
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
@@ -188,7 +190,7 @@ namespace EDITgui
                 MessageBox.Show(warningMessages.noBladderSegmentation);
                 return;
             }
-
+            startSpinner();
             double minThick = double.Parse(minThickness.Text);
             double maxThick = double.Parse(maxThickness.Text);
 
@@ -202,10 +204,17 @@ namespace EDITgui
             diplayMetrics();
             clear_canvas();
             display();
+            stopSpinner();
         }
 
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
+            if (!areTherePoints())
+            {
+                MessageBox.Show(warningMessages.noThicknessForUniqueFrame);
+                return;
+            }
+            startSpinner();
             bladderUltrasound = ultrasound.getBladderPoints();
 
             double minThick = double.Parse(minThickness.Text);
@@ -223,6 +232,7 @@ namespace EDITgui
             clear_canvas();
             diplayMetrics();
             display();
+            stopSpinner();
         }
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
@@ -319,7 +329,7 @@ namespace EDITgui
                     }
                     break;
             }
-
+            polylines.Clear();
             for (int i = 0; i < closeCurvePoints.Count - 1; i++)
             {
                 if (contourSeg != ContourSegmentation.FILL_POINTS || i != indexA - 1)
@@ -356,7 +366,6 @@ namespace EDITgui
                 pl.StrokeStartLineCap = PenLineCap.Round;
                 pl.StrokeEndLineCap = PenLineCap.Round;
                 canvasPhotoAcoustic.Children.Add(pl);
-                polylines.Add(pl);
             }
         }
 
@@ -697,14 +706,16 @@ namespace EDITgui
         private void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
-            applicationGrid.IsEnabled = false;
+            //applicationGrid.IsEnabled = false;
+            mainWindow.Rat.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         private void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
-            applicationGrid.IsEnabled = true;
+            //applicationGrid.IsEnabled = true;
+            mainWindow.Rat.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
