@@ -153,12 +153,7 @@ namespace EDITgui
                     slider.Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
-
-                    //mange starting and ending frame
-                    userPoints.Clear();
-                    startingFrame = -1;
-                    endingFrame = -1;
-                    contourSeg = ContourSegmentation.INSERT_USER_POINTS;
+                    Repeat_process_Click(sender, e);
                     stopSpinner();
                 }
                 else

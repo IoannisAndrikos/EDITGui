@@ -194,11 +194,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public void writeThicknessPoints()
+        public void writeThicknessPoints(List<List<EDITCore.CVPoint>> thicknessCvPoints)
         {
             try
             {
-                editPro.writeThicknessPoints();
+                editPro.writeThicknessPoints(thicknessCvPoints);
 
             }
             catch (Exception)

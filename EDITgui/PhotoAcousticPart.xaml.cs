@@ -169,6 +169,7 @@ namespace EDITgui
                     photoAcoustic_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = "Frame:" + " " + slider_value;
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
+                    OnrepeatProcess();
                     stopSpinner();
                 }
                 else
@@ -254,7 +255,8 @@ namespace EDITgui
         {
             await Task.Run(() =>
             {
-                coreFunctionality.writeThicknessPoints();
+                thicknessCvPoints = WPFPointToCVPoint(thickness);
+                coreFunctionality.writeThicknessPoints(thicknessCvPoints);
 
             });
         }
