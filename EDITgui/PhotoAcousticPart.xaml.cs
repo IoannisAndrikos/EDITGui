@@ -26,6 +26,7 @@ using System.Windows.Media.Animation;
 using OpenCvSharp;
 using Emgu.CV.Shape;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace EDITgui
 {
@@ -192,8 +193,8 @@ namespace EDITgui
                 return;
             }
             startSpinner();
-            double minThick = double.Parse(minThickness.Text);
-            double maxThick = double.Parse(maxThickness.Text);
+            double minThick = double.Parse(minThickness.Text.Replace(",","."), CultureInfo.InvariantCulture);
+            double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
 
             await Task.Run(() =>
             {
@@ -218,16 +219,15 @@ namespace EDITgui
             startSpinner();
             bladderUltrasound = ultrasound.getBladderPoints();
 
-            double minThick = double.Parse(minThickness.Text);
-            double maxThick = double.Parse(maxThickness.Text);
-
+            double minThick = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
 
             await Task.Run(() =>
             {
                 contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick);
                 thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
                 //contourForFix.Clear();
-               // meanThickness.AddRange(coreFunctionality.meanThickness);
+                // meanThickness.AddRange(coreFunctionality.meanThickness);
                 fillmeanThicknessList(coreFunctionality.meanThickness);
             });
             clear_canvas();

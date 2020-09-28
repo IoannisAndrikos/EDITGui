@@ -108,7 +108,7 @@
             <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDicom_Click"/>
             <Button x:Name="extract_thickness" Content="Extract Thickness" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
             <Button x:Name="Extract_STL" Content="Extract STL" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Points" Content="Export Points" HorizontalAlignment="Left" Height="26" Margin="164.147,133.667,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Points_Click"/>
+            <Button x:Name="Export_Points" Content="Export Points" HorizontalAlignment="Left" Height="26" Margin="164,107,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="128" Click="Export_Points_Click"/>
             <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Recalculate_Click"/>
         </Grid>
 

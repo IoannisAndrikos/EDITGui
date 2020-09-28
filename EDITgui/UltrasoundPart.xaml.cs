@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using OpenCvSharp.Extensions;
 using System.Windows.Media.Animation;
 using OpenCvSharp;
+using System.Globalization;
 
 namespace EDITgui
 {
@@ -178,8 +179,8 @@ namespace EDITgui
             startSpinner();
             int repeats = int.Parse(Repeats.Text);
             int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text);
-            double lamda2 = double.Parse(Lamda2.Text);
+            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             int levelsetSize = int.Parse(LevelsetSize.Text);
             bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
 
