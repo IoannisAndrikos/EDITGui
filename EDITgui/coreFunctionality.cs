@@ -84,16 +84,18 @@ namespace EDITgui
         }
 
         [HandleProcessCorruptedStateExceptions]
-        public void extractBladderSTL(List<List<EDITCore.CVPoint>> bladderCvPoints)
+        public String extractBladderSTL(List<List<EDITCore.CVPoint>> bladderCvPoints)
         {
             try
             {
-                editPro.extractBladderSTL(bladderCvPoints);
+               String STLPath = editPro.extractBladderSTL(bladderCvPoints);
+                return STLPath;
             }
             catch (Exception e)
             {
                 MessageBox.Show(errorMessages.problemToProduceSTL);
             }
+            return null;
         }
 
 
@@ -112,16 +114,18 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public void extractSkin()
+        public String extractSkin()
         {
             try
             {
-                editPro.extractSkin();
+               String STLPath =  editPro.extractSkinSTL();
+                return STLPath;
             }
             catch (Exception e)
             {
                 MessageBox.Show("Problem!");
             }
+            return null;
         }
 
         //------------------------------------PHOTOACOUSTIC----------------------------
@@ -179,16 +183,18 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public void extractThicknessSTL(List<List<EDITCore.CVPoint>> thicknessCvPoints)
+        public String extractThicknessSTL(List<List<EDITCore.CVPoint>> thicknessCvPoints)
         {
             try
             {
-                editPro.extractThicknessSTL(thicknessCvPoints);
+                String STLPath = editPro.extractThicknessSTL(thicknessCvPoints);
+                return STLPath;
             }
             catch (Exception e)
             {
                 MessageBox.Show(errorMessages.problemToProduceSTL);
             }
+            return null;
         }
 
 

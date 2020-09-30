@@ -46,6 +46,13 @@ namespace EDITgui
         public delegate void zoomUltrasoundChangedHandler(List<Matrix> obj);
         public static event zoomUltrasoundChangedHandler zoomUltrasoundChanged = delegate { };
 
+        public delegate void STLBladderHandler(EDITgui.Geometry geometry);
+        public static event STLBladderHandler returnBladderSTL = delegate { };
+
+        public delegate void STLSkinHandler(EDITgui.Geometry geometry);
+        public static event STLSkinHandler returnSkinSTL = delegate { };
+
+
 
         enum ContourSegmentation
         {
@@ -234,7 +241,12 @@ namespace EDITgui
 
             startSpinner();
             bladderCvPoints = WPFPointToCVPoint(bladder);
-            await Task.Run(() => { coreFunctionality.extractBladderSTL(bladderCvPoints); });
+            String STLPath = null;
+            await Task.Run(() => {
+                STLPath = coreFunctionality.extractBladderSTL(bladderCvPoints);
+            });
+            EDITgui.Geometry bladderGeometry = new Geometry() { TypeName = "Bladder", Path = STLPath, actor = null };
+            if(STLPath != null) returnBladderSTL(bladderGeometry);
             stopSpinner();
         }
 
@@ -254,7 +266,12 @@ namespace EDITgui
                 return;
             }
             startSpinner();
-            await Task.Run(() => { coreFunctionality.extractSkin(); });
+            String STLPath = null;
+            await Task.Run(() => {
+                STLPath = coreFunctionality.extractSkin();
+            });
+            EDITgui.Geometry skinGeometry = new Geometry() { TypeName = "Skin", Path = STLPath, actor = null };
+            if(STLPath != null) returnSkinSTL(skinGeometry);
             stopSpinner();
         }
 

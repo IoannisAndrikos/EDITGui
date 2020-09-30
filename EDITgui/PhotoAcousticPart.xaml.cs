@@ -35,9 +35,12 @@ namespace EDITgui
     /// </summary>
     public partial class PhotoAcousticPart : UserControl
     {
-
         public delegate void zoomPhotoAccousticChangedHandler(List<Matrix> obj);
         public static event zoomPhotoAccousticChangedHandler zoomPhotoAccousticChanged = delegate { };
+
+
+        public delegate void STLThicknessHandler(EDITgui.Geometry geometry);
+        public static event STLThicknessHandler returnThicknessSTL = delegate { };
 
         MainWindow mainWindow;
         UltrasoundPart ultrasound;
@@ -246,7 +249,12 @@ namespace EDITgui
 
             startSpinner();
             thicknessCvPoints = WPFPointToCVPoint(thickness);
-            await Task.Run(() => { coreFunctionality.extractThicknessSTL(thicknessCvPoints); });
+            String STLPath = null;
+            await Task.Run(() => {
+                STLPath = coreFunctionality.extractThicknessSTL(thicknessCvPoints);
+                });
+            EDITgui.Geometry thicknessGeometry = new Geometry() { TypeName = "Thickness", Path = STLPath, actor = null };
+            if(STLPath != null) returnThicknessSTL(thicknessGeometry);
             stopSpinner();
         }
 

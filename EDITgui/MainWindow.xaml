@@ -7,16 +7,100 @@
         mc:Ignorable="d"
         Title="MainWindow"
         Height="886.5" 
-        Width="1618.5" Background="#FF1C1F1F">
+        Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded">
 
     <Window.Resources>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style x:Key="TabItemStyle1" TargetType="{x:Type TabItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="0,0,-498.667,-326"/>
+                            <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="31" Margin="17,-22.267,0,0" VerticalAlignment="Top" Width="77.333" RadiusY="10.833" RadiusX="10.833" Stroke="#FF335B5B"/>
+                            <Label Content="2D" HorizontalAlignment="Left" Height="31" Margin="40.33,-22.267,0,0" VerticalAlignment="Top" Width="32" FontWeight="Bold" FontSize="14" Foreground="White"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TabItemStyle2" TargetType="{x:Type TabItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="-10,0,-411.333,-325.333"/>
+                            <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="31" Margin="95.667,-22.85,0,0" VerticalAlignment="Top" Width="77.333" RadiusY="10.833" RadiusX="10.833" Stroke="#FF335B5B"/>
+                            <Label Content="3D" HorizontalAlignment="Left" Height="31" Margin="118.997,-22.85,0,0" VerticalAlignment="Top" Width="32" FontWeight="Bold" FontSize="14" Foreground="White"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Window.Resources>
-    <Grid x:Name="Rat" Margin="10,0,10,0" Background="#FF1C1F1F" Width="1513.084">
-        <!-- -->
-        <!--  <local:UltrasoundPart Width="811" Margin="0" HorizontalAlignment="Left"/>
-        <local:PhotoAccousticPart HorizontalAlignment="Right" Margin="0"  /> -->
+    <Grid x:Name="totalGrid" Margin="0">
+        <Grid x:Name="tempRenderer" Margin="324,0,258,2.46" Visibility="Hidden"/>
+        <TabControl x:Name="tapPanel" Margin="0" Background="{x:Null}" BorderBrush="{x:Null}">
+            <TabItem x:Name="Tab_2D" Header="2D">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                        <GradientStop Color="#FFE5E5E5" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid x:Name="Rat" Background="#FF1C1F1F" Margin="5,0" HorizontalAlignment="Center" Width="1516.376">
+                    <!-- -->
+                    <!--<local:UltrasoundPart Width="772" Margin="0" HorizontalAlignment="Left"/>
+                <local:PhotoAcousticPart Margin="777,0,-4.5,0" Width="738"  />-->
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Tab_3D" Header="3D">
+                <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded">
+                    <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="287.25,61.54,252.25,125.5">
+                        <Grid x:Name="rendererGrid" Margin="1"/>
+                    </Border>
+                    <ComboBox x:Name="STLcombobox" HorizontalAlignment="Left" Height="27.333" Margin="41.667,61.54,0,0" VerticalAlignment="Top" Width="100.001"/>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
     </Grid>
+
 
 </Window>
 
