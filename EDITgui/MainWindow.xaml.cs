@@ -61,7 +61,7 @@ namespace EDITgui
             ultrasound.Margin = new Thickness(0, 0, 0, 0);
             ultrasound.HorizontalAlignment = HorizontalAlignment.Left;
 
-            photoAcoustic.Margin = new Thickness(777, 0, -4.5, 0);
+            photoAcoustic.Margin = new Thickness(777, 0, 0, 0);
             photoAcoustic.Width = 738;
 
             this.Rat.Children.Add(ultrasound);
@@ -97,50 +97,19 @@ namespace EDITgui
                 ch.Checked += new RoutedEventHandler(OnGeometryComboboxChecked);
                 ch.Unchecked += new RoutedEventHandler(OnGeometryComboboxUnchecked);
             }
-           
-
-        
-
-            //manage STL combobox
-            //this.STLcombobox.Items.Clear();
-            //foreach(Geometry geom in STLGeometries)
-            //{
-            //    CheckBox ch = new CheckBox();
-            //    ch.Content = geom.TypeName;
-            //    this.STLcombobox.Items.Add(ch);
-            //    ch.Checked += new RoutedEventHandler(OnGeometryComboboxChecked);
-            //    ch.Unchecked += new RoutedEventHandler(OnGeometryComboboxUnchecked);
-            //}
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Create the interop host control.
-            host = new System.Windows.Forms.Integration.WindowsFormsHost();
-            myRenderWindowControl = new RenderWindowControl();
-            myRenderWindowControl.SetBounds(0, 0, 30, 30); // not too big in case it disappears.
-                                                           // Assign the control as the host control's child.
-            host.Child = myRenderWindowControl;
-
-            host.Margin = new Thickness(0, 0, 0, 0);
-            tempRenderer.Children.Add(host);
-            renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
-
-            renderer.GetActiveCamera().SetPosition(0, 0, 50);
-            renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
-
-            tempRenderer.Children.Remove(host);
-            rendererGrid.Children.Add(host);
+           
 
         }
 
-        private void Viewer3D_Loaded(object sender, RoutedEventArgs e)
-        {
-          
-        }
+        
 
         public void OnGeometryComboboxChecked(object sender, RoutedEventArgs e)
         {
+          //  host.Visibility = Visibility.Visible;
             CheckBox ch = (sender as CheckBox);
             Geometry geometry = STLGeometries.Find(x => x.TypeName == ch.Content);
             visualizeGeometries(geometry);
@@ -197,6 +166,56 @@ namespace EDITgui
                 renderer.RemoveActor(geometry.actor);
             }
             myRenderWindowControl.RenderWindow.Render();
+        }
+
+        private void Viewer3D_Loaded(object sender, RoutedEventArgs e)
+        {
+                host = new System.Windows.Forms.Integration.WindowsFormsHost();
+                myRenderWindowControl = new RenderWindowControl();
+                myRenderWindowControl.SetBounds(0, 0, 0, 0); // not too big in case it disappears.
+                                                               // Assign the control as the host control's child.
+                host.Child = myRenderWindowControl;
+
+                host.Margin = new Thickness(0, 0, 0, 0);
+                rendererGrid.Children.Add(host);
+                renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
+                host.Visibility = Visibility.Hidden;
+
+                renderer.GetActiveCamera().SetPosition(0, 0, 50);
+                renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
+               // 
+                //tempRenderer.Children.Remove(host);
+                //rendererGrid.Children.Add(host);
+            count++;
+           
+        }
+
+        private void RendererGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(count == 1)
+            {
+               Dispatcher.BeginInvoke(new Action(() => host.Visibility = Visibility.Visible));
+               // Dispatcher.Invoke(new Action(() => { host.Visibility = Visibility.Visible; }), System.Windows.Threading.DispatcherPriority.ContextIdle, null);
+            }
+           
+        }
+
+
+        private void Bu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            switch (labelView.Content)
+            {
+                case "2D":
+                    labelView.Content = "3D";
+                    Rat.Visibility = Visibility.Hidden;
+                    Viewer3D.Visibility = Visibility.Visible;
+                    break;
+                case "3D":
+                    labelView.Content = "2D";
+                    Viewer3D.Visibility = Visibility.Hidden;
+                    Rat.Visibility = Visibility.Visible;
+                    break;
+            }
         }
     }
 
