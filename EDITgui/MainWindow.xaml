@@ -10,64 +10,6 @@
         Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded">
 
     <Window.Resources>
-        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
-                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True"/>
-                            <Trigger Property="IsDefaulted" Value="True"/>
-                            <Trigger Property="IsMouseOver" Value="True"/>
-                            <Trigger Property="IsPressed" Value="True"/>
-                            <Trigger Property="IsEnabled" Value="False"/>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <ControlTemplate x:Key="TabItemControlTemplate1" TargetType="{x:Type TabItem}">
-            <Grid Background="{x:Null}" Margin="13.333,0,176,0" Height="33.96">
-                <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="31.96" Margin="40.412,2.001,0,-0.001" Stroke="#FF335B5B" VerticalAlignment="Top" Width="38.663" RadiusY="5.5" RadiusX="5.5"/>
-                <Label Content="3D" HorizontalAlignment="Left" Height="23.96" Margin="46.415,5.336,0,0" VerticalAlignment="Top" Width="26.667" Foreground="White" FontWeight="Bold"/>
-            </Grid>
-        </ControlTemplate>
-        <ControlTemplate x:Key="TabItemControlTemplate2" TargetType="{x:Type TabItem}">
-            <Grid Margin="65.333,0,-65.333,0">
-                <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="31.96" Margin="40.412,4.002,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="38.663" RadiusY="5.5" RadiusX="5.5"/>
-                <Label Content="2D" HorizontalAlignment="Left" Height="23.96" Margin="46.415,8.004,0,0" VerticalAlignment="Top" Width="26.667" Foreground="White" FontWeight="Bold"/>
-            </Grid>
-        </ControlTemplate>
-        <Style x:Key="ToggleButtonStyle1" TargetType="{x:Type ToggleButton}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Grid>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <Rectangle RadiusY="7.5" RadiusX="7.5" Stroke="#FF335B5B"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
     </Window.Resources>
     <Grid Margin="0">
@@ -88,7 +30,9 @@
             <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="287.25,61.54,252.25,125.5">
                 <Grid x:Name="rendererGrid" Margin="1" Loaded="RendererGrid_Loaded"/>
             </Border>
-            <ComboBox x:Name="STLcombobox" HorizontalAlignment="Left" Height="27.333" Margin="41.667,61.54,0,0" VerticalAlignment="Top" Width="100.001"/>
+            <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="69.334" Margin="45.339,86.206,0,0" VerticalAlignment="Top" Width="86.666" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" Margin="45.339,61.54,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
+            <Rectangle HorizontalAlignment="Left" Height="102.794" Margin="35.334,61.54,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
         </Grid>
 
 

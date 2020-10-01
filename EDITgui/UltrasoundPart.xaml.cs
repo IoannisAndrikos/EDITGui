@@ -871,6 +871,11 @@ namespace EDITgui
             return endingFrame;
         }
 
+        private void ClosedSurface_Click(object sender, RoutedEventArgs e)
+        {
+            coreFunctionality.fillHoles = closedSurface.IsChecked.Value;
+        }
+
         public List<List<Point>> getBladderPoints()
         {
             return bladder;

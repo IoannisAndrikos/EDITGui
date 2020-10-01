@@ -90,10 +90,11 @@ namespace EDITgui
             else
             {
                 CheckBox ch = new CheckBox();
+                ch.Foreground = Brushes.White;
                 ch.Content = geometry.TypeName;
                 geometry.checkbox = ch;
                 STLGeometries.Add(geometry);
-                this.STLcombobox.Items.Add(ch);
+                this.geometryItems.Items.Add(ch);
                 ch.Checked += new RoutedEventHandler(OnGeometryComboboxChecked);
                 ch.Unchecked += new RoutedEventHandler(OnGeometryComboboxUnchecked);
             }

@@ -15,6 +15,7 @@ namespace EDITgui
         public static Messages errorMessages = new Messages();
 
 
+        public bool fillHoles = true;
         public List<double> meanThickness;
         public List<double> pixelSpacing;
 
@@ -88,7 +89,7 @@ namespace EDITgui
         {
             try
             {
-               String STLPath = editPro.extractBladderSTL(bladderCvPoints);
+               String STLPath = editPro.extractBladderSTL(bladderCvPoints, fillHoles);
                 return STLPath;
             }
             catch (Exception e)
@@ -118,7 +119,7 @@ namespace EDITgui
         {
             try
             {
-               String STLPath =  editPro.extractSkinSTL();
+               String STLPath =  editPro.extractSkinSTL(fillHoles);
                 return STLPath;
             }
             catch (Exception e)
@@ -187,7 +188,7 @@ namespace EDITgui
         {
             try
             {
-                String STLPath = editPro.extractThicknessSTL(thicknessCvPoints);
+                String STLPath = editPro.extractThicknessSTL(thicknessCvPoints, fillHoles);
                 return STLPath;
             }
             catch (Exception e)
