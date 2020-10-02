@@ -15,6 +15,7 @@
     <Grid Margin="0">
 
 
+
         <Label x:Name="labelView" Content="2D" HorizontalAlignment="Left" Height="20" Margin="83.666,12.001,0,0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Top" Width="23.334" Foreground="White" FontWeight="Bold"/>
         <local:ToggleButton x:Name="Bu" HorizontalAlignment="Left" Margin="24.332,2.001,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Bu_MouseLeftButtonDown" Height="33.666" Width="54.334"/>
         <Grid x:Name="Rat" Background="#FF1C1F1F" Margin="0,40,0,0" HorizontalAlignment="Center">

@@ -695,23 +695,26 @@ namespace EDITgui
             zoomPhotoAccousticChanged(zoom_out);
         }
 
-        private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)
+       
+
+        private void Switch_auto_manual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (this.switch_auto_manual.Content.Equals("Manual"))
+            if (this.contourSeg == ContourSegmentation.MANUAL)
             {
                 doCorrection();
                 diplayMetrics(true);
             }
-            else if (this.switch_auto_manual.Content.Equals("Correction"))
+            else if (this.contourSeg == ContourSegmentation.CORRECTION)
             {
                 doManual();
             }
-            else if (this.switch_auto_manual.Content.Equals("Fill Points"))
+            else if (this.contourSeg == ContourSegmentation.FILL_POINTS)
             {
                 doCorrection();
-               diplayMetrics(true);
+                diplayMetrics(true);
             }
         }
+
 
         private void startSpinner()
         {
@@ -731,7 +734,7 @@ namespace EDITgui
 
         private void doCorrection()
         {
-            this.switch_auto_manual.Content = "Correction";
+            this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;
             diplayMetrics();
             clear_canvas();
@@ -742,7 +745,7 @@ namespace EDITgui
 
         private void doManual()
         {
-            this.switch_auto_manual.Content = "Manual";
+            this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
             if (areTherePoints()) thickness[slider_value].Clear();
             diplayMetrics();
@@ -752,7 +755,7 @@ namespace EDITgui
 
         private void doFillPoints()
         {
-            this.switch_auto_manual.Content = "Fill Points";
+            this.switch_auto_manual.doFillPointState();
             contourSeg = ContourSegmentation.FILL_POINTS;
             diplayMetrics();
             clear_canvas();
@@ -832,6 +835,8 @@ namespace EDITgui
             }
             return cvp;
         }
+
+       
 
         //-----------------------------------------------
 

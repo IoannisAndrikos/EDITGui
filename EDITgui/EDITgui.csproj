@@ -144,6 +144,9 @@
     <Compile Include="someControls\ToggleButton.xaml.cs">
       <DependentUpon>ToggleButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="someControls\ThreeStateButton.xaml.cs">
+      <DependentUpon>ThreeStateButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="someControls\ToggleButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="someControls\ThreeStateButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
