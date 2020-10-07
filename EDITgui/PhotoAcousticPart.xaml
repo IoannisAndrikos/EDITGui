@@ -127,9 +127,12 @@
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp" Margin="0">
 
+        <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden"/>
 
 
-        <Label x:Name="photoAcoustic_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
+
+
+        <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
         <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="675.167,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
         <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
@@ -140,13 +143,26 @@
             </Canvas>
         </Border>
         <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="579.89,41.5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="157.11" Height="54.413" Background="{x:Null}"/>
-        <Grid x:Name="photoAcoustic_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,-0.333,0" VerticalAlignment="Top" Width="295">
-            <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDicom_Click"/>
-            <Button x:Name="extract_thickness" Content="Extract Thickness" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
-            <Button x:Name="Extract_STL" Content="Extract STL" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Points" Content="Export Points" HorizontalAlignment="Left" Height="26" Margin="164,107,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="128" Click="Export_Points_Click"/>
-            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Recalculate_Click"/>
-            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="164.147,47.163,0,0" VerticalAlignment="Top" Height="26.001" Width="127.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
+        <Grid x:Name="OXY_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="339.667,568,-0.333,0" VerticalAlignment="Top" Width="398.333">
+            <Button x:Name="loadΟΧΥDicom" Content="Load OXY" HorizontalAlignment="Left" Height="26.001" Margin="108.999,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadΟΧΥDicom_Click"/>
+            <Button x:Name="extract_thickness" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
+            <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
+            <Button x:Name="Export_Points" Content="Write Points" HorizontalAlignment="Left" Height="26" Margin="108.999,140.167,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Export_Points_Click"/>
+            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="255.5,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Recalculate_Click"/>
+            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="255.5,47.163,0,0" VerticalAlignment="Top" Height="26.001" Width="132.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
+            <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Left" Height="26.001" Margin="255.5,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDeOXYDicom_Click"/>
+            <local:ToggleButton x:Name="oxy_deoxy_switch" HorizontalAlignment="Left" Margin="16.563,25.879,0,0" VerticalAlignment="Top" Height="30.666" Width="49.752" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="Oxy_deoxy_switch_MouseLeftButtonDown">
+                <local:ToggleButton.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0.535"/>
+                        <RotateTransform/>
+                        <TranslateTransform X="0.157"/>
+                    </TransformGroup>
+                </local:ToggleButton.RenderTransform>
+            </local:ToggleButton>
+            <Label x:Name="oxy_deoxy_label" Content="  OXY" HorizontalAlignment="Left" Height="26" Margin="19.831,1.334,0,0" VerticalAlignment="Top" Width="49.164" Foreground="White"/>
+            <Button x:Name="Extract_DeOXY" Content="Extract OXY and DeOXY Points" HorizontalAlignment="Left" Height="26.001" Margin="108.999,109.166,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="279.334" Click="Extract_OXYDeOXY_Click"/>
         </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368.402,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">

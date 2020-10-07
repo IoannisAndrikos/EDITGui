@@ -31,9 +31,15 @@
             <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="287.25,61.54,252.25,125.5">
                 <Grid x:Name="rendererGrid" Margin="1" Loaded="RendererGrid_Loaded"/>
             </Border>
-            <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="69.334" Margin="45.339,86.206,0,0" VerticalAlignment="Top" Width="86.666" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="138.001" Margin="45.339,86.206,0,0" VerticalAlignment="Top" Width="117.166" Background="{x:Null}" BorderBrush="{x:Null}" IsTextSearchEnabled="False" Focusable="False"/>
             <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" Margin="45.339,61.54,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
-            <Rectangle HorizontalAlignment="Left" Height="102.794" Margin="35.334,61.54,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Rectangle HorizontalAlignment="Left" Height="170.794" Margin="35.334,61.54,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,68.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Right" Height="24.666" Margin="0,68.256,127.162,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
+            <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,92.922,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False"/>
+            <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Right" Height="24.666" Margin="0,277.922,119.829,0" VerticalAlignment="Top" Width="83.332" Foreground="White"/>
+            <ListBox x:Name="SurfaceAreaMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,302.588,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False"/>
+            <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,279.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
         </Grid>
 
 

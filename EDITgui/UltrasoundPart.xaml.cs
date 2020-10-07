@@ -76,6 +76,8 @@ namespace EDITgui
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
 
+        public bool wasBladderModelExtracted = false;
+
         List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
         double calibration_x;
         double calibration_y;
@@ -231,6 +233,7 @@ namespace EDITgui
             repeatProcess(); //trigger repeat process of photoAcousticPart 
         }
 
+
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
             if (!areTherePoints())
@@ -246,7 +249,11 @@ namespace EDITgui
                 STLPath = coreFunctionality.extractBladderSTL(bladderCvPoints);
             });
             EDITgui.Geometry bladderGeometry = new Geometry() { TypeName = "Bladder", Path = STLPath, actor = null };
-            if(STLPath != null) returnBladderSTL(bladderGeometry);
+            if (STLPath != null)
+            {
+                returnBladderSTL(bladderGeometry);
+                wasBladderModelExtracted = true;
+            }
             stopSpinner();
         }
 

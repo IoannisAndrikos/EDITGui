@@ -52,15 +52,20 @@ namespace EDITgui
             FILL_POINTS
         }
 
+        enum OxyDeOxyState { OXY, DEOXY}
+
+        public bool wasThicknessModelExtracted = false;
 
         //-----------for slider----------
-        bool photoaccousticDicomWasLoaded = false;
+        bool OXYDicomWasLoaded = false;
+        bool deOXYDicomWasLoaded = false;
         int slider_value = 0;
         int fileCount;
         //-------------------------------
 
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
+        OxyDeOxyState currentOxyDeOxyState = OxyDeOxyState.OXY;
 
         List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
         double calibration_x;
@@ -74,7 +79,8 @@ namespace EDITgui
         List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
         List<double> meanThickness = new List<double>();
         List<List<Point>> bladderUltrasound = new List<List<Point>>();
-        string imagesDir;
+        string OXYimagesDir;
+        string deOXYimagesDir;
 
         Messages warningMessages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
@@ -84,6 +90,7 @@ namespace EDITgui
             InitializeComponent();
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
+            oxy_deoxy_switch.setColor("#FFCB2525");
             //chechBox_Logger.IsChecked = true;
             // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
@@ -98,6 +105,7 @@ namespace EDITgui
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
             UltrasoundPart.repeatProcess += OnrepeatProcess;
+            oxy_deoxy_switch.setColor("#FFCB2525");
             //chechBox_Logger.IsChecked = true;
             // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
@@ -111,9 +119,15 @@ namespace EDITgui
         public void OnUltrasoundSliderValueChanged(int obj)
         {
             slider_value = (int)obj;
-            if (photoaccousticDicomWasLoaded)
+            if (OXYDicomWasLoaded)
             {
-                image.Source = new BitmapImage(new Uri(imagesDir + "/" + obj + ".bmp"));
+                if (currentOxyDeOxyState == OxyDeOxyState.OXY)
+                {
+                    image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + obj + ".bmp"));
+                }else if (currentOxyDeOxyState == OxyDeOxyState.DEOXY)
+                {
+                    image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + obj + ".bmp"));
+                }
                 frame_num_label.Content = "Frame:" + " " + slider_value;
                 doCorrection();
                 clear_canvas();
@@ -149,10 +163,9 @@ namespace EDITgui
             display();
         }
 
-
-        private async void LoadDicom_Click(object sender, RoutedEventArgs e)
+        private async void LoadΟΧΥDicom_Click(object sender, RoutedEventArgs e)
         {
-            photoaccousticDicomWasLoaded = false;
+            OXYDicomWasLoaded = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
@@ -163,16 +176,21 @@ namespace EDITgui
 
                 await Task.Run(() =>
                 {
-                    imagesDir = coreFunctionality.exportPhotoAcousticImages(dcmfile, true); //enablelogging = true
+                    OXYimagesDir = coreFunctionality.exportOXYImages(dcmfile, true); //enablelogging = true
 
                 });
-                if (imagesDir != null)
+                if (OXYimagesDir != null)
                 {
-                    photoaccousticDicomWasLoaded = true;
-                    image.Source = new BitmapImage(new Uri(imagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
-                    photoAcoustic_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    OXYDicomWasLoaded = true;
+
+                    doOXYState();
+                    oxy_deoxy_switch.setDotToLeft();
+
+
+                    image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
+                    OXY_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = "Frame:" + " " + slider_value;
-                    fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
+                    fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     OnrepeatProcess();
                     stopSpinner();
                 }
@@ -186,6 +204,54 @@ namespace EDITgui
             }
         }
 
+        private async void LoadDeOXYDicom_Click(object sender, RoutedEventArgs e)
+        {
+
+            deOXYDicomWasLoaded = false;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                startSpinner();
+                clear_canvas();
+                coreFunctionality.repeatSegmentation();
+                string dcmfile = openFileDialog.FileName;
+
+                await Task.Run(() =>
+                {
+                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(dcmfile, true); //enablelogging = true
+
+                });
+                if (deOXYimagesDir != null)
+                {
+                    deOXYDicomWasLoaded = true;
+
+                    //var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
+                    //{
+                    //    RoutedEvent = Control.MouseLeftButtonDownEvent
+                    //};
+
+                    //Oxy_deoxy_switch_MouseLeftButtonDown(sender, args);
+
+                    doDeOXYState();
+                    oxy_deoxy_switch.setDotToRight();
+
+
+                    image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
+                    DeOXY_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    frame_num_label.Content = "Frame:" + " " + slider_value;
+                    fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
+                    OnrepeatProcess();
+                    stopSpinner();
+                }
+                else
+                {
+                    stopSpinner();
+                    MessageBox.Show(warningMessages.cannotLoadDicom);
+                }
+
+
+            }
+        }
 
         private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
@@ -254,9 +320,53 @@ namespace EDITgui
                 STLPath = coreFunctionality.extractThicknessSTL(thicknessCvPoints);
                 });
             EDITgui.Geometry thicknessGeometry = new Geometry() { TypeName = "Thickness", Path = STLPath, actor = null };
-            if(STLPath != null) returnThicknessSTL(thicknessGeometry);
+            if (STLPath != null)
+            {
+                returnThicknessSTL(thicknessGeometry);
+                wasThicknessModelExtracted = true;
+            }
             stopSpinner();
         }
+
+        private async void Extract_OXYDeOXY_Click(object sender, RoutedEventArgs e)
+        {
+            if (!areTherePoints())
+            {
+                MessageBox.Show(warningMessages.noBladderSegmentation);
+                return;
+            }
+            if (!OXYDicomWasLoaded || !deOXYDicomWasLoaded)
+            {
+                MessageBox.Show(warningMessages.noOXYAndDeOXYImages);
+                return;
+            }
+            if (!wasThicknessModelExtracted || !ultrasound.wasBladderModelExtracted)
+            {
+                MessageBox.Show(warningMessages.noBadderOrThickness3DModels);
+                return;
+            }
+
+            startSpinner();
+
+            thicknessCvPoints = WPFPointToCVPoint(thickness);
+
+            List<String> txtPaths = new List<string>(); 
+            await Task.Run(() => {
+                txtPaths = coreFunctionality.extractOXYandDeOXYPoints(ultrasound.getBladderCVPoints(), thicknessCvPoints);
+            });
+
+            EDITgui.Geometry OXYGeometry = new Geometry() { TypeName = "OXY", Path = txtPaths[0], actor = null };
+            EDITgui.Geometry DeOXYGeometry = new Geometry() { TypeName = "DeOXY", Path = txtPaths[1], actor = null };
+            if (txtPaths.Any())
+            {
+                returnThicknessSTL(OXYGeometry);
+                returnThicknessSTL(DeOXYGeometry);
+            }
+            stopSpinner();
+        }
+
+
+
 
 
         private async void Export_Points_Click(object sender, RoutedEventArgs e)
@@ -836,8 +946,56 @@ namespace EDITgui
             return cvp;
         }
 
-       
+        private void Oxy_deoxy_switch_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            switch (currentOxyDeOxyState)
+            {
+                case OxyDeOxyState.OXY:
+                    doDeOXYState();
+                    break;
+                case OxyDeOxyState.DEOXY:
+                    doOXYState();
+                    break;
+            }
+        }
 
+        private void doOXYState()
+        {
+            oxy_deoxy_label.Content = "  OXY";
+            oxy_deoxy_switch.setColor("#FFCB2525");
+            currentOxyDeOxyState = OxyDeOxyState.OXY;
+            DeOXY_studyname_label.Visibility = Visibility.Hidden;
+            OXY_studyname_label.Visibility = Visibility.Visible;
+            if (OXYDicomWasLoaded)
+            {
+                image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + slider_value + ".bmp"));
+                frame_num_label.Content = "Frame:" + " " + slider_value;
+            }
+            else
+            {
+                image.Source = null;
+                frame_num_label.Content = "";
+            }
+        }
+
+        private void doDeOXYState()
+        {
+            oxy_deoxy_label.Content = "DeOXY";
+            oxy_deoxy_switch.setColor("#FF0A25D1");
+            currentOxyDeOxyState = OxyDeOxyState.DEOXY;
+            OXY_studyname_label.Visibility = Visibility.Hidden;
+            DeOXY_studyname_label.Visibility = Visibility.Visible;
+            if (deOXYDicomWasLoaded)
+            {
+                image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + slider_value + ".bmp"));
+                frame_num_label.Content = "Frame:" + " " + slider_value;
+            }
+            else
+            {
+                image.Source = null;
+                frame_num_label.Content = "";
+            }
+        }
         //-----------------------------------------------
 
 

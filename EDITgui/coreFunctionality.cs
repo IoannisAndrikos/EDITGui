@@ -132,11 +132,11 @@ namespace EDITgui
         //------------------------------------PHOTOACOUSTIC----------------------------
 
         [HandleProcessCorruptedStateExceptions]
-        public string exportPhotoAcousticImages(string dcmfile, bool enablelogging)
+        public string exportOXYImages(string dcmfile, bool enablelogging)
         {
             try
             {
-                string imagesDir = editPro.exportPhotoAcousticImages(dcmfile, enablelogging);
+                string imagesDir = editPro.exportOXYImages(dcmfile, enablelogging);
                 return imagesDir;
             }
             catch (Exception)
@@ -145,6 +145,24 @@ namespace EDITgui
             }
             return null;
         }
+
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public string exportDeOXYImages(string dcmfile, bool enablelogging)
+        {
+            try
+            {
+                string imagesDir = editPro.exportDeOXYImages(dcmfile, enablelogging);
+                return imagesDir;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Problem!");
+            }
+            return null;
+        }
+
 
 
         [HandleProcessCorruptedStateExceptions]
@@ -197,6 +215,23 @@ namespace EDITgui
             }
             return null;
         }
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public List<String> extractOXYandDeOXYPoints(List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints)
+        {
+            try
+            {
+                List<String> txtPath = editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints);
+                return txtPath;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(errorMessages.problemToProduceSTL);
+            }
+            return null;
+        }
+
 
 
 

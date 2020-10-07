@@ -78,5 +78,27 @@ namespace EDITgui
             }
 
         }
+
+
+
+        public void setColor(String hexColor)
+        {
+            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexColor));
+        }
+
+
+        public void setDotToRight()
+        {
+            Dot.Margin = RightSide;
+            Toggled = true;
+        }
+
+        public void setDotToLeft()
+        {
+            Dot.Margin = LeftSide;
+            Toggled = false;
+        }
+
+
     }
 }

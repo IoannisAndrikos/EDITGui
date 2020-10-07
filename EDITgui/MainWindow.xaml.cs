@@ -76,12 +76,14 @@ namespace EDITgui
         {
 
             Geometry currentGeometry = STLGeometries.Find(x => x.TypeName == geometry.TypeName);
-            
+            string extension = System.IO.Path.GetExtension(geometry.Path);
 
             if (currentGeometry != null)
             {
                 STLGeometries.Remove(currentGeometry);
                 geometry.checkbox = currentGeometry.checkbox;
+                geometry.volumeLabel = currentGeometry.volumeLabel;
+                geometry.surfaceAreaLabel = currentGeometry.surfaceAreaLabel;
                 STLGeometries.Add(geometry);
                 renderer.RemoveActor(currentGeometry.actor);
                 visualizeGeometries(geometry);
@@ -91,10 +93,25 @@ namespace EDITgui
             {
                 CheckBox ch = new CheckBox();
                 ch.Foreground = Brushes.White;
-                ch.Content = geometry.TypeName;
+                if(extension == ".stl")
+                {
+                    Label volumeLabel = new Label();
+                    volumeLabel.Foreground = Brushes.White;
+                    Label surfaceAreaLabel = new Label();
+                    surfaceAreaLabel.Foreground = Brushes.White;
+                    geometry.volumeLabel = volumeLabel;
+                    geometry.surfaceAreaLabel = surfaceAreaLabel;
+                    this.volumeMetricsItems.Items.Add(volumeLabel);
+                    this.SurfaceAreaMetricsItems.Items.Add(surfaceAreaLabel);
+
+                }
+                
                 geometry.checkbox = ch;
+               
+                ch.Content = geometry.TypeName;
                 STLGeometries.Add(geometry);
                 this.geometryItems.Items.Add(ch);
+              
                 ch.Checked += new RoutedEventHandler(OnGeometryComboboxChecked);
                 ch.Unchecked += new RoutedEventHandler(OnGeometryComboboxUnchecked);
             }
@@ -113,6 +130,13 @@ namespace EDITgui
           //  host.Visibility = Visibility.Visible;
             CheckBox ch = (sender as CheckBox);
             Geometry geometry = STLGeometries.Find(x => x.TypeName == ch.Content);
+
+            string extension = System.IO.Path.GetExtension(geometry.Path);
+            if (extension == ".stl")
+            {
+                geometry.volumeLabel.Visibility = Visibility.Visible;
+                geometry.surfaceAreaLabel.Visibility = Visibility.Visible;
+            }
             visualizeGeometries(geometry);
         }
 
@@ -120,14 +144,40 @@ namespace EDITgui
         public void visualizeGeometries(Geometry geometry)
         {
             vtkSTLReader reader = vtkSTLReader.New();
-
-            reader.SetFileName(geometry.Path);
-            reader.Update();
-
             vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
-            mapper.SetInputConnection(reader.GetOutputPort());
-            mapper.Update();
+            string extension = System.IO.Path.GetExtension(geometry.Path);
 
+
+            if(extension == ".stl")
+            {
+                reader.SetFileName(geometry.Path);
+                reader.Update();
+                if (geometry.checkbox.IsChecked == true)
+                {
+                   vtkMassProperties mass = vtkMassProperties.New();
+                   mass.SetInput(reader.GetOutput());
+                   mass.Update();
+                   geometry.volumeLabel.Content = geometry.TypeName.ToString() + " = " + Math.Round(mass.GetVolume(), 2)  + "mm\xB3";
+                   geometry.surfaceAreaLabel.Content = geometry.TypeName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + "mm\xB2"; 
+                }
+
+
+                mapper.SetInputConnection(reader.GetOutputPort());
+                mapper.Update();
+
+            }
+            else if (extension == ".txt")
+            {
+                vtkPolyData polyData = vtkPolyData.New();
+                polyData.SetPoints(txtPointsToPolyData(geometry.Path));
+                vtkVertexGlyphFilter glyphFilter = vtkVertexGlyphFilter.New();
+                glyphFilter.SetInput(polyData);
+                glyphFilter.Update();
+
+                mapper.SetInputConnection(glyphFilter.GetOutputPort());
+            }
+
+           
             vtkActor actor = vtkActor.New();
             actor.SetMapper(mapper);
 
@@ -139,14 +189,21 @@ namespace EDITgui
                         actor.GetProperty().SetColor(1, 1, 1);
                         actor.GetProperty().SetOpacity(1);
                         break;
-
                     case "Thickness":
-                        actor.GetProperty().SetColor(1, 0, 0);
+                        actor.GetProperty().SetColor(1, 1, 0);
                         actor.GetProperty().SetOpacity(0.8);
                         break;
                     case "Skin":
                         actor.GetProperty().SetColor(0, 1, 0);
                         actor.GetProperty().SetOpacity(0.3);
+                        break;
+                    case "OXY":
+                        actor.GetProperty().SetColor(1, 0, 0);
+                        actor.GetProperty().SetOpacity(0.6);
+                        break;
+                    case "DeOXY":
+                        actor.GetProperty().SetColor(0, 0, 1);
+                        actor.GetProperty().SetOpacity(0.6);
                         break;
                 }
                 geometry.actor = actor;
@@ -160,7 +217,12 @@ namespace EDITgui
         {
             CheckBox ch = (sender as CheckBox);
             Geometry geometry = STLGeometries.Find(x => x.TypeName == ch.Content);
-           
+            string extension = System.IO.Path.GetExtension(geometry.Path);
+            if (extension == ".stl")
+            {
+                geometry.volumeLabel.Visibility = Visibility.Hidden;
+                geometry.surfaceAreaLabel.Visibility = Visibility.Hidden;
+            }
 
             if (geometry.checkbox.IsChecked == false)
             {
@@ -218,6 +280,35 @@ namespace EDITgui
                     break;
             }
         }
+
+
+        private vtkPoints txtPointsToPolyData(string filename)
+        {
+            vtkPoints points = vtkPoints.New();
+            vtkPoints pointslist = vtkPoints.New();
+    
+         
+            StreamReader sr = new StreamReader(filename);
+            String line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                double x, y, z;
+
+                string[] col = line.Split(' ');
+
+                x = double.Parse(col[0]);
+                y = double.Parse(col[1]);
+                z = double.Parse(col[2]);
+
+                points.InsertNextPoint(x, y, z);
+
+            }
+            sr.Close();
+
+            return points;
+        }
+
+
     }
 
     public class Geometry
@@ -225,6 +316,8 @@ namespace EDITgui
         public string TypeName { get; set; }
         public string Path { get; set; }
         public CheckBox checkbox { get; set; }
+        public Label volumeLabel { get; set; }
+        public Label surfaceAreaLabel { get; set; }
         public vtkActor actor { set; get; }
     }
 }
