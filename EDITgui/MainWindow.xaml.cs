@@ -27,6 +27,7 @@ using OpenCvSharp;
 using Emgu.CV.Shape;
 using Kitware.VTK;
 using Kitware.mummy;
+using System.Globalization;
 
 namespace EDITgui
 {
@@ -296,9 +297,9 @@ namespace EDITgui
 
                 string[] col = line.Split(' ');
 
-                x = double.Parse(col[0]);
-                y = double.Parse(col[1]);
-                z = double.Parse(col[2]);
+                x = double.Parse(col[0].Replace(",", "."), CultureInfo.InvariantCulture);  
+                y = double.Parse(col[1].Replace(",", "."), CultureInfo.InvariantCulture);
+                z = double.Parse(col[2].Replace(",", "."), CultureInfo.InvariantCulture);
 
                 points.InsertNextPoint(x, y, z);
 
