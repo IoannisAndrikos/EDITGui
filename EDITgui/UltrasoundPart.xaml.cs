@@ -205,6 +205,7 @@ namespace EDITgui
 
             await Task.Run(() => {
                 bladderCvPoints = coreFunctionality.Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
+                if (!bladderCvPoints.Any()) return; 
                 bladder = editCVPointToWPFPoint(bladderCvPoints);
             });
 
@@ -273,11 +274,12 @@ namespace EDITgui
                 return;
             }
             startSpinner();
+            bladderCvPoints = WPFPointToCVPoint(bladder);
             String STLPath = null;
             await Task.Run(() => {
-                STLPath = coreFunctionality.extractSkin();
+                STLPath = coreFunctionality.extractSkin(bladderCvPoints);
             });
-            EDITgui.Geometry skinGeometry = new Geometry() { TypeName = "Skin", Path = STLPath, actor = null };
+            EDITgui.Geometry skinGeometry = new Geometry() { TypeName = "Layer", Path = STLPath, actor = null };
             if(STLPath != null) returnSkinSTL(skinGeometry);
             stopSpinner();
         }

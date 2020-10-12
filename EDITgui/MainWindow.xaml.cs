@@ -50,6 +50,7 @@ namespace EDITgui
             InitializeComponent();
             coreFunctionality core = new coreFunctionality();
             core.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+            //core.setExaminationsDirectory("//Mac/Home/Downloads/export");
 
             ultrasound = new UltrasoundPart(this);
             photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
@@ -194,7 +195,7 @@ namespace EDITgui
                         actor.GetProperty().SetColor(1, 1, 0);
                         actor.GetProperty().SetOpacity(0.8);
                         break;
-                    case "Skin":
+                    case "Layer":
                         actor.GetProperty().SetColor(0, 1, 0);
                         actor.GetProperty().SetOpacity(0.3);
                         break;

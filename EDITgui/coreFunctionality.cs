@@ -74,7 +74,7 @@ namespace EDITgui
                 List<List<EDITCore.CVPoint>> bladderCvPoints = editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
                 return bladderCvPoints;
             }catch(Exception e){
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -109,22 +109,22 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
         }
 
 
         [HandleProcessCorruptedStateExceptions]
-        public String extractSkin()
+        public String extractSkin(List<List<EDITCore.CVPoint>> bladderCvPoints)
         {
             try
             {
-               String STLPath =  editPro.extractSkinSTL(fillHoles);
+               String STLPath =  editPro.extractSkinSTL(bladderCvPoints, fillHoles);
                 return STLPath;
             }
             catch (Exception e)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return null;
         }
@@ -141,7 +141,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return null;
         }
@@ -158,7 +158,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return null;
         }
@@ -177,7 +177,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -195,7 +195,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return new List<EDITCore.CVPoint>();
         }
@@ -245,7 +245,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
 
         }
