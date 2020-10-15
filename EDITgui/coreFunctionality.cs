@@ -27,7 +27,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
         }
 
@@ -36,32 +36,31 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportImages(dcmfile, enablelogging);
+                string imagesDir = editPro.exportImages(dcmfile);
                 pixelSpacing = editPro.getPixelSpacing();
                 return imagesDir;
             }
             catch (Exception)
             {
-                MessageBox.Show("Problem!");
+                MessageBox.Show(errorMessages.errorOccured);
             }
             return null;
         }
 
 
-        //[HandleProcessCorruptedStateExceptions]
-        //public List<double> getPixelSpacing()
-        //{
-        //    try
-        //    {
-        //        List<double> pixelSpacing = editPro.getPixelSpacing();
-        //        return pixelSpacing;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        MessageBox.Show("Problem!");
-        //    }
-        //    return null;
-        //}
+        [HandleProcessCorruptedStateExceptions]
+        public void setLoggingOnOff(bool OnOff)
+        {
+            try
+            {
+                editPro.setLoggingOnOff(OnOff);
+               
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(errorMessages.errorOccured);
+            }
+        }
 
 
         [HandleProcessCorruptedStateExceptions]
@@ -136,7 +135,7 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportOXYImages(dcmfile, enablelogging);
+                string imagesDir = editPro.exportOXYImages(dcmfile);
                 return imagesDir;
             }
             catch (Exception)
@@ -153,7 +152,7 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportDeOXYImages(dcmfile, enablelogging);
+                string imagesDir = editPro.exportDeOXYImages(dcmfile);
                 return imagesDir;
             }
             catch (Exception)

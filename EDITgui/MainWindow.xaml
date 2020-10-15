@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow"
         Height="886.5" 
-        Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded">
+        Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded" Closed="Window_Closed">
 
     <Window.Resources>
 
@@ -51,8 +51,8 @@
 
 
 
-        <Label x:Name="labelView" Content="2D" HorizontalAlignment="Left" Height="20" Margin="83.666,12.001,0,0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Top" Width="23.334" Foreground="White" FontWeight="Bold"/>
-        <local:ToggleButton x:Name="Bu" HorizontalAlignment="Left" Margin="24.332,2.001,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Bu_MouseLeftButtonDown" Height="33.666" Width="54.334"/>
+        <Label x:Name="labelView" Content="2D" HorizontalAlignment="Left" Height="20" Margin="74,12.001,0,0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Top" Width="23.334" Foreground="White" FontWeight="Bold"/>
+        <local:ToggleButton x:Name="Bu" HorizontalAlignment="Left" Margin="15,5,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Bu_MouseLeftButtonDown" Height="33.666" Width="54.334"/>
         <Grid x:Name="Rat" Background="#FF1C1F1F" Margin="0,40,0,0" HorizontalAlignment="Center">
             <!-- -->
 
@@ -76,7 +76,7 @@
             <ListBox x:Name="SurfaceAreaMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,302.588,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False"/>
             <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,279.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
         </Grid>
-        <Button x:Name="loadDicom" Content="Save Study" HorizontalAlignment="Left" Height="26.001" Margin="1415.2,10,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796"/>
+        <Button x:Name="saveStudy" Content="Save Study" HorizontalAlignment="Right" Height="26.001" Margin="0,10,20,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796" Click="SaveStudy_Click"/>
 
 
     </Grid>

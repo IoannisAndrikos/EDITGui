@@ -28,6 +28,7 @@ using Emgu.CV.Shape;
 using Kitware.VTK;
 using Kitware.mummy;
 using System.Globalization;
+using Path = System.IO.Path;
 
 namespace EDITgui
 {
@@ -36,6 +37,9 @@ namespace EDITgui
     /// </summary>
     public partial class MainWindow : Window
     {
+
+       public string workingPath;
+        public string workingDir = "Edit_Current_working_study";
         RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
         UltrasoundPart ultrasound;
@@ -43,13 +47,23 @@ namespace EDITgui
         vtkRenderer renderer;
         List<Geometry> STLGeometries = new List<Geometry>();
 
+        SaveActions saveActions = new SaveActions();
+        coreFunctionality core;
+
         public static int count = 0;
+
+        Messages messages = new Messages();
 
         public MainWindow()
         {
             InitializeComponent();
-            coreFunctionality core = new coreFunctionality();
-            core.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
+            core = new coreFunctionality();
+            Console.WriteLine(Path.GetTempPath());
+
+            //workingPath = "C:/Users/Legion Y540/Desktop/EDIT_STUDIES" + System.IO.Path.DirectorySeparatorChar + workingDir;
+            workingPath = Path.GetTempPath() + workingDir;
+
+            core.setExaminationsDirectory(workingPath);
             //core.setExaminationsDirectory("//Mac/Home/Downloads/export");
 
             ultrasound = new UltrasoundPart(this);
@@ -77,8 +91,8 @@ namespace EDITgui
         public void OnAddAvailableGeometry(Geometry geometry)
         {
 
-            Geometry currentGeometry = STLGeometries.Find(x => x.TypeName == geometry.TypeName);
-            string extension = System.IO.Path.GetExtension(geometry.Path);
+            Geometry currentGeometry = STLGeometries.Find(x => x.geometryName == geometry.geometryName);
+            string extension = Path.GetExtension(geometry.Path);
 
             if (currentGeometry != null)
             {
@@ -110,7 +124,7 @@ namespace EDITgui
                 
                 geometry.checkbox = ch;
                
-                ch.Content = geometry.TypeName;
+                ch.Content = geometry.geometryName;
                 STLGeometries.Add(geometry);
                 this.geometryItems.Items.Add(ch);
               
@@ -131,9 +145,9 @@ namespace EDITgui
         {
           //  host.Visibility = Visibility.Visible;
             CheckBox ch = (sender as CheckBox);
-            Geometry geometry = STLGeometries.Find(x => x.TypeName == ch.Content);
+            Geometry geometry = STLGeometries.Find(x => x.geometryName == ch.Content);
 
-            string extension = System.IO.Path.GetExtension(geometry.Path);
+            string extension = Path.GetExtension(geometry.Path);
             if (extension == ".stl")
             {
                 geometry.volumeLabel.Visibility = Visibility.Visible;
@@ -147,7 +161,7 @@ namespace EDITgui
         {
             vtkSTLReader reader = vtkSTLReader.New();
             vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
-            string extension = System.IO.Path.GetExtension(geometry.Path);
+            string extension = Path.GetExtension(geometry.Path);
 
 
             if(extension == ".stl")
@@ -159,8 +173,8 @@ namespace EDITgui
                    vtkMassProperties mass = vtkMassProperties.New();
                    mass.SetInput(reader.GetOutput());
                    mass.Update();
-                   geometry.volumeLabel.Content = geometry.TypeName.ToString() + " = " + Math.Round(mass.GetVolume(), 2)  + "mm\xB3";
-                   geometry.surfaceAreaLabel.Content = geometry.TypeName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + "mm\xB2"; 
+                   geometry.volumeLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetVolume(), 2)  + "mm\xB3";
+                   geometry.surfaceAreaLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + "mm\xB2"; 
                 }
 
 
@@ -185,7 +199,7 @@ namespace EDITgui
 
             if (geometry.checkbox.IsChecked == true)
             {
-                switch (geometry.TypeName)
+                switch (geometry.geometryName)
                 {
                     case "Bladder":
                         actor.GetProperty().SetColor(1, 1, 1);
@@ -218,8 +232,8 @@ namespace EDITgui
         public void OnGeometryComboboxUnchecked(object sender, RoutedEventArgs e)
         {
             CheckBox ch = (sender as CheckBox);
-            Geometry geometry = STLGeometries.Find(x => x.TypeName == ch.Content);
-            string extension = System.IO.Path.GetExtension(geometry.Path);
+            Geometry geometry = STLGeometries.Find(x => x.geometryName == ch.Content);
+            string extension = Path.GetExtension(geometry.Path);
             if (extension == ".stl")
             {
                 geometry.volumeLabel.Visibility = Visibility.Hidden;
@@ -311,15 +325,102 @@ namespace EDITgui
         }
 
 
+        private void SaveStudy_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.CheckFileExists = false;
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.Title = messages.saveStudy;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                //if (saveFileDialog.FileName != null)
+                {
+                    //save bladder
+                    saveActions.writePointsToTXT(saveFileDialog.FileName, ultrasound.getBladderPoints(), SaveActions.FileType.bladderPoints);
+                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, ultrasound.getBladderArea(), SaveActions.FileType.Bladder2DArea);
+                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, ultrasound.getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
+
+                    //save thickness
+                    saveActions.writePointsToTXT(saveFileDialog.FileName, photoAcoustic.getThicknessPoints(), SaveActions.FileType.thicknessPoints);
+                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, photoAcoustic.getMeanThickness(), SaveActions.FileType.MeanThickness);
+
+                    //save geometries
+                    foreach (Geometry geometry in STLGeometries)
+                    {
+                        saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, geometry.Path, geometry.getSaveActionFileType());
+                    }
+
+                    //save Dicom
+                    if (ultrasound.ultrasoundDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
+                    if (photoAcoustic.OXYDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
+                    if (photoAcoustic.DeOXYDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
+
+                    //save logfiles
+                    saveActions.copyLogFilesToFolderOfStudy(saveFileDialog.FileName, workingPath);
+
+                    //save info
+                    saveActions.writeInfoTXTFile(saveFileDialog.FileName, collectAllStudyInfo(), SaveActions.FileType.info);
+                }
+            }
+        }
+
+
+        private List<StudyInfo> collectAllStudyInfo()
+        {
+            List<StudyInfo> studyInfo = new List<StudyInfo>();
+            studyInfo.Add(new StudyInfo() { infoName = messages.startingFrame, infoValue = ultrasound.startingFrame });
+            studyInfo.Add(new StudyInfo() { infoName = messages.endingFrame, infoValue = ultrasound.endingFrame });
+
+            return studyInfo;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            //close logging process
+            core.setLoggingOnOff(false);
+            //Delete working directory
+            if (Directory.Exists(workingPath))
+            {
+                Directory.Delete(workingPath, true);
+            }
+        }
     }
 
     public class Geometry
     {
-        public string TypeName { get; set; }
+        public string geometryName { get; set; }
         public string Path { get; set; }
         public CheckBox checkbox { get; set; }
         public Label volumeLabel { get; set; }
         public Label surfaceAreaLabel { get; set; }
         public vtkActor actor { set; get; }
+
+        public SaveActions.FileType getSaveActionFileType()
+        {
+            switch (geometryName)
+            {
+                case "Bladder":
+                    return SaveActions.FileType.Bladder3D;
+                case "Thickness":
+                    return SaveActions.FileType.Thickness3D;
+                case "Layer":
+                    return SaveActions.FileType.Layer3D;
+                case "OXY":
+                    return SaveActions.FileType.OXY3D;
+                case "DeOXY":
+                    return SaveActions.FileType.DeOXY3D;
+            }
+
+            return SaveActions.FileType.Bladder3D; //never
+
+        }
     }
+
+    public class StudyInfo
+    {
+        public string infoName { get; set; }
+        public double infoValue { get; set; }
+    }
+
+
 }

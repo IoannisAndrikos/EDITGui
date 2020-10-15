@@ -28,6 +28,8 @@ using Emgu.CV.Shape;
 using System.ComponentModel;
 using System.Globalization;
 
+using Path = System.IO.Path;
+
 namespace EDITgui
 {
     /// <summary>
@@ -61,6 +63,8 @@ namespace EDITgui
         bool deOXYDicomWasLoaded = false;
         int slider_value = 0;
         int fileCount;
+        public string OXYDicomFile = null;
+        public string DeOXYDicomFile = null;
         //-------------------------------
 
 
@@ -82,7 +86,7 @@ namespace EDITgui
         string OXYimagesDir;
         string deOXYimagesDir;
 
-        Messages warningMessages = new Messages();
+        Messages messages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
 
         public PhotoAcousticPart()
@@ -104,7 +108,7 @@ namespace EDITgui
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
-            UltrasoundPart.repeatProcess += OnrepeatProcess;
+            UltrasoundPart.repeatPhotoAcousticProcess += OnrepeatProcess;
             oxy_deoxy_switch.setColor("#FFCB2525");
             //chechBox_Logger.IsChecked = true;
             // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
@@ -119,16 +123,17 @@ namespace EDITgui
         public void OnUltrasoundSliderValueChanged(int obj)
         {
             slider_value = (int)obj;
-            if (OXYDicomWasLoaded)
+            if (OXYDicomWasLoaded && slider_value < fileCount)
             {
                 if (currentOxyDeOxyState == OxyDeOxyState.OXY)
                 {
-                    image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + obj + ".bmp"));
-                }else if (currentOxyDeOxyState == OxyDeOxyState.DEOXY)
-                {
-                    image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + obj + ".bmp"));
+                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + obj + ".bmp");
                 }
-                frame_num_label.Content = "Frame:" + " " + slider_value;
+                else if (currentOxyDeOxyState == OxyDeOxyState.DEOXY)
+                {
+                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + obj + ".bmp");
+                }
+                frame_num_label.Content = messages.frame + ": " + slider_value;
                 doCorrection();
                 clear_canvas();
                 display();
@@ -165,18 +170,18 @@ namespace EDITgui
 
         private async void LoadΟΧΥDicom_Click(object sender, RoutedEventArgs e)
         {
-            OXYDicomWasLoaded = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = messages.selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
                 
                 coreFunctionality.repeatSegmentation();
-                string dcmfile = openFileDialog.FileName;
+                OXYDicomFile = openFileDialog.FileName;
 
                 await Task.Run(() =>
                 {
-                    OXYimagesDir = coreFunctionality.exportOXYImages(dcmfile, true); //enablelogging = true
+                    OXYimagesDir = coreFunctionality.exportOXYImages(OXYDicomFile, true); //enablelogging = true
 
                 });
                 if (OXYimagesDir != null)
@@ -186,17 +191,18 @@ namespace EDITgui
                     doOXYState();
                     oxy_deoxy_switch.setDotToLeft();
 
-                    image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
-                    OXY_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = "Frame:" + " " + slider_value;
+                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                    OXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    frame_num_label.Content = messages.frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     // OnrepeatProcess();
                     stopSpinner();
                 }
                 else
                 {
+                    OXYDicomFile = null;
                     stopSpinner();
-                    MessageBox.Show(warningMessages.cannotLoadDicom);
+                    MessageBox.Show(messages.cannotLoadDicom);
                 }
                 
             }
@@ -204,19 +210,18 @@ namespace EDITgui
 
         private async void LoadDeOXYDicom_Click(object sender, RoutedEventArgs e)
         {
-
-            deOXYDicomWasLoaded = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = messages.selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
                 //clear_canvas();
                 coreFunctionality.repeatSegmentation();
-                string dcmfile = openFileDialog.FileName;
+                DeOXYDicomFile = openFileDialog.FileName;
 
                 await Task.Run(() =>
                 {
-                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(dcmfile, true); //enablelogging = true
+                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(DeOXYDicomFile, true); //enablelogging = true
 
                 });
                 if (deOXYimagesDir != null)
@@ -227,17 +232,18 @@ namespace EDITgui
                     oxy_deoxy_switch.setDotToRight();
 
 
-                    image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + slider_value + ".bmp")); //imagesDir + "/0.bmp"
-                    DeOXY_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = "Frame:" + " " + slider_value;
+                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
+                    DeOXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    frame_num_label.Content = messages.frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     // OnrepeatProcess();
                     stopSpinner();
                 }
                 else
                 {
+                    DeOXYDicomFile = null;
                     stopSpinner();
-                    MessageBox.Show(warningMessages.cannotLoadDicom);
+                    MessageBox.Show(messages.cannotLoadDicom);
                 }
 
                
@@ -262,7 +268,7 @@ namespace EDITgui
                 thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints(), minThick, maxThick);
                 if (!thicknessCvPoints.Any()) return;
                 thickness = editCVPointToWPFPoint(thicknessCvPoints);
-                fillmeanThicknessList(coreFunctionality.meanThickness);
+                fillMeanThicknessList(coreFunctionality.meanThickness);
             });
             bladderUltrasound = ultrasound.getBladderPoints();
             diplayMetrics();
@@ -293,7 +299,7 @@ namespace EDITgui
                 thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
                 //contourForFix.Clear();
                 // meanThickness.AddRange(coreFunctionality.meanThickness);
-                fillmeanThicknessList(coreFunctionality.meanThickness);
+                fillMeanThicknessList(coreFunctionality.meanThickness);
             });
             clear_canvas();
             diplayMetrics();
@@ -316,7 +322,7 @@ namespace EDITgui
             await Task.Run(() => {
                 STLPath = coreFunctionality.extractThicknessSTL(thicknessCvPoints);
                 });
-            EDITgui.Geometry thicknessGeometry = new Geometry() { TypeName = "Thickness", Path = STLPath, actor = null };
+            EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = "Thickness", Path = STLPath, actor = null };
             if (STLPath != null)
             {
                 returnThicknessSTL(thicknessGeometry);
@@ -343,8 +349,8 @@ namespace EDITgui
                 txtPaths = coreFunctionality.extractOXYandDeOXYPoints(ultrasound.getBladderCVPoints(), thicknessCvPoints);
             });
 
-            EDITgui.Geometry OXYGeometry = new Geometry() { TypeName = "OXY", Path = txtPaths[0], actor = null };
-            EDITgui.Geometry DeOXYGeometry = new Geometry() { TypeName = "DeOXY", Path = txtPaths[1], actor = null };
+            EDITgui.Geometry OXYGeometry = new Geometry() { geometryName = "OXY", Path = txtPaths[0], actor = null };
+            EDITgui.Geometry DeOXYGeometry = new Geometry() { geometryName = "DeOXY", Path = txtPaths[1], actor = null };
             if (txtPaths.Any())
             {
                 returnThicknessSTL(OXYGeometry);
@@ -480,7 +486,7 @@ namespace EDITgui
                 if (image.Source != null && slider_value >= ultrasound.getStartingFrame() && slider_value <= ultrasound.getEndingFrame() && contourSeg == ContourSegmentation.CORRECTION)
                 {
                     metrics_label.Visibility = Visibility.Visible;
-                    metrics_label.Content = "mean thickness = " + Math.Round(meanThickness[slider_value], 2) + " mm";
+                    metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
                 }
                 else
                 {
@@ -739,6 +745,17 @@ namespace EDITgui
             }
         }
 
+        public void BitmapFromPath(string imagePath)
+        {
+            image.Source = new BitmapImage();
+            ((BitmapImage)image.Source).BeginInit();
+            ((BitmapImage)image.Source).CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            ((BitmapImage)image.Source).CacheOption = BitmapCacheOption.OnLoad;
+            ((BitmapImage)image.Source).UriSource = new Uri(imagePath);
+            ((BitmapImage)image.Source).EndInit();
+        }
+
+
         private void ApplicationGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (rectRemovePoints != null && rectRemovePoints.GetType() == typeof(Rectangle))
@@ -947,8 +964,8 @@ namespace EDITgui
             OXY_studyname_label.Visibility = Visibility.Visible;
             if (OXYDicomWasLoaded)
             {
-                image.Source = new BitmapImage(new Uri(OXYimagesDir + "/" + slider_value + ".bmp"));
-                frame_num_label.Content = "Frame:" + " " + slider_value;
+                BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                frame_num_label.Content = messages.frame + ":" + " " + slider_value;
             }
             else
             {
@@ -966,8 +983,8 @@ namespace EDITgui
             DeOXY_studyname_label.Visibility = Visibility.Visible;
             if (deOXYDicomWasLoaded)
             {
-                image.Source = new BitmapImage(new Uri(deOXYimagesDir + "/" + slider_value + ".bmp"));
-                frame_num_label.Content = "Frame:" + " " + slider_value;
+                BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                frame_num_label.Content = messages.frame + ":" + " " + slider_value;
             }
             else
             {
@@ -978,7 +995,7 @@ namespace EDITgui
         //-----------------------------------------------
 
 
-        void fillmeanThicknessList(List<double> values)
+        void fillMeanThicknessList(List<double> values)
         {
             meanThickness.Clear();
             //meanThickness = new List<double>();
@@ -996,6 +1013,22 @@ namespace EDITgui
 
         }
 
+
+        //------- SOME GETTERS---------------
+
+        public List<List<Point>> getThicknessPoints()
+        {
+            return thickness;
+        }
+
+        public List<double> getMeanThickness()
+        {
+            return meanThickness;
+        }
+
+        //-----------------------------------------
+
+
         enum executionType { extract2DThickness, recalculate, extract3DThickness, extractOXYDeOXY};
 
         private string checkBeforeExecutionAndDispalySuitableMessage(executionType type)
@@ -1003,40 +1036,40 @@ namespace EDITgui
             switch (type)
                 {
                 case executionType.extract2DThickness:
-                    if (!ultrasound.areTherePoints())
+                    if (!ultrasound.bladder.Any())
                     {
-                        return warningMessages.noBladderSegmentation;
+                        return messages.noBladderSegmentation;
                   
                     }
                     if (!OXYDicomWasLoaded)
                     {
-                        return warningMessages.noOXYdicom;
+                        return messages.noOXYdicom;
                     }
                     break;
                 case executionType.recalculate:
                     if (!areTherePoints())
                     {
-                        return warningMessages.noThicknessForUniqueFrame;
+                        return messages.noThicknessForUniqueFrame;
                     }
                     break;
                 case executionType.extract3DThickness:
-                    if (!areTherePoints())
+                    if (!ultrasound.bladder.Any())
                     {
-                        return warningMessages.noBladderSegmentation;
+                        return messages.noBladderSegmentation;
                     }
                     break;
                 case executionType.extractOXYDeOXY:
                     if (!areTherePoints())
                     {
-                        return warningMessages.noBladderSegmentation;
+                        return messages.noBladderSegmentation;
                     }
                     if (!OXYDicomWasLoaded || !deOXYDicomWasLoaded)
                     {
-                        return warningMessages.noOXYAndDeOXYImages; ;
+                        return messages.noOXYAndDeOXYImages; ;
                     }
                     if (!wasThicknessModelExtracted || !ultrasound.wasBladderModelExtracted)
                     {
-                        return warningMessages.noBadderOrThickness3DModels;
+                        return messages.noBadderOrThickness3DModels;
                     }
                     break;
             }

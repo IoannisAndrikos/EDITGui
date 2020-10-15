@@ -401,7 +401,7 @@
             <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,81.326,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
             <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,106.07,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
             <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="27.333" Margin="162.156,10,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
-            <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
+            <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" Click="ChechBox_Logger_Click"/>
             <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click"/>
         </Grid>
         <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">

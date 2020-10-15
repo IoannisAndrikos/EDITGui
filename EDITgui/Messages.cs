@@ -9,6 +9,44 @@ namespace EDITgui
 {
     public class Messages
     {
+        public string selectDicom = "Select Dicom File";
+
+        public string saveStudy  = "Save Current Study";
+
+        public string area  = "Area";
+
+        public string perimeter  = "perimeter";
+
+        public string meanThickness  = "Mean thickness";
+
+        public string frame = "Frame";
+
+        public string mm = "mm";
+        
+        public string mmB2 = "mm\xB2";
+
+        public string mmB3 = "mm\xB3";
+
+        public string startingFrame = "Starting_Frame";
+
+        public string endingFrame = "Ending_Frame";
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //---------------------------------------ERROR CATEGORY---------------------------------------------------------------
         public string errorOccured = "An error  has occurred. Check the previous step of the process";
         
         public string cannotLoadDicom = "Cannot load the selected DICOM file";
@@ -24,7 +62,6 @@ namespace EDITgui
         public string noOXYAndDeOXYImages = "No OXY Or DeOXY DICOM file was loaded";
 
         public string noBadderOrThickness3DModels = "Before proceeding with the extraction of the OXY and DeOXY points you have to extract both the bladder and thickness 3D model";
-
 
         //------------------------------PROBLEM TO PRODUCE THE STL-------------------------------------------------------
         public string problemToProduceSTL = "Cannot produce the STL object. There is an issue on the 2D segmnetation";

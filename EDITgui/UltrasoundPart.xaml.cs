@@ -1,8 +1,17 @@
-﻿using System;
+﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.UI;
+using Microsoft.Win32;
+using Microsoft.Win32;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,21 +19,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
-using Microsoft.Win32;
-
-
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.UI;
-using Microsoft.Win32;
-using OpenCvSharp.Extensions;
-using System.Windows.Media.Animation;
-using OpenCvSharp;
-using System.Globalization;
+using Path = System.IO.Path;
 
 namespace EDITgui
 {
@@ -35,7 +34,7 @@ namespace EDITgui
     {
 
         public delegate void repeatProcessHandler();
-        public static event repeatProcessHandler repeatProcess = delegate { };
+        public static event repeatProcessHandler repeatPhotoAcousticProcess = delegate { };
 
         public delegate void bladderPointChangedHandler(List<List<Point>> newBladder);
         public static event bladderPointChangedHandler bladderPointChanged = delegate { };
@@ -66,12 +65,14 @@ namespace EDITgui
         Slider slider;
         public int slider_value = 0;
         int fileCount;
+        public string ultrasoundDicomFile = null;
+        string imagesDir;
         //-------------------------------
 
         //------------user set intial points on images------
         List<Point> userPoints = new List<Point>(2);//
-        int startingFrame = 0;
-        int endingFrame = 0;
+        public int startingFrame = 0;
+        public int endingFrame = 0;
         //--------------------------------------------------
 
         ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
@@ -85,15 +86,16 @@ namespace EDITgui
         List<Point> points = new List<Point>();
         List<Polyline> polylines = new List<Polyline>();
         List<List<EDITCore.CVPoint>> bladderCvPoints = new List<List<EDITCore.CVPoint>>();
-        List<List<Point>> bladder = new List<List<Point>>();
+        public List<List<Point>> bladder = new List<List<Point>>();
         List<double> bladderArea = new List<double>();
         List<double> bladderPerimeter = new List<double>();
-        string imagesDir;
+
+   
 
         MainWindow mainWindow;
 
         //create objects of the other classes
-        Messages warningMessages = new Messages();
+        Messages messages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
         metricsCalculations metrics = new metricsCalculations();
 
@@ -134,23 +136,27 @@ namespace EDITgui
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = messages.selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
                 if (bladder != null) bladder.Clear();
                 clear_canvas();
                 coreFunctionality.repeatSegmentation();
-                string dcmfile = openFileDialog.FileName;
+                ultrasoundDicomFile = openFileDialog.FileName;
                 bool enablelogging = chechBox_Logger.IsChecked.Value;
                 await Task.Run(() => {
-                    imagesDir = coreFunctionality.exportImages(dcmfile, enablelogging);
+                    imagesDir = coreFunctionality.exportImages(ultrasoundDicomFile, enablelogging);
                     pixelSpacing = coreFunctionality.pixelSpacing;
                 });
                 if (imagesDir != null)
                 {
                     metrics_label.Visibility = Visibility.Hidden;
                     metrics.setPixelSpacing(pixelSpacing);
-                    image.Source = new BitmapImage(new Uri(imagesDir + "/0.bmp"));
+                   
+                    //image.Source = BitmapFromUri(new Uri(imagesDir + "/0.bmp"));
+                    BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
+                    
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = "Frame:" + " " + "0";
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
@@ -169,7 +175,7 @@ namespace EDITgui
                 else
                 {
                     stopSpinner();
-                    MessageBox.Show(warningMessages.cannotLoadDicom);
+                    MessageBox.Show(messages.cannotLoadDicom);
                 }
 
 
@@ -181,7 +187,7 @@ namespace EDITgui
         {
             if (userPoints.Count < 2)
             {
-                MessageBox.Show(warningMessages.notEnoughUserPoints);
+                MessageBox.Show(messages.notEnoughUserPoints);
                 return;
             }
 
@@ -231,15 +237,15 @@ namespace EDITgui
             endingFrame = -1;
             clear_canvas();
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
-            repeatProcess(); //trigger repeat process of photoAcousticPart 
+            repeatPhotoAcousticProcess(); //trigger repeat process of photoAcousticPart 
         }
 
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
-            if (!areTherePoints())
+            if (!bladder.Any())
             {
-                MessageBox.Show(warningMessages.noBladderSegmentation);
+                MessageBox.Show(messages.noBladderSegmentation);
                 return;
             }
 
@@ -249,7 +255,7 @@ namespace EDITgui
             await Task.Run(() => {
                 STLPath = coreFunctionality.extractBladderSTL(bladderCvPoints);
             });
-            EDITgui.Geometry bladderGeometry = new Geometry() { TypeName = "Bladder", Path = STLPath, actor = null };
+            EDITgui.Geometry bladderGeometry = new Geometry() { geometryName = "Bladder", Path = STLPath, actor = null };
             if (STLPath != null)
             {
                 returnBladderSTL(bladderGeometry);
@@ -270,7 +276,7 @@ namespace EDITgui
         {
             if (!areTherePoints())
             {
-                MessageBox.Show(warningMessages.noBladderSegmentation);
+                MessageBox.Show(messages.noBladderSegmentation);
                 return;
             }
             startSpinner();
@@ -279,7 +285,7 @@ namespace EDITgui
             await Task.Run(() => {
                 STLPath = coreFunctionality.extractSkin(bladderCvPoints);
             });
-            EDITgui.Geometry skinGeometry = new Geometry() { TypeName = "Layer", Path = STLPath, actor = null };
+            EDITgui.Geometry skinGeometry = new Geometry() { geometryName = "Layer", Path = STLPath, actor = null };
             if(STLPath != null) returnSkinSTL(skinGeometry);
             stopSpinner();
         }
@@ -291,8 +297,8 @@ namespace EDITgui
             {
                 slider_value = (int)slider.Value;
                 sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
-                string I = imagesDir + "/" + slider_value.ToString() + ".bmp"; //path
-                image.Source = new BitmapImage(new Uri(I)); 
+                //string I = imagesDir + "/" + slider_value.ToString() + ".bmp"; //path
+                BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
                 frame_num_label.Content = "Frame:" + " " + slider_value.ToString();
                 diplayMetrics();
                 clear_canvas();
@@ -677,6 +683,16 @@ namespace EDITgui
             }
 
         }
+        
+        public void BitmapFromPath(string imagePath)
+        {
+            image.Source = new BitmapImage();
+            ((BitmapImage)image.Source).BeginInit();
+            ((BitmapImage)image.Source).CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            ((BitmapImage)image.Source).CacheOption = BitmapCacheOption.OnLoad;
+            ((BitmapImage)image.Source).UriSource = new Uri(imagePath);
+            ((BitmapImage)image.Source).EndInit();
+        }
 
         private void ApplicationGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -756,6 +772,15 @@ namespace EDITgui
             }
         }
 
+        private void ClosedSurface_Click(object sender, RoutedEventArgs e)
+        {
+            coreFunctionality.fillHoles = closedSurface.IsChecked.Value;
+        }
+
+        private void ChechBox_Logger_Click(object sender, RoutedEventArgs e)
+        {
+            coreFunctionality.setLoggingOnOff(chechBox_Logger.IsChecked.Value);
+        }
 
 
         private void startSpinner()
@@ -887,15 +912,20 @@ namespace EDITgui
             return endingFrame;
         }
 
-        private void ClosedSurface_Click(object sender, RoutedEventArgs e)
-        {
-            coreFunctionality.fillHoles = closedSurface.IsChecked.Value;
-        }
-
 
         public List<List<Point>> getBladderPoints()
         {
             return bladder;
+        }
+
+        public List<double> getBladderArea()
+        {
+            return bladderArea;
+        }
+
+        public List<double> getBladderPerimeter()
+        {
+            return bladderPerimeter;
         }
 
     }
