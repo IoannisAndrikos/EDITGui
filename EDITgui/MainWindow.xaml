@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EDITgui"
         mc:Ignorable="d"
-        Title="MainWindow"
+        Title="EDIT"
         Height="886.5" 
         Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded" Closed="Window_Closed">
 
