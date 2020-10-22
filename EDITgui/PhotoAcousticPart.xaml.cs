@@ -195,16 +195,13 @@ namespace EDITgui
                     OXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = messages.frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                    // OnrepeatProcess();
-                    stopSpinner();
+                    OnrepeatProcess();
                 }
                 else
                 {
                     OXYDicomFile = null;
-                    stopSpinner();
-                    MessageBox.Show(messages.cannotLoadDicom);
                 }
-                
+                stopSpinner();
             }
         }
 
@@ -237,16 +234,13 @@ namespace EDITgui
                     frame_num_label.Content = messages.frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     // OnrepeatProcess();
-                    stopSpinner();
                 }
                 else
                 {
                     DeOXYDicomFile = null;
-                    stopSpinner();
-                    MessageBox.Show(messages.cannotLoadDicom);
                 }
+                stopSpinner();
 
-               
             }
         }
 
@@ -270,8 +264,8 @@ namespace EDITgui
                 thickness = editCVPointToWPFPoint(thicknessCvPoints);
                 fillMeanThicknessList(coreFunctionality.meanThickness);
             });
-            bladderUltrasound = ultrasound.getBladderPoints();
-            diplayMetrics();
+            bladderUltrasound = ultrasound.getBladderPoints().ToList();
+            displayMetrics();
             clear_canvas();
             display();
             stopSpinner();
@@ -287,7 +281,7 @@ namespace EDITgui
             }
 
             startSpinner();
-            bladderUltrasound = ultrasound.getBladderPoints();
+            bladderUltrasound = ultrasound.getBladderPoints().ToList();
 
             double minThick = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
@@ -302,7 +296,7 @@ namespace EDITgui
                 fillMeanThicknessList(coreFunctionality.meanThickness);
             });
             clear_canvas();
-            diplayMetrics();
+            displayMetrics();
             display();
             stopSpinner();
         }
@@ -372,7 +366,7 @@ namespace EDITgui
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
         bool areTherePoints()
         {
-            return (thickness.Any() && thickness[slider_value].Any());
+            return (image.Source!=null && thickness.Any() && thickness[slider_value].Any());
         }
 
         void display()
@@ -381,13 +375,23 @@ namespace EDITgui
             {
                 draw_polyline(thickness[slider_value]);
                 draw_points(thickness[slider_value]);
-                
             }
             if (image.Source != null && ultrasound.areTherePoints() && bladderUltrasound.Any())
             {
                 draw_polyline_ultrasound(bladderUltrasound[slider_value]);
             }
-            diplayMetrics();
+
+            if (areTherePoints() && thickness.Any() && contourSeg == ContourSegmentation.CORRECTION)
+            {
+                displayMetrics();
+                metrics_label.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                metrics_label.Visibility = Visibility.Hidden;
+            }
+
+
         }
 
 
@@ -479,19 +483,11 @@ namespace EDITgui
             }
         }
 
-        private void diplayMetrics(bool recalculate = false)
+        private void displayMetrics(bool recalculate = false)
         {
             try
             {
-                if (image.Source != null && slider_value >= ultrasound.getStartingFrame() && slider_value <= ultrasound.getEndingFrame() && contourSeg == ContourSegmentation.CORRECTION)
-                {
-                    metrics_label.Visibility = Visibility.Visible;
-                    metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
-                }
-                else
-                {
-                    metrics_label.Visibility = Visibility.Hidden;
-                }
+                metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
             }
             catch (Exception e)
             {
@@ -541,13 +537,13 @@ namespace EDITgui
                             thickness[slider_value].Insert(indexA, point);
                         }
                         display();
-                         diplayMetrics(true);
+                         displayMetrics(true);
                     }else if (contourSeg == ContourSegmentation.MANUAL)
                     {
                         clear_canvas();
                         thickness[slider_value].Add(point);
                         display();
-                        diplayMetrics(true);
+                        displayMetrics(true);
                     }
                 }
                 else if (e.ChangedButton == MouseButton.Right && contourSeg == ContourSegmentation.MANUAL)
@@ -555,7 +551,7 @@ namespace EDITgui
                     if (thickness[slider_value].Any())
                     {
                         thickness[slider_value].RemoveAt(thickness[slider_value].Count - 1);
-                        diplayMetrics(true);
+                        displayMetrics(true);
                         if (contourSeg == ContourSegmentation.MANUAL)
                         {
                             clear_canvas();
@@ -637,7 +633,7 @@ namespace EDITgui
                     {
                         int j = thickness[slider_value].IndexOf(initialPoisition1);
                         thickness[slider_value][j] = final_position;
-                        diplayMetrics(true);
+                        displayMetrics(true);
                         //update_centerline();
                     }
                     catch { }
@@ -688,7 +684,7 @@ namespace EDITgui
             if (count == thickness[slider_value].Count)
             {
                 doManual();
-               diplayMetrics(true);
+               displayMetrics(true);
                 return;
             }
             thickness[slider_value].RemoveAll(item => pointsToRemove.Contains(item));
@@ -696,7 +692,7 @@ namespace EDITgui
 
 
             pointsToRemove.Clear();
-            diplayMetrics();
+            displayMetrics();
         }
 
 
@@ -806,7 +802,7 @@ namespace EDITgui
             if (this.contourSeg == ContourSegmentation.MANUAL)
             {
                 doCorrection();
-                diplayMetrics(true);
+                displayMetrics(true);
             }
             else if (this.contourSeg == ContourSegmentation.CORRECTION)
             {
@@ -815,7 +811,7 @@ namespace EDITgui
             else if (this.contourSeg == ContourSegmentation.FILL_POINTS)
             {
                 doCorrection();
-                diplayMetrics(true);
+                displayMetrics(true);
             }
         }
 
@@ -840,7 +836,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;
-            diplayMetrics();
+            displayMetrics();
             clear_canvas();
             display();
         }
@@ -852,7 +848,7 @@ namespace EDITgui
             this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
             if (areTherePoints()) thickness[slider_value].Clear();
-            diplayMetrics();
+            displayMetrics();
             clear_canvas();
             display();
         }
@@ -861,7 +857,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.doFillPointState();
             contourSeg = ContourSegmentation.FILL_POINTS;
-            diplayMetrics();
+            displayMetrics();
             clear_canvas();
             display();
         }

@@ -15,7 +15,7 @@ namespace EDITgui
 
         public string area  = "Area";
 
-        public string perimeter  = "perimeter";
+        public string perimeter  = "Perimeter";
 
         public string meanThickness  = "Mean thickness";
 

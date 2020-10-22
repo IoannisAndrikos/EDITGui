@@ -12,6 +12,8 @@ namespace EDITgui
     public class coreFunctionality
     {
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
+        public static EDITCore.EDITResponse response = EDITCore.EDITResponse.Instance;
+
         public static Messages errorMessages = new Messages();
 
 
@@ -36,9 +38,16 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportImages(dcmfile);
-                pixelSpacing = editPro.getPixelSpacing();
-                return imagesDir;
+                editPro.exportUltrasoundImages(dcmfile);
+                if (response.isSuccessful())
+                {
+                    pixelSpacing = response.getNumericData();
+                    return response.getPath();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
             }
             catch (Exception)
             {
@@ -70,8 +79,16 @@ namespace EDITgui
             try
             {
                 editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
-                List<List<EDITCore.CVPoint>> bladderCvPoints = editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
-                return bladderCvPoints;
+                editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
+                if (response.isSuccessful())
+                {
+                    return response.getAllFramesData();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
+                
             }catch(Exception e){
                 MessageBox.Show(errorMessages.errorOccured);
             }
@@ -88,8 +105,15 @@ namespace EDITgui
         {
             try
             {
-               String STLPath = editPro.extractBladderSTL(bladderCvPoints, fillHoles);
-                return STLPath;
+               editPro.extractBladderSTL(bladderCvPoints, fillHoles);
+                if (response.isSuccessful())
+                {
+                    return response.getPath();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
             }
             catch (Exception e)
             {
@@ -118,8 +142,8 @@ namespace EDITgui
         {
             try
             {
-               String STLPath =  editPro.extractSkinSTL(bladderCvPoints, fillHoles);
-                return STLPath;
+               editPro.extractSkinSTL(bladderCvPoints, fillHoles);
+                return response.getPath();
             }
             catch (Exception e)
             {
@@ -135,8 +159,15 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportOXYImages(dcmfile);
-                return imagesDir;
+                editPro.exportOXYImages(dcmfile);
+                if (response.isSuccessful())
+                {
+                    return response.getPath();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
             }
             catch (Exception)
             {
@@ -152,8 +183,15 @@ namespace EDITgui
         {
             try
             {
-                string imagesDir = editPro.exportDeOXYImages(dcmfile);
-                return imagesDir;
+                editPro.exportDeOXYImages(dcmfile);
+                if (response.isSuccessful())
+                {
+                    return response.getPath();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
             }
             catch (Exception)
             {
@@ -169,10 +207,10 @@ namespace EDITgui
         {
             try
             {
-                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
-                List<List<EDITCore.CVPoint>> thicknessCvPoints = editPro.extractThickness(bladderCvPoints);
-                meanThickness = editPro.getMeanThickness();
-                return thicknessCvPoints;
+               editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
+               editPro.extractThickness(bladderCvPoints);
+               meanThickness = response.getNumericData();
+                return response.getAllFramesData();
             }
             catch (Exception)
             {
@@ -188,9 +226,9 @@ namespace EDITgui
             try
             {
                 editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
-                List<EDITCore.CVPoint> newThicknessCvPoints = editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
-                meanThickness = editPro.getMeanThickness();
-                return newThicknessCvPoints;
+                editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
+                meanThickness = response.getNumericData();
+                return response.getUniqueFramesData();
             }
             catch (Exception)
             {
@@ -205,8 +243,16 @@ namespace EDITgui
         {
             try
             {
-                String STLPath = editPro.extractThicknessSTL(thicknessCvPoints, fillHoles);
-                return STLPath;
+               editPro.extractThicknessSTL(thicknessCvPoints, fillHoles);
+                if (response.isSuccessful())
+                {
+                    return response.getPath();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
+                
             }
             catch (Exception e)
             {
@@ -221,8 +267,8 @@ namespace EDITgui
         {
             try
             {
-                List<String> txtPath = editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints);
-                return txtPath;
+                editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints);
+                return response.getPaths();
             }
             catch (Exception e)
             {
