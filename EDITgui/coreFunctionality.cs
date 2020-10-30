@@ -143,7 +143,15 @@ namespace EDITgui
             try
             {
                editPro.extractSkinSTL(bladderCvPoints, fillHoles);
-                return response.getPath();
+               if (response.isSuccessful())
+               {
+                   return response.getPath();
+               }
+               else
+               {
+                   MessageBox.Show(response.getFailure());
+               }
+
             }
             catch (Exception e)
             {
@@ -268,7 +276,15 @@ namespace EDITgui
             try
             {
                 editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints);
-                return response.getPaths();
+                if(response.isSuccessful())
+                {
+                    return response.getPaths();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
+              
             }
             catch (Exception e)
             {

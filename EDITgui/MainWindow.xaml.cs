@@ -68,7 +68,7 @@ namespace EDITgui
 
             ultrasound = new UltrasoundPart(this);
             photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
-          
+         
 
             ultrasound.InitializeCoreFunctionality = core;
             photoAcoustic.InitializeCoreFunctionality = core;
