@@ -159,8 +159,7 @@ namespace EDITgui
 
 
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
-                
-                   
+
                     //image.Source = BitmapFromUri(new Uri(imagesDir + "/0.bmp"));
                     BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
                     

@@ -191,6 +191,8 @@ namespace EDITgui
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     OXYDicomWasLoaded = true;
 
+                    makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
+
                     doOXYState();
                     oxy_deoxy_switch.setDotToLeft();
 
@@ -228,6 +230,8 @@ namespace EDITgui
                 {
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     deOXYDicomWasLoaded = true;
+
+                    makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
 
                     doDeOXYState();
                     oxy_deoxy_switch.setDotToRight();
@@ -990,11 +994,13 @@ namespace EDITgui
             {
                 BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                 frame_num_label.Content = messages.frame + ":" + " " + slider_value;
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             }
             else
             {
                 image.Source = null;
                 frame_num_label.Content = "";
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
             }
         }
 
@@ -1009,14 +1015,27 @@ namespace EDITgui
             {
                 BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                 frame_num_label.Content = messages.frame + ":" + " " + slider_value;
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             }
             else
             {
                 image.Source = null;
                 frame_num_label.Content = "";
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
             }
         }
+
+        private void makeVisibeOrUnvisibleSliderLeftTickBar(Visibility visibility)
+        {
+            UIElement ultrasoundSliderLeftTickBar = (UIElement)ultrasound.ultrasound_slider.Template.FindName("BottomTick", ultrasound.ultrasound_slider);
+            ultrasoundSliderLeftTickBar.Visibility = visibility;
+        }
+
+
         //-----------------------------------------------
+
+
+
 
 
         void fillMeanThicknessList(List<double> values)

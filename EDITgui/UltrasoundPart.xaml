@@ -260,7 +260,7 @@
         </ControlTemplate>
         <ControlTemplate x:Key="SliderThumbVerticalDefault" TargetType="{x:Type Thumb}">
             <Grid HorizontalAlignment="Stretch" Height="10.499" Margin="0" VerticalAlignment="Stretch" Width="17.25">
-                <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="10.499" Margin="0" RadiusY="3.5" RadiusX="3.5" Stroke="#FF335B5B" VerticalAlignment="Top" Width="17.25"/>
+                <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="10.499" Margin="0" RadiusY="3.542" RadiusX="3.542" Stroke="#FF335B5B" VerticalAlignment="Top" Width="17.25"/>
             </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="true"/>
@@ -277,7 +277,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TickBar x:Name="TopTick" Grid.Column="0" Fill="#FF335B5B" Margin="0,0,2,0" Placement="Left" Visibility="Visible" Width="4"/>
-                    <TickBar x:Name="BottomTick" Grid.Column="2" Fill="{TemplateBinding Foreground}" Margin="2,0,0,0" Placement="Right" Visibility="Collapsed" Width="4"/>
+                    <TickBar x:Name="BottomTick" Grid.Column="2" Fill="#FF335B5B" Margin="2,0,0,0" Placement="Right" Visibility="Hidden" Width="4"/>
                     <Border x:Name="TrackBackground" BorderThickness="1" Background="#FF333333" Grid.Column="1" HorizontalAlignment="center" Margin="0,5" Width="4.0">
                         <Canvas Margin="-1,-6">
                             <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Visibility="Hidden" Width="4.0"/>
