@@ -80,6 +80,7 @@ namespace EDITgui
         public bool wasBladderModelExtracted = false;
 
         List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
+        List<double> imageSize = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
         double calibration_x;
         double calibration_y;
 
@@ -149,10 +150,16 @@ namespace EDITgui
                 await Task.Run(() => {
                     imagesDir = coreFunctionality.exportImages(ultrasoundDicomFile, enablelogging);
                     pixelSpacing = coreFunctionality.pixelSpacing;
+                    imageSize = coreFunctionality.imageSize;
+
                 });
                 if (imagesDir != null)
                 {
                     metrics.setPixelSpacing(pixelSpacing);
+
+
+                    fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
+                
                    
                     //image.Source = BitmapFromUri(new Uri(imagesDir + "/0.bmp"));
                     BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
@@ -745,9 +752,34 @@ namespace EDITgui
             zoomUltrasoundChanged(zoom_out);
         }
 
-        private void Switch_auto_manual_Click(object sender, RoutedEventArgs e)
+        private void fitUIAccordingToDicomImageSize(double height, double width)
         {
-           
+            double value = 736 - width;
+
+            Thickness ImageRectangleMargin = image_Rectangle.Margin;
+            Thickness ImageBorderMargin = imageborder.Margin;
+            Thickness StudyLabelMargin = ultrasound_studyname_label.Margin;
+            Thickness ConfigMargin = segmentation_config.Margin;
+            Thickness waitMargin = Wait.Margin;
+
+            ImageRectangleMargin.Left = value;
+            ImageBorderMargin.Left = value + 1;
+            StudyLabelMargin.Left = value;
+            ConfigMargin.Left = value + 1;
+            waitMargin.Left = 736 - width / 2 - Wait.Width / 2;
+
+            image_Rectangle.Margin = ImageRectangleMargin;
+            imageborder.Margin = ImageBorderMargin;
+            ultrasound_studyname_label.Margin = StudyLabelMargin;
+            segmentation_config.Margin = ConfigMargin;
+            Wait.Margin = waitMargin;
+
+
+            image_Rectangle.Width = width + 2;
+            imageborder.Width = width;
+            image.Width = width;
+            image.MinWidth = width;
+
         }
 
         private void Switch_auto_manual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

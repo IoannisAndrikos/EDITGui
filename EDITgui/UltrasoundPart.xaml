@@ -337,8 +337,8 @@
 
 
         <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="675.5,7.5,0,0" VerticalAlignment="Top" Width="62.5" Foreground="White"/>
-        <Rectangle Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
+        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="668,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
+        <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
                 <Grid x:Name="startingFrameMarker" HorizontalAlignment="Left" Height="14.626" VerticalAlignment="Top" Width="13.25" Canvas.Left="353.788" Canvas.Top="288.458" Visibility="Hidden">
@@ -413,7 +413,7 @@
             <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
         </Grid>
 
-        <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="368.402,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
+        <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.523,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
             <Grid.RenderTransform>
                 <RotateTransform Angle="0" />
             </Grid.RenderTransform>

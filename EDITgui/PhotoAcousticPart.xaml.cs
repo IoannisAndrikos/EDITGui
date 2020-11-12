@@ -72,6 +72,7 @@ namespace EDITgui
         OxyDeOxyState currentOxyDeOxyState = OxyDeOxyState.OXY;
 
         List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
+        List<double> imageSize = new List<double>();
         double calibration_x;
         double calibration_y;
 
@@ -182,10 +183,12 @@ namespace EDITgui
                 await Task.Run(() =>
                 {
                     OXYimagesDir = coreFunctionality.exportOXYImages(OXYDicomFile, true); //enablelogging = true
+                    imageSize = coreFunctionality.imageSize;
 
                 });
                 if (OXYimagesDir != null)
                 {
+                    fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     OXYDicomWasLoaded = true;
 
                     doOXYState();
@@ -219,10 +222,11 @@ namespace EDITgui
                 await Task.Run(() =>
                 {
                     deOXYimagesDir = coreFunctionality.exportDeOXYImages(DeOXYDicomFile, true); //enablelogging = true
-
+                    imageSize = coreFunctionality.imageSize;
                 });
                 if (deOXYimagesDir != null)
                 {
+                    fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     deOXYDicomWasLoaded = true;
 
                     doDeOXYState();
@@ -795,7 +799,31 @@ namespace EDITgui
             zoomPhotoAccousticChanged(zoom_out);
         }
 
-       
+        private void fitUIAccordingToDicomImageSize(double height, double width)
+        {
+            Thickness waitMargin = Wait.Margin;
+            Thickness frameNumMargin = frame_num_label.Margin;
+            Thickness MetricsLabelMargin = metrics_label.Margin;
+            Thickness OXYButtonsMargin = OXY_Buttons.Margin;
+
+            frameNumMargin.Left = 665 - Math.Abs(736 - width);
+            MetricsLabelMargin.Left = 580 - Math.Abs(736 - width);
+            OXYButtonsMargin.Left = 339 - Math.Abs(736 - width);
+            waitMargin.Left = width / 2 - Wait.Width / 2;//344.426 - Math.Abs(736 - width);
+
+            frame_num_label.Margin = frameNumMargin;
+            metrics_label.Margin = MetricsLabelMargin;
+            OXY_Buttons.Margin = OXYButtonsMargin;
+            Wait.Margin = waitMargin;
+
+
+            image_Rectangle.Width = width + 2;
+            imageborder.Width = width;
+            image.Width = width;
+            image.MinWidth = width;
+
+        }
+
 
         private void Switch_auto_manual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

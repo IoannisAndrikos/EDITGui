@@ -20,6 +20,7 @@ namespace EDITgui
         public bool fillHoles = true;
         public List<double> meanThickness;
         public List<double> pixelSpacing;
+        public List<double> imageSize;
 
         public void setExaminationsDirectory(String path)
         {
@@ -41,7 +42,8 @@ namespace EDITgui
                 editPro.exportUltrasoundImages(dcmfile);
                 if (response.isSuccessful())
                 {
-                    pixelSpacing = response.getNumericData();
+                    pixelSpacing = response.getNumericData().GetRange(0,2);
+                    imageSize = response.getNumericData().GetRange(2,2);
                     return response.getPath();
                 }
                 else
@@ -170,6 +172,8 @@ namespace EDITgui
                 editPro.exportOXYImages(dcmfile);
                 if (response.isSuccessful())
                 {
+                    //pixelSpacing = response.getNumericData().GetRange(0, 2);
+                    imageSize = response.getNumericData().GetRange(2, 2);
                     return response.getPath();
                 }
                 else
@@ -194,6 +198,8 @@ namespace EDITgui
                 editPro.exportDeOXYImages(dcmfile);
                 if (response.isSuccessful())
                 {
+                    //pixelSpacing = response.getNumericData().GetRange(0, 2);
+                    imageSize = response.getNumericData().GetRange(2, 2);
                     return response.getPath();
                 }
                 else
