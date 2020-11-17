@@ -9,6 +9,12 @@ namespace EDITgui
 {
     public class Messages
     {
+        public string ultrasound = "ultrasound";
+
+        public string oxy = "OXY";
+
+        public string deoxy = "DeOXY";
+
         public string selectDicom = "Select Dicom File";
 
         public string saveStudy  = "Save Current Study";
@@ -27,28 +33,46 @@ namespace EDITgui
 
         public string mmB3 = "mm\xB3";
 
-        public string startingFrame = "Starting_Frame";
 
-        public string endingFrame = "Ending_Frame";
+        //---------------------------------------INFO FILE VARIABLES--------------------------------------
+        public string startingFrame = "StartingFrame";
 
-       
+        public string endingFrame = "EndingFrame";
 
+        public string clickPointX = "clickPointX";
 
+        public string clickPointY = "clickPointY";
 
+        public string repeats = "Repeats";
 
+        public string smoothing = "Smoothing";
 
+        public string lamda1 = "Lamda1";
 
+        public string lamda2 = "Lamda2";
 
+        public string levelSize = "LevelSize";
 
+        public string filtering = "Filtering";
 
+        public string logger = "Logger";
 
+        public string closesSurface = "closesSurface";
 
+        public string minThickness = "minThickness";
 
+        public string maxThickness = "maxThickness";
+
+        //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
+        public string limitedInfoFile = "The info.txt file of the study is limited";
 
 
         //---------------------------------------ERROR CATEGORY---------------------------------------------------------------
         public string errorOccured = "An error  has occurred. Check the previous step of the process";
-        
+
+        public string ultrasoundFileNotLoaded = "Ultrasound File was not loaded";
+
+
         public string cannotLoadDicom = "Cannot load the selected DICOM file";
 
         public string notEnoughUserPoints = "You have to specify the initial and last frame by clicking on the ultrasound sequence";

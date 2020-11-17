@@ -38,17 +38,19 @@ namespace EDITgui
     public partial class MainWindow : Window
     {
 
-       public string workingPath;
-        public string workingDir = "Edit_Current_working_study";
-        RenderWindowControl myRenderWindowControl;
+        public string workingPath;
+        StudyFile studyFile = new StudyFile();
+        public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
         UltrasoundPart ultrasound;
         PhotoAcousticPart photoAcoustic;
-        vtkRenderer renderer;
-        List<Geometry> STLGeometries = new List<Geometry>();
+        public vtkRenderer renderer;
+        public List<Geometry> STLGeometries = new List<Geometry>();
 
-        SaveActions saveActions = new SaveActions();
+        SaveActions saveActions;
+        LoadActions loadActions;
         coreFunctionality core;
+        checkBeforeExecute check;
 
         public static int count = 0;
 
@@ -61,14 +63,20 @@ namespace EDITgui
             Console.WriteLine(Path.GetTempPath());
 
             //workingPath = "C:/Users/Legion Y540/Desktop/EDIT_STUDIES" + System.IO.Path.DirectorySeparatorChar + workingDir;
-            workingPath = Path.GetTempPath() + workingDir;
+            workingPath = studyFile.getWorkingPath();
 
             core.setExaminationsDirectory(workingPath);
             //core.setExaminationsDirectory("//Mac/Home/Downloads/export");
 
             ultrasound = new UltrasoundPart(this);
             photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
-         
+
+            check = new checkBeforeExecute(this, ultrasound, photoAcoustic);
+            loadActions = new LoadActions(this, core, ultrasound, photoAcoustic, workingPath);
+            saveActions = new SaveActions(this, core, ultrasound, photoAcoustic, workingPath);
+
+            ultrasound.setChecker(check);
+            photoAcoustic.setChecker(check);
 
             ultrasound.InitializeCoreFunctionality = core;
             photoAcoustic.InitializeCoreFunctionality = core;
@@ -359,20 +367,40 @@ namespace EDITgui
                     saveActions.copyLogFilesToFolderOfStudy(saveFileDialog.FileName, workingPath);
 
                     //save info
-                    saveActions.writeInfoTXTFile(saveFileDialog.FileName, collectAllStudyInfo(), SaveActions.FileType.info);
+                    saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
+
                 }
             }
         }
 
 
-        private List<StudyInfo> collectAllStudyInfo()
+        private void LoadStudy_Click(object sender, RoutedEventArgs e)
         {
-            List<StudyInfo> studyInfo = new List<StudyInfo>();
-            studyInfo.Add(new StudyInfo() { infoName = messages.startingFrame, infoValue = ultrasound.startingFrame });
-            studyInfo.Add(new StudyInfo() { infoName = messages.endingFrame, infoValue = ultrasound.endingFrame });
-
-            return studyInfo;
+            System.Windows.Forms.FolderBrowserDialog browserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = browserDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                //load available 2D Data
+                loadActions.loadAvailableData(browserDialog.SelectedPath);
+            }
         }
+
+        public void cleanVTKRender()
+        {
+            foreach (Geometry g in STLGeometries)
+            {
+                if (g.actor != null) renderer.RemoveActor(g.actor);
+            }
+            myRenderWindowControl.RenderWindow.Render();
+            volumeMetricsItems.Items.Clear();
+            SurfaceAreaMetricsItems.Items.Clear();
+            geometryItems.Items.Clear();
+            STLGeometries.Clear();
+            ultrasound.bladderGeometryPath = null;
+            photoAcoustic.thicknessGeometryPath = null;
+        }
+
+
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -415,12 +443,5 @@ namespace EDITgui
 
         }
     }
-
-    public class StudyInfo
-    {
-        public string infoName { get; set; }
-        public double infoValue { get; set; }
-    }
-
 
 }

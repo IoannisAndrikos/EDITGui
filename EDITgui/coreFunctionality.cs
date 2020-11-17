@@ -19,6 +19,7 @@ namespace EDITgui
 
         public bool fillHoles = true;
         public List<double> meanThickness;
+        public double uniqueContourMeanThickness;
         public List<double> pixelSpacing;
         public List<double> imageSize;
 
@@ -172,7 +173,7 @@ namespace EDITgui
                 editPro.exportOXYImages(dcmfile);
                 if (response.isSuccessful())
                 {
-                    //pixelSpacing = response.getNumericData().GetRange(0, 2);
+                    pixelSpacing = response.getNumericData().GetRange(0, 2);
                     imageSize = response.getNumericData().GetRange(2, 2);
                     return response.getPath();
                 }
@@ -198,7 +199,7 @@ namespace EDITgui
                 editPro.exportDeOXYImages(dcmfile);
                 if (response.isSuccessful())
                 {
-                    //pixelSpacing = response.getNumericData().GetRange(0, 2);
+                    pixelSpacing = response.getNumericData().GetRange(0, 2);
                     imageSize = response.getNumericData().GetRange(2, 2);
                     return response.getPath();
                 }
@@ -223,8 +224,15 @@ namespace EDITgui
             {
                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
                editPro.extractThickness(bladderCvPoints);
-               meanThickness = response.getNumericData();
-                return response.getAllFramesData();
+                if (response.isSuccessful())
+                {
+                    meanThickness = response.getNumericData();
+                    return response.getAllFramesData();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }
             }
             catch (Exception)
             {
@@ -241,8 +249,15 @@ namespace EDITgui
             {
                 editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
                 editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
-                meanThickness = response.getNumericData();
-                return response.getUniqueFramesData();
+                if (response.isSuccessful())
+                {
+                    uniqueContourMeanThickness = response.getNumericData()[0];
+                    return response.getUniqueFramesData();
+                }
+                else
+                {
+                    MessageBox.Show(response.getFailure());
+                }   
             }
             catch (Exception)
             {
@@ -277,11 +292,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public List<String> extractOXYandDeOXYPoints(List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints)
+        public List<String> extractOXYandDeOXYPoints(List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints, String bladderGeometryPath, String thicknessGeometryPath)
         {
             try
             {
-                editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints);
+                editPro.extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints, bladderGeometryPath, thicknessGeometryPath);
                 if(response.isSuccessful())
                 {
                     return response.getPaths();
@@ -318,7 +333,24 @@ namespace EDITgui
         }
 
 
+        //----------------------------------------------FILL VARIABLES WHEN LOAD DATA FROM UI---------------------------------
 
+        [HandleProcessCorruptedStateExceptions]
+        public void fill2DVariablesWhenLoadDataFromUI(int startingFrame, int endingFrame)
+        {
+            try
+            {
+                editPro.fill2DVariablesWhenLoadDataFromUI(startingFrame, endingFrame);
+                if (!response.isSuccessful())
+                {
+                    MessageBox.Show(response.getFailure());
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(errorMessages.errorOccured);
+            }
+        }
     }
 
 }

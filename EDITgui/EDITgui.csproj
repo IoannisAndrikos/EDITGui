@@ -138,6 +138,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="checkBeforeExecute.cs" />
+    <Compile Include="LoadActions.cs" />
     <Compile Include="metricsCalculations.cs" />
     <Compile Include="PhotoAcousticPart.xaml.cs">
       <DependentUpon>PhotoAcousticPart.xaml</DependentUpon>
@@ -149,6 +151,7 @@
     <Compile Include="someControls\ThreeStateButton.xaml.cs">
       <DependentUpon>ThreeStateButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StudyFile.cs" />
     <Compile Include="UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>

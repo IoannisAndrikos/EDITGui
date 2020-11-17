@@ -53,10 +53,6 @@ namespace EDITgui
                 Dot.Margin = LeftSide;
 
             }
-
-
-
-
         }
 
         private void Back_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -79,25 +75,37 @@ namespace EDITgui
 
         }
 
-
-
-        public void setColor(String hexColor)
+        public void setCustomDotToRight()
         {
-            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexColor));
-        }
-
-
-        public void setDotToRight()
-        {
+            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF0A25D1"));
             Dot.Margin = RightSide;
             Toggled = true;
         }
 
-        public void setDotToLeft()
+        public void setCustomDotToLeft()
         {
+            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFCB2525"));
             Dot.Margin = LeftSide;
             Toggled = false;
         }
+
+        //public void setColor(String hexColor)
+        //{
+        //    Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexColor));
+        //}
+
+
+        //public void setDotToRight()
+        //{
+        //    Dot.Margin = RightSide;
+        //    Toggled = true;
+        //}
+
+        //public void setDotToLeft()
+        //{
+        //    Dot.Margin = LeftSide;
+        //    Toggled = false;
+        //}
 
 
     }
