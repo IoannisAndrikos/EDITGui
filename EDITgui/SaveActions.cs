@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Globalization;
+using System.Xml;
 
 namespace EDITgui
 {
@@ -89,47 +90,49 @@ namespace EDITgui
             }
         }
 
-        public void writeInfoTXTFile(string path, List<StudyInfo> info, FileType type)
+        public void writeInfoXMLFile(string path, List<StudySetting> info, FileType type)
         {
             string filename = getProperFileName(type);
-
-            string filePath = getFolderName(path, type, true) + filename;
-            StreamWriter sw = new StreamWriter(filePath);
+            string filePath = getFolderName(path, type, true) + getProperFileName(type);
+            XmlWriter xmlWriter = XmlWriter.Create(filePath);
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("settings");
             for (int i = 0; i < info.Count; i++)
             {
-                sw.WriteLine(info[i].infoName.ToString() + " " + info[i].infoValue);
+                xmlWriter.WriteElementString(info[i].infoName.ToString(), info[i].infoValue.ToString());
             }
-            sw.Close();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+
+
         }
 
-
-        public List<StudyInfo> collectAllStudyInfo()
+        public List<StudySetting> collectAllStudySetings()
         {
-            List<StudyInfo> studyInfo = new List<StudyInfo>();
-            studyInfo.Add(new StudyInfo() { infoName = infoType.StartingFrame, infoValue = ultrasound.startingFrame });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.EndingFrame, infoValue = ultrasound.endingFrame });
+            List<StudySetting> studyInfo = new List<StudySetting>();
+            studyInfo.Add(new StudySetting() { infoName = settingType.StartingFrame, infoValue = ultrasound.startingFrame });
+            studyInfo.Add(new StudySetting() { infoName = settingType.EndingFrame, infoValue = ultrasound.endingFrame });
 
             if (ultrasound.userPoints.Count ==2)
             {
-                studyInfo.Add(new StudyInfo() { infoName = infoType.ClickPointX, infoValue = ultrasound.userPoints[0].X });
-                studyInfo.Add(new StudyInfo() { infoName = infoType.ClickPointY, infoValue = ultrasound.userPoints[0].Y });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = ultrasound.userPoints[0].X });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = ultrasound.userPoints[0].Y });
             }
             else
             {
-                studyInfo.Add(new StudyInfo() { infoName = infoType.ClickPointX, infoValue = 0 });
-                studyInfo.Add(new StudyInfo() { infoName = infoType.ClickPointY, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = 0 });
             }
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Repeats, infoValue = double.Parse(ultrasound.Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Smoothing, infoValue = double.Parse(ultrasound.Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Lamda1, infoValue = double.Parse(ultrasound.Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Lamda2, infoValue = double.Parse(ultrasound.Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.LevelSize, infoValue = double.Parse(ultrasound.LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Filtering, infoValue = double.Parse((ToInt(ultrasound.chechBox_FIltering.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.Logger, infoValue = double.Parse((ToInt(ultrasound.chechBox_Logger.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.ClosedSurface, infoValue = double.Parse((ToInt(ultrasound.closedSurface.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.minThickness, infoValue = double.Parse(photoAcoustic.minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudyInfo() { infoName = infoType.maxThickness, infoValue = double.Parse(photoAcoustic.maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-
+            studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(ultrasound.Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(ultrasound.Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(ultrasound.Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(ultrasound.Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(ultrasound.LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(ultrasound.chechBox_FIltering.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Logger, infoValue = double.Parse((ToInt(ultrasound.chechBox_Logger.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(ultrasound.closedSurface.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(photoAcoustic.minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(photoAcoustic.maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
             return studyInfo;
         }
 

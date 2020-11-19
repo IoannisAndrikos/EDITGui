@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
 
 namespace EDITgui
 {
@@ -84,8 +85,9 @@ namespace EDITgui
                 photoAcoustic.AfterLoadDeOXYDicom(DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
             }
 
+            //The order below plays significant role! Be careful here!
             loadAvailableBladderPoints(path);
-            loadInfoFile(path);
+            loadXMLInfoFile(path);
             loadAvailableThicknessPoints(path);
             loadAvailableThicknessMetrics(path);
             load3DAvailableData(path);
@@ -150,60 +152,59 @@ namespace EDITgui
 
         }
 
-
-        public void loadInfoFile(string path)
+        public void loadXMLInfoFile(string path)
         {
-            Dictionary<string, double> info =  new Dictionary<string, double>();
-
-            string infoFilePath = getFolderName(path, FileType.info, false) + getProperFileName(FileType.info);
+            string infoFilePath = getFolderName(path, FileType.settings, false) + getProperFileName(FileType.settings);
             if (File.Exists(infoFilePath))
             {
-                StreamReader sr = new StreamReader(infoFilePath);
-                String line;
-                string x;
+                Dictionary<string, double> settings = new Dictionary<string, double>();
+                XmlDocument doc = new XmlDocument();
+                doc.Load(infoFilePath);
                 double y;
-                while ((line = sr.ReadLine()) != null)
+                foreach (XmlElement xmlElement in doc.DocumentElement)
                 {
-                    if (line.Any())
-                    {
-                        string[] col = line.Split(' ');
-                        y = double.Parse(col[1].Replace(",", "."), CultureInfo.InvariantCulture);
-                        info.Add(col[0], y);
-                    }
+                    y = double.Parse(xmlElement.InnerText.Replace(",", "."), CultureInfo.InvariantCulture);
+                    settings.Add(xmlElement.Name, y);
+                    // Console.Out.WriteLine(xmlElement.Name);
                 }
-                sr.Close();
+                setStudySettings(settings);
             }
+        }
+
+
+        void setStudySettings(Dictionary<string, double> settings)
+        {
             try
             {
                 //set settings of study
-                ultrasound.startingFrame = (int)info[infoType.StartingFrame.ToString()];
-                ultrasound.endingFrame = (int)info[infoType.EndingFrame.ToString()];
+                ultrasound.startingFrame = (int)settings[settingType.StartingFrame.ToString()];
+                ultrasound.endingFrame = (int)settings[settingType.EndingFrame.ToString()];
                 Point clickpoint = new Point();
-                clickpoint.X = (double)info[infoType.ClickPointX.ToString()];
-                clickpoint.Y = (double)info[infoType.ClickPointY.ToString()];
-                if(clickpoint.X!=0 && clickpoint.Y != 0)
+                clickpoint.X = (double)settings[settingType.ClickPointX.ToString()];
+                clickpoint.Y = (double)settings[settingType.ClickPointY.ToString()];
+                if (clickpoint.X != 0 && clickpoint.Y != 0)
                 {
                     ultrasound.userPoints.Add(clickpoint);
                     ultrasound.userPoints.Add(clickpoint);
                 }
-                ultrasound.Repeats.Text = ((int)info[infoType.Repeats.ToString()]).ToString();
-                ultrasound.Smoothing.Text = ((int)info[infoType.Smoothing.ToString()]).ToString();
-                ultrasound.Lamda1.Text = string.Format("{0:0.0}", ((double)info[infoType.Lamda1.ToString()]));
-                ultrasound.Lamda2.Text = string.Format("{0:0.0}", ((double)info[infoType.Lamda2.ToString()]));
-                ultrasound.LevelsetSize.Text = ((int)info[infoType.LevelSize.ToString()]).ToString();
-                ultrasound.chechBox_FIltering.IsChecked = ToBool((int)info[infoType.Filtering.ToString()]);
-                ultrasound.chechBox_Logger.IsChecked = ToBool((int)info[infoType.Logger.ToString()]);
-                ultrasound.closedSurface.IsChecked = ToBool((int)info[infoType.ClosedSurface.ToString()]);
+                ultrasound.Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
+                ultrasound.Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
+                ultrasound.Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
+                ultrasound.Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
+                ultrasound.LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
+                ultrasound.chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
+                ultrasound.chechBox_Logger.IsChecked = ToBool((int)settings[settingType.Logger.ToString()]);
+                ultrasound.closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
                 core.fillHoles = ultrasound.closedSurface.IsChecked.Value;
-                photoAcoustic.minThickness.Text = string.Format("{0:0.0}", ((double)info[infoType.minThickness.ToString()]));
-                photoAcoustic.maxThickness.Text = string.Format("{0:0.0}", ((double)info[infoType.maxThickness.ToString()]));
+                photoAcoustic.minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
+                photoAcoustic.maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
             }
             catch (Exception e)
             {
                 MessageBox.Show(messages.limitedInfoFile);
             }
-          
         }
+
 
 
 

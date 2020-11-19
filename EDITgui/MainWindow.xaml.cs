@@ -367,8 +367,8 @@ namespace EDITgui
                     saveActions.copyLogFilesToFolderOfStudy(saveFileDialog.FileName, workingPath);
 
                     //save info
-                    saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
-
+                   // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
+                    saveActions.writeInfoXMLFile(saveFileDialog.FileName, saveActions.collectAllStudySetings(), SaveActions.FileType.settings);
                 }
             }
         }

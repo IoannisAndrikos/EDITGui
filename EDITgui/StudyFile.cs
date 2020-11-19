@@ -17,7 +17,7 @@ namespace EDITgui
 
         public enum FileType
         {
-            bladderPoints, thicknessPoints, info, Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D,
+            bladderPoints, thicknessPoints, settings, Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D,
             UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, Bladder2DArea, Bladder2DPerimeter, MeanThickness
         }
 
@@ -47,8 +47,8 @@ namespace EDITgui
                 case FileType.MeanThickness:
                     filename = "MeanThickness.txt";
                     break;
-                case FileType.info:
-                    filename = "Info.txt";
+                case FileType.settings:
+                    filename = "Settings.xml";
                     break;
                 case FileType.UltrasoundDicomFile:
                     filename = "ultrasound.dcm"; //+ Path.GetExtension(sourceFileName);
@@ -92,7 +92,7 @@ namespace EDITgui
                 case FileType.thicknessPoints:
                     dir = path + Path.DirectorySeparatorChar + "Points_2D" + Path.DirectorySeparatorChar + "Thickness_Points" + Path.DirectorySeparatorChar;
                     break;
-                case FileType.info:
+                case FileType.settings:
                     dir = path + Path.DirectorySeparatorChar;
                     break;
                 case FileType.Bladder3D:
@@ -120,15 +120,15 @@ namespace EDITgui
             return dir;
         }
 
-        public enum infoType
+        public enum settingType
         {
             StartingFrame, EndingFrame, ClickPointX, ClickPointY, Repeats, Smoothing, Lamda1,
             Lamda2, LevelSize, Filtering, Logger, ClosedSurface, minThickness, maxThickness
         };
 
-        public class StudyInfo
+        public class StudySetting
         {
-            public infoType infoName { get; set; }
+            public settingType infoName { get; set; }
             public double infoValue { get; set; }
         }
     }
