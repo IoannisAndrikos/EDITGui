@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace EDITgui
             messages = new Messages();
         }
 
-        public async void loadAvailableData(string path)//async
+        public async void loadAvailableData(string path)
         {
             List<double> pixelSpacing = new List<double>();
             List<double> imageSize = new List<double>();
@@ -42,15 +43,16 @@ namespace EDITgui
             string UltrasoundimagesDir = null;
             string OXYImagesDir = null;
             string DeOXYImagesDir = null;
-
             ultrasound.startSpinner();
             photoAcoustic.startSpinner();
+            string studyName = Path.GetFileName(path);
 
-
-           await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 ultrasoundDicomFile = getFolderName(path, FileType.UltrasoundDicomFile, false) + getProperFileName(FileType.UltrasoundDicomFile);
                 if (File.Exists(ultrasoundDicomFile))
                 {
+                    ultrasoundDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), ultrasoundDicomFile, FileType.UltrasoundDicomFile);
                     UltrasoundimagesDir = core.exportImages(ultrasoundDicomFile, false);
                     pixelSpacing = core.pixelSpacing;
                     imageSize = core.imageSize;
@@ -58,44 +60,44 @@ namespace EDITgui
                 OXYDicomFile = getFolderName(path, FileType.OXYDicomFile, false) + Path.DirectorySeparatorChar + getProperFileName(FileType.OXYDicomFile);
                 if (File.Exists(OXYDicomFile))
                 {
+                    OXYDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), OXYDicomFile, FileType.OXYDicomFile);
                     OXYImagesDir = core.exportOXYImages(OXYDicomFile, false);
                 }
                 DeOXYDicomFile = getFolderName(path, FileType.DeOXYDicomFile, false) + Path.DirectorySeparatorChar + getProperFileName(FileType.DeOXYDicomFile);
                 if (File.Exists(DeOXYDicomFile))
                 {
+                    DeOXYDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), DeOXYDicomFile, FileType.DeOXYDicomFile);
                     DeOXYImagesDir = core.exportDeOXYImages(DeOXYDicomFile, false);
                 }
             });
 
+            ultrasound.stopSpinner();
+            photoAcoustic.stopSpinner();
 
             if (UltrasoundimagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
                 metrics.setPixelSpacing(pixelSpacing);
-                ultrasound.AfterLoadUltrasoundDicom(ultrasoundDicomFile, UltrasoundimagesDir, pixelSpacing, imageSize);
-                
+                ultrasound.AfterLoadUltrasoundDicom(studyName, ultrasoundDicomFile, UltrasoundimagesDir, pixelSpacing, imageSize);
             }
 
             if (OXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                photoAcoustic.AfterLoadOXYDicom(OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
+                photoAcoustic.AfterLoadOXYDicom(studyName, OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
             }
 
             if (DeOXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                photoAcoustic.AfterLoadDeOXYDicom(DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
+                photoAcoustic.AfterLoadDeOXYDicom(studyName, DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
             }
 
             //The order below plays significant role! Be careful here!
             loadAvailableBladderPoints(path);
-            loadXMLInfoFile(path);
+            loadXMLSettingsFile(path);
             loadAvailableThicknessPoints(path);
             loadAvailableThicknessMetrics(path);
             load3DAvailableData(path);
             fill2DBackendVariables();
-            ultrasound.stopSpinner();
-            photoAcoustic.stopSpinner();
         }
-
 
         public void load3DAvailableData(string path)
         {
@@ -152,7 +154,7 @@ namespace EDITgui
 
         }
 
-        public void loadXMLInfoFile(string path)
+        public void loadXMLSettingsFile(string path)
         {
             string infoFilePath = getFolderName(path, FileType.settings, false) + getProperFileName(FileType.settings);
             if (File.Exists(infoFilePath))
@@ -165,7 +167,6 @@ namespace EDITgui
                 {
                     y = double.Parse(xmlElement.InnerText.Replace(",", "."), CultureInfo.InvariantCulture);
                     settings.Add(xmlElement.Name, y);
-                    // Console.Out.WriteLine(xmlElement.Name);
                 }
                 setStudySettings(settings);
             }
@@ -201,7 +202,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                MessageBox.Show(messages.limitedInfoFile);
+                MessageBox.Show(messages.limitedSettingsFile);
             }
         }
 
@@ -231,7 +232,6 @@ namespace EDITgui
                         ultrasound.bladderPerimeter.Add(metrics.calulatePerimeter(ultrasound.bladder[i]));
                     }
                 }
-
                 if (ultrasound.bladder.Any())
                 {
                     ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
@@ -281,7 +281,6 @@ namespace EDITgui
                 }
             }
         }
-
 
         private List<Point> readPointsTXTFile(string filename)
         {

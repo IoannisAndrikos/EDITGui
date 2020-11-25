@@ -65,7 +65,7 @@ namespace EDITgui
         }
 
 
-        public void copyFileToFolderOfStudy(string path, string sourceFileLocation, FileType type)
+        public void copyFileToSaveStudyFolder(string path, string sourceFileLocation, FileType type)
         {
             if (!File.Exists(sourceFileLocation)) return;
 
@@ -78,7 +78,6 @@ namespace EDITgui
         public void copyLogFilesToFolderOfStudy(string path, string workingDirectory)
         {
             if (!Directory.Exists(workingDirectory)) return;
-            Console.WriteLine(workingDirectory + Path.DirectorySeparatorChar);
             string[] fileEntries = Directory.GetFiles(workingDirectory);
             foreach (string file in fileEntries)
             {

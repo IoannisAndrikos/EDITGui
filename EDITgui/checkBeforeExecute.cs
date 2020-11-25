@@ -89,7 +89,7 @@ namespace EDITgui
                     }
                     break;
                 case executionType.extractOXYDeOXY:
-                    if (!photoAcoustic.areTherePoints())
+                    if (!photoAcoustic.thickness.Any())
                     {
                         return messages.noBladderSegmentation;
                     }

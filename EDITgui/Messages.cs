@@ -34,7 +34,7 @@ namespace EDITgui
         public string mmB3 = "mm\xB3";
 
 
-        //---------------------------------------INFO FILE VARIABLES--------------------------------------
+        //---------------------------------------SETTINGS FILE VARIABLES--------------------------------------
         public string startingFrame = "StartingFrame";
 
         public string endingFrame = "EndingFrame";
@@ -63,9 +63,46 @@ namespace EDITgui
 
         public string maxThickness = "maxThickness";
 
-        //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
-        public string limitedInfoFile = "The info.txt file of the study is limited";
+        //--------------------------------------SAVE STUDY NAMES-----------------------------------------
 
+        public string metrics = "Metrics";
+
+        public string points2D = "Points_2D";
+
+        public string objects3D = "Objects_3D";
+
+        public string dicomFiles = "Dicom_files";
+
+        public string bladderPoints = "Bladder_Points";
+
+        public string thicknessPoints = "Thickness_Points";
+
+        public string bladderAreaTXT = "BladderArea.txt";
+
+        public string bladderPerimeterTXT = "BladderPerimeter.txt";
+
+        public string meanThicknessTXT = "MeanThickness.txt";
+
+        public string settingsXML = "Settings.xml";
+
+        public string ulrasoundDCM = "ultrasound.dcm";
+
+        public string oxyDCM = "OXY.dcm";
+
+        public string deoxyDCM = "DeOXY.dcm";
+
+        public string bladderSTL = "Bladder.stl";
+
+        public string thicknessSTL = "Thickness.stl";
+
+        public string oxyTXT = "OXY.txt";
+
+        public string deoxyTXT = "DeOXY.txt";
+
+        public string layerSTL = "Layer.stl";
+
+        //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
+        public string limitedSettingsFile = "The Settings.xml file of the loaded study is limited";
 
         //---------------------------------------ERROR CATEGORY---------------------------------------------------------------
         public string errorOccured = "An error  has occurred. Check the previous step of the process";
@@ -90,5 +127,7 @@ namespace EDITgui
         //------------------------------PROBLEM TO PRODUCE THE STL-------------------------------------------------------
         public string problemToProduceSTL = "Cannot produce the STL object. There is an issue on the 2D segmnetation";
 
+        //--------------------------------------ERROR IN 3D VIEWER-------------------------------------
+        public string noObject3DLoaded = "An minor error occured. Select again the geometry if is not rendered";
     }
 }

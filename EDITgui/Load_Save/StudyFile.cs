@@ -11,9 +11,13 @@ namespace EDITgui
    {
         public Messages messages = new Messages();
 
-        string workingDir = "Edit_Current_working_study";
+        string workspaceDirName = "Edit_Workspace";
 
-        string workingObjects3DFolderName = "stl_objects";
+        //Be careful! This folder names are produced form the backend code!
+        //if you change them here remember to change them at the backend, as well!
+        string workspace3DObjectsDirName = "stl_objects"; 
+
+        string workspaceDicomFilesDirName = "dicom_files";
 
         public enum FileType
         {
@@ -22,14 +26,24 @@ namespace EDITgui
         }
 
 
-        public string getWorkingPath()
+        public string getWorkspace()
         {
-            return Path.GetTempPath() + workingDir;
+            return Path.GetTempPath() + workspaceDirName;
         }
 
         public string getWorkingObjetcts3DPath()
         {
-            return getWorkingPath() + Path.DirectorySeparatorChar + workingObjects3DFolderName + Path.DirectorySeparatorChar;
+            return getWorkspace() + Path.DirectorySeparatorChar + workspace3DObjectsDirName + Path.DirectorySeparatorChar;
+        }
+
+        public string getWorkspaceDicomPath()
+        {
+            string dicomFilesDir = getWorkspace() + Path.DirectorySeparatorChar + workspaceDicomFilesDirName;
+            if (!Directory.Exists(dicomFilesDir))
+            {
+                Directory.CreateDirectory(dicomFilesDir);
+            }
+            return dicomFilesDir + Path.DirectorySeparatorChar;
         }
 
 
@@ -39,40 +53,40 @@ namespace EDITgui
             switch (type)
             {
                 case FileType.Bladder2DArea:
-                    filename = "BladderArea.txt";
+                    filename = messages.bladderAreaTXT;
                     break;
                 case FileType.Bladder2DPerimeter:
-                    filename = "BladderPerimeter.txt";
+                    filename = messages.bladderPerimeterTXT;
                     break;
                 case FileType.MeanThickness:
-                    filename = "MeanThickness.txt";
+                    filename = messages.meanThicknessTXT;
                     break;
                 case FileType.settings:
-                    filename = "Settings.xml";
+                    filename = messages.settingsXML;
                     break;
                 case FileType.UltrasoundDicomFile:
-                    filename = "ultrasound.dcm"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.ulrasoundDCM;
                     break;
                 case FileType.OXYDicomFile:
-                    filename = "OXY.dcm"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.oxyDCM;
                     break;
                 case FileType.DeOXYDicomFile:
-                    filename = "DeOXY.dcm"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.deoxyDCM;
                     break;
                 case FileType.Bladder3D:
-                    filename = "Bladder.stl"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.bladderSTL;
                     break;
                 case FileType.Thickness3D:
-                    filename = "Thickness.stl"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.thicknessSTL;
                     break;
                 case FileType.OXY3D:
-                    filename = "OXY.txt"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.oxyTXT;
                     break;
                 case FileType.DeOXY3D:
-                    filename = "DeOXY.txt";// + Path.GetExtension(sourceFileName);
+                    filename = messages.deoxyTXT;
                     break;
                 case FileType.Layer3D:
-                    filename = "Layer.stl"; //+ Path.GetExtension(sourceFileName);
+                    filename = messages.layerSTL;
                     break;
             }
             return filename;
@@ -87,10 +101,10 @@ namespace EDITgui
             switch (type)
             {
                 case FileType.bladderPoints:
-                    dir = path + Path.DirectorySeparatorChar + "Points_2D" + Path.DirectorySeparatorChar + "Bladder_Points" + Path.DirectorySeparatorChar;
+                    dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.bladderPoints + Path.DirectorySeparatorChar;
                     break;
                 case FileType.thicknessPoints:
-                    dir = path + Path.DirectorySeparatorChar + "Points_2D" + Path.DirectorySeparatorChar + "Thickness_Points" + Path.DirectorySeparatorChar;
+                    dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.thicknessPoints + Path.DirectorySeparatorChar;
                     break;
                 case FileType.settings:
                     dir = path + Path.DirectorySeparatorChar;
@@ -100,17 +114,17 @@ namespace EDITgui
                 case FileType.OXY3D:
                 case FileType.Layer3D:
                 case FileType.DeOXY3D:
-                    dir = path + Path.DirectorySeparatorChar + "Objects_3D" + Path.DirectorySeparatorChar;
+                    dir = path + Path.DirectorySeparatorChar + messages.objects3D + Path.DirectorySeparatorChar;
                     break;
                 case FileType.UltrasoundDicomFile:
                 case FileType.OXYDicomFile:
                 case FileType.DeOXYDicomFile:
-                    dir = path + Path.DirectorySeparatorChar + "Dicom_files" + Path.DirectorySeparatorChar;
+                    dir = path + Path.DirectorySeparatorChar + messages.dicomFiles + Path.DirectorySeparatorChar;
                     break;
                 case FileType.Bladder2DArea:
                 case FileType.Bladder2DPerimeter:
                 case FileType.MeanThickness:
-                    dir = path + Path.DirectorySeparatorChar + "Metrics" + Path.DirectorySeparatorChar;
+                    dir = path + Path.DirectorySeparatorChar + messages.metrics + Path.DirectorySeparatorChar;
                     break;
             }
             if(!Directory.Exists(dir) && create)
@@ -119,6 +133,19 @@ namespace EDITgui
             }
             return dir;
         }
+
+
+        public string copyFileToWorkspace(string path, string sourceFileLocation, FileType type)
+        {
+            if (!File.Exists(sourceFileLocation)) return null;
+
+            string sourceFileNewLocation = path + getProperFileName(type);
+            File.Copy(sourceFileLocation, sourceFileNewLocation, true);
+
+            return sourceFileNewLocation;
+        }
+
+
 
         public enum settingType
         {

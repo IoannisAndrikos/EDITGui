@@ -39,14 +39,15 @@ namespace EDITgui
     {
 
         public string workingPath;
-        StudyFile studyFile = new StudyFile();
         public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
+    
         public vtkRenderer renderer;
         public List<Geometry> STLGeometries = new List<Geometry>();
 
+        StudyFile studyFile;
+        UltrasoundPart ultrasound;
+        PhotoAcousticPart photoAcoustic;
         SaveActions saveActions;
         LoadActions loadActions;
         coreFunctionality core;
@@ -59,14 +60,13 @@ namespace EDITgui
         public MainWindow()
         {
             InitializeComponent();
+            studyFile = new StudyFile();
             core = new coreFunctionality();
+
             Console.WriteLine(Path.GetTempPath());
 
-            //workingPath = "C:/Users/Legion Y540/Desktop/EDIT_STUDIES" + System.IO.Path.DirectorySeparatorChar + workingDir;
-            workingPath = studyFile.getWorkingPath();
-
+            workingPath = studyFile.getWorkspace();
             core.setExaminationsDirectory(workingPath);
-            //core.setExaminationsDirectory("//Mac/Home/Downloads/export");
 
             ultrasound = new UltrasoundPart(this);
             photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
@@ -161,7 +161,14 @@ namespace EDITgui
                 geometry.volumeLabel.Visibility = Visibility.Visible;
                 geometry.surfaceAreaLabel.Visibility = Visibility.Visible;
             }
-            visualizeGeometries(geometry);
+            try
+            {
+                visualizeGeometries(geometry);
+            }catch(Exception)
+            {
+                MessageBox.Show(messages.noObject3DLoaded);
+            }
+            
         }
 
 
@@ -355,13 +362,13 @@ namespace EDITgui
                     //save geometries
                     foreach (Geometry geometry in STLGeometries)
                     {
-                        saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, geometry.Path, geometry.getSaveActionFileType());
+                        saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, geometry.Path, geometry.getSaveActionFileType());
                     }
 
                     //save Dicom
-                    if (ultrasound.ultrasoundDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
-                    if (photoAcoustic.OXYDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
-                    if (photoAcoustic.DeOXYDicomFile != null) saveActions.copyFileToFolderOfStudy(saveFileDialog.FileName, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
+                    if (ultrasound.ultrasoundDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
+                    if (photoAcoustic.OXYDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
+                    if (photoAcoustic.DeOXYDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
 
                     //save logfiles
                     saveActions.copyLogFilesToFolderOfStudy(saveFileDialog.FileName, workingPath);
@@ -399,8 +406,6 @@ namespace EDITgui
             ultrasound.bladderGeometryPath = null;
             photoAcoustic.thicknessGeometryPath = null;
         }
-
-
 
         private void Window_Closed(object sender, EventArgs e)
         {

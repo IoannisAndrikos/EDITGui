@@ -139,19 +139,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="checkBeforeExecute.cs" />
-    <Compile Include="LoadActions.cs" />
-    <Compile Include="metricsCalculations.cs" />
+    <Compile Include="Load_Save\LoadActions.cs" />
+    <Compile Include="MetricsCalc\metricsCalculations.cs" />
     <Compile Include="PhotoAcousticPart.xaml.cs">
       <DependentUpon>PhotoAcousticPart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SaveActions.cs" />
-    <Compile Include="someControls\ToggleButton.xaml.cs">
+    <Compile Include="Load_Save\SaveActions.cs" />
+    <Compile Include="UIControls\ToggleButton.xaml.cs">
       <DependentUpon>ToggleButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="someControls\ThreeStateButton.xaml.cs">
+    <Compile Include="UIControls\ThreeStateButton.xaml.cs">
       <DependentUpon>ThreeStateButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StudyFile.cs" />
+    <Compile Include="Load_Save\StudyFile.cs" />
     <Compile Include="UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
@@ -177,11 +177,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="someControls\ToggleButton.xaml">
+    <Page Include="UIControls\ToggleButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="someControls\ThreeStateButton.xaml">
+    <Page Include="UIControls\ThreeStateButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -236,6 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Edit_logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="logo\Edit_logo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

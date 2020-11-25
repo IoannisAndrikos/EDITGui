@@ -44,9 +44,10 @@ namespace EDITgui
         public delegate void STLThicknessHandler(EDITgui.Geometry geometry);
         public static event STLThicknessHandler returnThicknessSTL = delegate { };
 
+        Messages messages = new Messages();
+        StudyFile studyFile = new StudyFile();
         MainWindow mainWindow;
         UltrasoundPart ultrasound;
-        Messages messages = new Messages();
         coreFunctionality coreFunctionality;// = new coreFunctionality();
         checkBeforeExecute check;
 
@@ -189,7 +190,8 @@ namespace EDITgui
 
                 await Task.Run(() =>
                 {
-                    OXYimagesDir = coreFunctionality.exportOXYImages(openFileDialog.FileName, true); //enablelogging = true
+                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.OXYDicomFile);
+                    OXYimagesDir = coreFunctionality.exportOXYImages(dicomPath, true); //enablelogging = true
                     imageSize = coreFunctionality.imageSize;
 
                 });
@@ -224,7 +226,8 @@ namespace EDITgui
 
                 await Task.Run(() =>
                 {
-                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(openFileDialog.FileName, true); //enablelogging = true
+                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.DeOXYDicomFile);
+                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(dicomPath, true); //enablelogging = true
                     imageSize = coreFunctionality.imageSize;
                 });
                 if (deOXYimagesDir != null)
@@ -248,7 +251,7 @@ namespace EDITgui
 
 
 
-        public void AfterLoadOXYDicom(string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
+        public void AfterLoadOXYDicom(string studyName, string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
         {
             this.OXYDicomFile = filename;
             this.OXYimagesDir = imagesDir;
@@ -258,14 +261,14 @@ namespace EDITgui
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doOXYState();
             BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-            OXY_studyname_label.Content = Directory.GetParent(System.IO.Path.GetDirectoryName(filename)).Name + " " + messages.oxy;
+            OXY_studyname_label.Content = studyName + " " + messages.oxy;
             frame_num_label.Content = messages.frame + ": " + slider_value;
             fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             OnrepeatProcess();
         }
 
 
-        public void AfterLoadDeOXYDicom(string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
+        public void AfterLoadDeOXYDicom(string studyName, string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
         {
             this.DeOXYDicomFile = filename;
             this.deOXYimagesDir = imagesDir;
@@ -276,7 +279,7 @@ namespace EDITgui
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doDeOXYState();
             BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
-            DeOXY_studyname_label.Content = Directory.GetParent(System.IO.Path.GetDirectoryName(filename)).Name + " " + messages.deoxy;
+            DeOXY_studyname_label.Content = studyName + " " + messages.deoxy;
             frame_num_label.Content = messages.frame + ": " + slider_value;
             fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
         }
@@ -1008,7 +1011,7 @@ namespace EDITgui
 
         private void doOXYState()
         {
-            oxy_deoxy_label.Content = "  OXY";
+            oxy_deoxy_label.Content = "  " + messages.oxy;
             oxy_deoxy_switch.setCustomDotToLeft();
             currentOxyDeOxyState = OxyDeOxyState.OXY;
             if (OXYDicomFile!=null)
@@ -1033,7 +1036,7 @@ namespace EDITgui
 
         private void doDeOXYState()
         {
-            oxy_deoxy_label.Content = "DeOXY";
+            oxy_deoxy_label.Content = messages.deoxy;
             oxy_deoxy_switch.setCustomDotToRight();
             currentOxyDeOxyState = OxyDeOxyState.DEOXY;
             if (DeOXYDicomFile!=null)

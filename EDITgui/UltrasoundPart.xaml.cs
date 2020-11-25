@@ -96,8 +96,9 @@ namespace EDITgui
         MainWindow mainWindow;
 
         //create objects of the other classes
+        StudyFile studyFile = new StudyFile();
         Messages messages = new Messages();
-        coreFunctionality coreFunctionality;// = new coreFunctionality();
+        coreFunctionality coreFunctionality;
         metricsCalculations metrics = new metricsCalculations();
         checkBeforeExecute check;
 
@@ -153,7 +154,8 @@ namespace EDITgui
                 ultrasoundDicomFile = null;
                 bool enablelogging = chechBox_Logger.IsChecked.Value;
                 await Task.Run(() => {
-                    imagesDir = coreFunctionality.exportImages(openFileDialog.FileName, enablelogging);
+                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.UltrasoundDicomFile);
+                    imagesDir = coreFunctionality.exportImages(dicomPath, enablelogging);
                     pixelSpacing = coreFunctionality.pixelSpacing;
                     imageSize = coreFunctionality.imageSize;
                 });
@@ -189,7 +191,7 @@ namespace EDITgui
             }
         }
 
-        public void AfterLoadUltrasoundDicom(string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
+        public void AfterLoadUltrasoundDicom(string studyName, string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
         {
             this.ultrasoundDicomFile = filename;
             this.imagesDir = imagesDir;
@@ -200,7 +202,7 @@ namespace EDITgui
             fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
             //image.Source = BitmapFromUri(new Uri(imagesDir + "/0.bmp"));
             BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
-            ultrasound_studyname_label.Content = Directory.GetParent(System.IO.Path.GetDirectoryName(filename)).Name + " " + messages.ultrasound;
+            ultrasound_studyname_label.Content = studyName + " " + messages.ultrasound;
             frame_num_label.Content = "Frame:" + " " + "0";
             fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             slider.Value = 0;
