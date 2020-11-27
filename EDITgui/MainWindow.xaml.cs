@@ -39,6 +39,7 @@ namespace EDITgui
     {
 
         public string workingPath;
+        public string loadedStudyPath = null; //is filled if study is loaded
         public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
     
@@ -166,7 +167,7 @@ namespace EDITgui
                 visualizeGeometries(geometry);
             }catch(Exception)
             {
-                MessageBox.Show(messages.noObject3DLoaded);
+                CustomMessageBox.Show(messages.noObject3DLoaded, messages.warning, MessageBoxButton.OK);
             }
             
         }
@@ -342,54 +343,29 @@ namespace EDITgui
 
         private void SaveStudy_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.CheckFileExists = false;
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.Title = messages.saveStudy;
-            if (saveFileDialog.ShowDialog() == true)
+            if (loadedStudyPath == null)
             {
-                //if (saveFileDialog.FileName != null)
+                saveActions.doSave();
+            }
+            else
+            {
+                MessageBoxResult result = CustomMessageBox.Show(messages.getOverwriteExistingStudyQuestion(loadedStudyPath), messages.warning, MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes)
                 {
-                    //save bladder
-                    saveActions.writePointsToTXT(saveFileDialog.FileName, ultrasound.getBladderPoints(), SaveActions.FileType.bladderPoints);
-                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, ultrasound.getBladderArea(), SaveActions.FileType.Bladder2DArea);
-                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, ultrasound.getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
-
-                    //save thickness
-                    saveActions.writePointsToTXT(saveFileDialog.FileName, photoAcoustic.getThicknessPoints(), SaveActions.FileType.thicknessPoints);
-                    saveActions.writeMetricsToTXT(saveFileDialog.FileName, photoAcoustic.getMeanThickness(), SaveActions.FileType.MeanThickness);
-
-                    //save geometries
-                    foreach (Geometry geometry in STLGeometries)
-                    {
-                        saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, geometry.Path, geometry.getSaveActionFileType());
-                    }
-
-                    //save Dicom
-                    if (ultrasound.ultrasoundDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
-                    if (photoAcoustic.OXYDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
-                    if (photoAcoustic.DeOXYDicomFile != null) saveActions.copyFileToSaveStudyFolder(saveFileDialog.FileName, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
-
-                    //save logfiles
-                    saveActions.copyLogFilesToFolderOfStudy(saveFileDialog.FileName, workingPath);
-
-                    //save info
-                   // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
-                    saveActions.writeInfoXMLFile(saveFileDialog.FileName, saveActions.collectAllStudySetings(), SaveActions.FileType.settings);
+                    saveActions.saveAvailableData(loadedStudyPath);
                 }
+                else if (result == MessageBoxResult.No)
+                {
+                    saveActions.doSave();
+                }
+
             }
         }
 
 
         private void LoadStudy_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog browserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = browserDialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                //load available 2D Data
-                loadActions.loadAvailableData(browserDialog.SelectedPath);
-            }
+            loadActions.doLoad();
         }
 
         public void cleanVTKRender()

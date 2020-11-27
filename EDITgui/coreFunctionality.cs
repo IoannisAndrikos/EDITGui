@@ -31,7 +31,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
         }
 
@@ -49,12 +49,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -70,7 +70,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
         }
 
@@ -89,11 +89,11 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
                 
             }catch(Exception e){
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -115,12 +115,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception e)
             {
-                MessageBox.Show(errorMessages.problemToProduceSTL);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -135,7 +135,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
         }
 
@@ -152,13 +152,13 @@ namespace EDITgui
                }
                else
                {
-                   MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                }
 
             }
             catch (Exception e)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -179,12 +179,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -205,12 +205,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -231,12 +231,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -256,12 +256,12 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }   
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return new List<EDITCore.CVPoint>();
         }
@@ -279,13 +279,13 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
                 
             }
             catch (Exception e)
             {
-                MessageBox.Show(errorMessages.problemToProduceSTL);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -303,13 +303,13 @@ namespace EDITgui
                 }
                 else
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
               
             }
             catch (Exception e)
             {
-                MessageBox.Show(errorMessages.problemToProduceSTL);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
             return null;
         }
@@ -327,7 +327,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
 
         }
@@ -343,12 +343,12 @@ namespace EDITgui
                 editPro.fill2DVariablesWhenLoadDataFromUI(startingFrame, endingFrame);
                 if (!response.isSuccessful())
                 {
-                    MessageBox.Show(response.getFailure());
+                    CustomMessageBox.Show(response.getFailure(), errorMessages.error, MessageBoxButton.OK);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(errorMessages.errorOccured);
+                CustomMessageBox.Show(errorMessages.errorOccured, errorMessages.error, MessageBoxButton.OK);
             }
         }
     }

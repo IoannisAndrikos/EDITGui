@@ -139,6 +139,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="checkBeforeExecute.cs" />
+    <Compile Include="CustMessageBox\CustomMessageBox.cs" />
+    <Compile Include="CustMessageBox\CustomMessageBoxWindow.xaml.cs">
+      <DependentUpon>CustomMessageBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Load_Save\LoadActions.cs" />
     <Compile Include="MetricsCalc\metricsCalculations.cs" />
     <Compile Include="PhotoAcousticPart.xaml.cs">
@@ -155,6 +159,10 @@
     <Compile Include="UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
+    <Page Include="CustMessageBox\CustomMessageBoxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -239,6 +247,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="logo\Edit_logo.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="CustMessageBox\Edit_logo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

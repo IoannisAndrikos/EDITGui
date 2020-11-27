@@ -176,6 +176,7 @@ namespace EDITgui
                     slider.Maximum = fileCount - 1;
                     slider.TickFrequency = 1;
                     slider.Visibility = Visibility.Visible;
+                    switch_auto_manual.Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
                 }
@@ -184,6 +185,7 @@ namespace EDITgui
                     ultrasound_studyname_label.Content = "";
                     frame_num_label.Content = "";
                     image.Source = null;
+                    switch_auto_manual.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
                 }
                 doRepeatProcess();
@@ -212,6 +214,7 @@ namespace EDITgui
             slider.Maximum = fileCount - 1;
             slider.TickFrequency = 1;
             slider.Visibility = Visibility.Visible;
+            switch_auto_manual.Visibility = Visibility.Visible;
             calibration_x = image.Source.Width / canvasUltrasound.Width;
             calibration_y = image.Source.Height / canvasUltrasound.Height;
             doRepeatProcess();
@@ -223,7 +226,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extract2DBladder);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -286,7 +289,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extract3DBladder);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -319,7 +322,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extract3DLayer);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -804,18 +807,21 @@ namespace EDITgui
             Thickness StudyLabelMargin = ultrasound_studyname_label.Margin;
             Thickness ConfigMargin = segmentation_config.Margin;
             Thickness waitMargin = Wait.Margin;
+            Thickness switchAutoManual = switch_auto_manual.Margin;
 
             ImageRectangleMargin.Left = value;
             ImageBorderMargin.Left = value + 1;
             StudyLabelMargin.Left = value;
             ConfigMargin.Left = value + 1;
             waitMargin.Left = 736 - width / 2 - Wait.Width / 2;
+            switchAutoManual.Left = value + 1;
 
             image_Rectangle.Margin = ImageRectangleMargin;
             imageborder.Margin = ImageBorderMargin;
             ultrasound_studyname_label.Margin = StudyLabelMargin;
             segmentation_config.Margin = ConfigMargin;
             Wait.Margin = waitMargin;
+            switch_auto_manual.Margin = switchAutoManual;
 
 
             image_Rectangle.Width = width + 2;

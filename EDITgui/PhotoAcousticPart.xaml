@@ -148,7 +148,6 @@
             <Button x:Name="extract_thickness" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
             <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
             <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="255.5,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Recalculate_Click"/>
-            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="255.5,47.163,0,0" VerticalAlignment="Top" Height="26.001" Width="132.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
             <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Left" Height="26.001" Margin="255.5,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDeOXYDicom_Click"/>
             <local:ToggleButton x:Name="oxy_deoxy_switch" HorizontalAlignment="Left" Margin="16.563,25.879,0,0" VerticalAlignment="Top" Height="30.666" Width="49.752" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="Oxy_deoxy_switch_MouseLeftButtonDown">
                 <local:ToggleButton.RenderTransform>
@@ -183,6 +182,7 @@
             <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
             <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
         </Grid>
+        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="26.001" Width="132.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
 
 
 

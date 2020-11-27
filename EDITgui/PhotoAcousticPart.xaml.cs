@@ -290,7 +290,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extract2DThickness);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -317,7 +317,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.recalculate);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -348,7 +348,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extract3DThickness);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -372,7 +372,7 @@ namespace EDITgui
             string message = check.getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
             if (message != null)
             {
-                MessageBox.Show(message);
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -1021,6 +1021,7 @@ namespace EDITgui
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
                 DeOXY_studyname_label.Visibility = Visibility.Hidden;
                 OXY_studyname_label.Visibility = Visibility.Visible;
+                switch_auto_manual.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1029,6 +1030,7 @@ namespace EDITgui
                 OXY_studyname_label.Content = "";
                 DeOXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
+                switch_auto_manual.Visibility = Visibility.Hidden;
             }
             clear_canvas();
             display();
@@ -1046,6 +1048,7 @@ namespace EDITgui
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
                 OXY_studyname_label.Visibility = Visibility.Hidden;
                 DeOXY_studyname_label.Visibility = Visibility.Visible;
+                switch_auto_manual.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1054,6 +1057,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Content = "";
                 OXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
+                switch_auto_manual.Visibility = Visibility.Hidden;
             }
             clear_canvas();
             display();

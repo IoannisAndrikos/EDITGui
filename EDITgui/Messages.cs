@@ -100,11 +100,21 @@ namespace EDITgui
         public string deoxyTXT = "DeOXY.txt";
 
         public string layerSTL = "Layer.stl";
+        //--------------------------------------NOTIFY MESSAGES-----------------------------------------------
+
+        public string warning = "Warning";
+
+        public string getOverwriteExistingStudyQuestion(string path)
+        {
+            return "The current study will overwrite the existing study : '" + path + "'. Do you agree?";
+        }
 
         //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
         public string limitedSettingsFile = "The Settings.xml file of the loaded study is limited";
 
         //---------------------------------------ERROR CATEGORY---------------------------------------------------------------
+        public string error = "Error";
+
         public string errorOccured = "An error  has occurred. Check the previous step of the process";
 
         public string ultrasoundFileNotLoaded = "Ultrasound File was not loaded";

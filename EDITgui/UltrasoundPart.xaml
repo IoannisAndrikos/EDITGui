@@ -405,11 +405,10 @@
             <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click"/>
         </Grid>
         <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">
-            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="163.727,46.437,0,0" VerticalAlignment="Top" Height="27.328" Width="128.253" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
             <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
             <Button x:Name="extract_bladder" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
             <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Skin" Content="Extract Layer" HorizontalAlignment="Left" Height="26.002" Margin="163.727,78.765,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
+            <Button x:Name="Export_Skin" Content="Extract Layer" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
             <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
         </Grid>
 
@@ -427,6 +426,7 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
         <Slider x:Name="ultrasound_slider" HorizontalAlignment="Left" Height="514" Margin="742,39,0,0" VerticalAlignment="Top" Width="29.167" Orientation="Vertical" Initialized="Ultrasound_slider_Initialized" ValueChanged="Ultrasound_slider_ValueChanged" Style="{DynamicResource SliderStyle1}" Visibility="Hidden"/>
+        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="27.328" Width="128.253" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
 
 
 

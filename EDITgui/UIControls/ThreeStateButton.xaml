@@ -4,12 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDITgui"
-             mc:Ignorable="d" 
-             d:DesignHeight="26.167" d:DesignWidth="127.499">
-    <Grid Margin="0" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-
-        <Rectangle x:Name="back" HorizontalAlignment="Center" Height="26.167" RadiusY="6.168" RadiusX="6.168" VerticalAlignment="Center" Width="127.499" Fill="#FF335B42"/>
-        <Label x:Name="content" Content="Correction" HorizontalAlignment="Center" Height="17.167" Margin="0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Center" Width="57.667" Foreground="White"/>
+             mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top" Width="83.957" Height="25.459">
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Height="25.542" VerticalAlignment="Top" HorizontalAlignment="Left" Width="83.957">
+        <Rectangle x:Name="back1" Fill="#FF335B42" HorizontalAlignment="Left" Height="29" Margin="0" VerticalAlignment="Top" Width="52.625"/>
+        <Rectangle x:Name="back2" Fill="#FF335B42" HorizontalAlignment="Left" Height="15.334" VerticalAlignment="Top" Width="83.957"/>
+        <Rectangle x:Name="back3" Fill="#FF335B42" HorizontalAlignment="Left" Height="25.542" VerticalAlignment="Top" Width="83.957" RadiusY="8.5" RadiusX="8.5"/>
+        <Label x:Name="content" Content="Correction" Height="17.166" Margin="0" Style="{DynamicResource SimpleLabel}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
     </Grid>
 </UserControl>

@@ -33,6 +33,19 @@ namespace EDITgui
             messages = new Messages();
         }
 
+
+        public void doLoad()
+        {
+            System.Windows.Forms.FolderBrowserDialog browserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = browserDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                //load available 2D Data
+                loadAvailableData(browserDialog.SelectedPath);
+                this.mainWindow.loadedStudyPath = browserDialog.SelectedPath;
+            }
+        }
+
         public async void loadAvailableData(string path)
         {
             List<double> pixelSpacing = new List<double>();
@@ -202,12 +215,9 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                MessageBox.Show(messages.limitedSettingsFile);
+                CustomMessageBox.Show(messages.limitedSettingsFile, messages.warning, MessageBoxButton.OK);
             }
         }
-
-
-
 
         private void loadAvailableBladderPoints(string path)
         {

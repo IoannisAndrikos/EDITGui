@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Globalization;
 using System.Xml;
+using Microsoft.Win32;
 
 namespace EDITgui
 {
@@ -33,6 +34,52 @@ namespace EDITgui
             metrics = new metricsCalculations();
             messages = new Messages();
         }
+
+        public void doSave()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.CheckFileExists = false;
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.Title = messages.saveStudy;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                saveAvailableData(saveFileDialog.FileName);
+                this.mainWindow.loadedStudyPath = saveFileDialog.FileName;
+            }
+        }
+
+
+        public void saveAvailableData(string path)
+        {
+            //save bladder
+            writePointsToTXT(path, ultrasound.getBladderPoints(), SaveActions.FileType.bladderPoints);
+            writeMetricsToTXT(path, ultrasound.getBladderArea(), SaveActions.FileType.Bladder2DArea);
+            writeMetricsToTXT(path, ultrasound.getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
+
+            //save thickness
+            writePointsToTXT(path, photoAcoustic.getThicknessPoints(), SaveActions.FileType.thicknessPoints);
+            writeMetricsToTXT(path, photoAcoustic.getMeanThickness(), SaveActions.FileType.MeanThickness);
+
+            //save geometries
+            foreach (Geometry geometry in this.mainWindow.STLGeometries)
+            {
+                copyFileToSaveStudyFolder(path, geometry.Path, geometry.getSaveActionFileType());
+            }
+
+            //save Dicom
+            if (ultrasound.ultrasoundDicomFile != null) copyFileToSaveStudyFolder(path, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
+            if (photoAcoustic.OXYDicomFile != null) copyFileToSaveStudyFolder(path, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
+            if (photoAcoustic.DeOXYDicomFile != null) copyFileToSaveStudyFolder(path, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
+
+            //save logfiles
+            copyLogFilesToFolderOfStudy(path, workingPath);
+
+            //save info
+            // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
+            writeInfoXMLFile(path, collectAllStudySetings(), SaveActions.FileType.settings);
+        }
+
+
 
         public void writePointsToTXT(string path, List<List<Point>> points, FileType type) 
         {
