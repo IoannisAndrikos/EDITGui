@@ -104,6 +104,8 @@ namespace EDITgui
 
         public string warning = "Warning";
 
+        public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost";
+
         public string getOverwriteExistingStudyQuestion(string path)
         {
             return "The current study will overwrite the existing study : '" + path + "'. Do you agree?";

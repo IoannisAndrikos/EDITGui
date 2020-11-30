@@ -263,7 +263,18 @@ namespace EDITgui
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
         {
-            doRepeatProcess();
+            if(bladder.Any())
+            {
+                MessageBoxResult result = CustomMessageBox.Show(messages.makeUserAwareOfRepeatProcess, messages.warning, MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes)
+                {
+                    doRepeatProcess();
+                }
+            }
+            else
+            {
+                doRepeatProcess();
+            }
         }
 
         private void doRepeatProcess()
@@ -277,8 +288,7 @@ namespace EDITgui
             coreFunctionality.repeatSegmentation();
             startingFrame = -1;
             endingFrame = -1;
-            clear_canvas();
-            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
+            doInsertUserPoints();
             mainWindow.cleanVTKRender();
             repeatPhotoAcousticProcess(); //trigger repeat process of photoAcousticPart
         }
@@ -906,6 +916,17 @@ namespace EDITgui
             clear_canvas();
             display();
         }
+
+        private void doInsertUserPoints()
+        {
+            this.switch_auto_manual.doCorrectionState();
+            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
+            displayMetrics();
+            clear_canvas();
+            display();
+        }
+
+
 
         public bool areTherePoints()
         {
