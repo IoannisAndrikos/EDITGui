@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EDITgui
 {
@@ -111,6 +112,64 @@ namespace EDITgui
                     break;
             }
             return null;
+        }
+
+
+
+        List<int> segmentationGaps = new List<int>();
+        public string checkForSegmentationGaps(List<List<Point>> points)
+        {
+            segmentationGaps.Clear();
+
+            if (ultrasound.processWasExecutedAuto())
+            {
+                for(int i=ultrasound.startingFrame; i<=ultrasound.endingFrame; i++)
+                {
+                    if (!points[i].Any())
+                    {
+                        segmentationGaps.Add(i);
+                    }
+                }
+
+            }
+            else //manual segmentation
+            {
+                int starting = 0;
+                int ending = 0;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (points[i].Any())
+                    {
+                        starting = i;
+                        break;
+                    }
+                }
+                for (int i = points.Count - 1; i >= 0; i--)
+                {
+                    if (points[i].Any())
+                    {
+                        ending = i;
+                        break;
+                    }
+                }
+
+                for (int i = starting; i <= ending; i++)
+                {
+                    if (!points[i].Any())
+                    {
+                        segmentationGaps.Add(i);
+                    }
+                }
+            }
+         
+            if (!segmentationGaps.Any())
+            {
+                return null;
+            }
+            else
+            {
+                return messages.makeUserAwareOfSegmentationGaps(segmentationGaps);
+            }
         }
 
     }

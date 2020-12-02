@@ -104,42 +104,58 @@ namespace EDITgui
 
         public string warning = "Warning";
 
-        public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost";
+        public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost.";
 
         public string getOverwriteExistingStudyQuestion(string path)
         {
-            return "The current study will overwrite the existing study : '" + path + "'. Do you agree?";
+            return "The current study will overwrite the existing study : '" + path + "'. Do you agree?. If you want to save it as a new study press 'No'.";
         }
 
+        public string makeUserAwareOfSegmentationGaps(List<int> frames)
+        {
+            string message = "Frames: [ ";
+            foreach(int f in frames)
+            {
+                message += f.ToString() + " "; 
+            }
+
+            message += "] do not contain segmentation points.";
+
+            return message;
+        }
+
+
+        public string correctDoubleFormat = "Check the settings settings fields (gear button). None field should be empty, while every demical number should be depicted with the following format: '##.###' or '##,###'.";
+
         //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
-        public string limitedSettingsFile = "The Settings.xml file of the loaded study is limited";
+        public string limitedSettingsFile = "The 'Settings.xml' file of the loaded study is limited.";
 
         //---------------------------------------ERROR CATEGORY---------------------------------------------------------------
         public string error = "Error";
 
-        public string errorOccured = "An error  has occurred. Check the previous step of the process";
+        public string errorOccured = "An error has been occurred. Check the previous step of the process and repeat it.";
 
-        public string ultrasoundFileNotLoaded = "Ultrasound File was not loaded";
+        public string ultrasoundFileNotLoaded = "Ultrasound File was not loaded.";
 
 
-        public string cannotLoadDicom = "Cannot load the selected DICOM file";
+        public string cannotLoadDicom = "Cannot load the selected DICOM file.";
 
-        public string notEnoughUserPoints = "You have to specify the initial and last frame by clicking on the ultrasound sequence";
+        public string notEnoughUserPoints = "You have to specify the initial and last frame by clicking on the ultrasound sequence.";
 
-        public string noBladderSegmentation = "There is no bladder 2D segmentation. Accomplice the segmentation of bladder";
+        public string noBladderSegmentation = "There is no bladder 2D segmentation. Accomplice the segmentation of bladder.";
 
-        public string noOXYdicom = "No OXY DICOM file was loaded";
+        public string noOXYdicom = "No OXY DICOM file was loaded.";
 
-        public string noThicknessForUniqueFrame = "There are no initial thickness points for the current frame";
+        public string noThicknessForUniqueFrame = "There are no initial thickness points for the current frame.";
 
-        public string noOXYAndDeOXYImages = "No OXY Or DeOXY DICOM file was loaded";
+        public string noOXYAndDeOXYImages = "No OXY Or DeOXY DICOM file was loaded.";
 
-        public string noBadderOrThickness3DModels = "Before proceeding with the extraction of the OXY and DeOXY points you have to extract both the bladder and thickness 3D model";
+        public string noBadderOrThickness3DModels = "Before proceeding with the extraction of the OXY and DeOXY points you have to extract both the bladder and thickness 3D model.";
 
         //------------------------------PROBLEM TO PRODUCE THE STL-------------------------------------------------------
-        public string problemToProduceSTL = "Cannot produce the STL object. There is an issue on the 2D segmnetation";
+        public string problemToProduceSTL = "Cannot produce the STL object. There is an issue on the 2D segmnetation.";
 
         //--------------------------------------ERROR IN 3D VIEWER-------------------------------------
-        public string noObject3DLoaded = "An minor error occured. Select again the geometry if is not rendered";
+        public string noObject3DLoaded = "An minor error occured. Select again the geometry if is not rendered.";
     }
 }

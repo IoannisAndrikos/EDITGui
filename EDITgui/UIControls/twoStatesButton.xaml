@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="EDITgui.twoStatesButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EDITgui"
+             mc:Ignorable="d" Width="150" Height="30">
+    <Grid>
+        <Grid x:Name="left" Margin="0,0,75,0" MouseLeftButtonDown="Left_MouseLeftButtonDown">
+            <Grid x:Name="D2" Height="30" Width="75" MouseLeftButtonDown="D2_MouseLeftButtonDown"/>
+            <Rectangle x:Name="rec2DFront" Height="30" RadiusY="13" RadiusX="13" Width="75" Fill="#FF335B5B" MouseLeftButtonDown="Rec2DFront_MouseLeftButtonDown"/>
+            <Rectangle x:Name="rec2DBack" Height="30" Width="56" Fill="#FF335B5B" Margin="19,0,0,0" MouseLeftButtonDown="Rec2DBack_MouseLeftButtonDown"/>
+            <Label Content="2D" Margin="0" Style="{DynamicResource SimpleLabel}" Width="16.668" Foreground="White" FontWeight="Bold" RenderTransformOrigin="0.47,0.479" Height="17.627" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+        </Grid>
+        <Grid x:Name="D3" Margin="75,0,0,0" MouseLeftButtonDown="D3_MouseLeftButtonDown">
+            <Rectangle x:Name="rec3DFront" Height="30" RadiusY="13" RadiusX="13" Width="75" Fill="#FF333333" MouseLeftButtonDown="Rec3DFront_MouseLeftButtonDown"/>
+            <Rectangle x:Name="rec3DBack" Height="30" Width="56" Fill="#FF333333" Margin="0,0,19,0" MouseLeftButtonDown="Rec3DBack_MouseLeftButtonDown"/>
+            <Label Content="3D" Margin="0" Style="{DynamicResource SimpleLabel}" Width="16.668" Foreground="White" FontWeight="Bold" RenderTransformOrigin="0.47,0.479" Height="17.627" MouseLeftButtonDown="Label_MouseLeftButtonDown_1"/>
+        </Grid>
+    </Grid>
+</UserControl>

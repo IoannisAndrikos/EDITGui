@@ -147,7 +147,7 @@
             <Button x:Name="loadΟΧΥDicom" Content="Load OXY" HorizontalAlignment="Left" Height="26.001" Margin="108.999,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadΟΧΥDicom_Click"/>
             <Button x:Name="extract_thickness" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
             <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
-            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="255.5,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Recalculate_Click"/>
+            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="255.167,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Recalculate_Click"/>
             <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Left" Height="26.001" Margin="255.5,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDeOXYDicom_Click"/>
             <local:ToggleButton x:Name="oxy_deoxy_switch" HorizontalAlignment="Left" Margin="16.563,25.879,0,0" VerticalAlignment="Top" Height="30.666" Width="49.752" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="Oxy_deoxy_switch_MouseLeftButtonDown">
                 <local:ToggleButton.RenderTransform>
@@ -181,8 +181,9 @@
             <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
             <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
             <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+            <CheckBox x:Name="big_tumor" Content="Big tumor" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="83.2" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
         </Grid>
-        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="26.001" Width="132.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
+        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
 
 
 

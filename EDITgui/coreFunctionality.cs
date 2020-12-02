@@ -23,6 +23,7 @@ namespace EDITgui
         public List<double> pixelSpacing;
         public List<double> imageSize;
 
+        [HandleProcessCorruptedStateExceptions]
         public void setExaminationsDirectory(String path)
         {
             try
@@ -34,6 +35,20 @@ namespace EDITgui
                 displayFailureMessage(errorMessages.errorOccured);
             }
         }
+
+        [HandleProcessCorruptedStateExceptions]
+        public void setStudySettings(double distanceBetweenFrames, double xspace, double yspace)
+        {
+            try
+            {
+                editPro.setStudySettings(distanceBetweenFrames, xspace, yspace);
+            }
+            catch (Exception)
+            {
+                displayFailureMessage(errorMessages.errorOccured);
+            }
+        }
+
 
         [HandleProcessCorruptedStateExceptions]
         public string exportImages(string dcmfile, bool enablelogging)
@@ -218,11 +233,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints, double minThickness, double maxThickness)
+        public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints, double minThickness, double maxThickness, bool bigTumor)
         {
             try
             {
-               editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
+               editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness, bigTumor);
                editPro.extractThickness(bladderCvPoints);
                 if (response.isSuccessful())
                 {
@@ -243,11 +258,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public List<EDITCore.CVPoint> recalculateThicknessOfContour(int frame, List<EDITCore.CVPoint> thicknessCvPoints, double minThickness, double maxThickness)
+        public List<EDITCore.CVPoint> recalculateThicknessOfContour(int frame, List<EDITCore.CVPoint> thicknessCvPoints, double minThickness, double maxThickness, bool bigTumor)
         {
             try
             {
-                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness);
+                editPro.setPhotoAcousticSegmentationConfigurations(minThickness, maxThickness, bigTumor);
                 editPro.extractThicknessForUniqueFrame(frame, thicknessCvPoints);
                 if (response.isSuccessful())
                 {

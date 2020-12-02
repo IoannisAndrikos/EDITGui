@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="EDITgui.settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EDITgui"
+             mc:Ignorable="d" Height="195.562" Width="201.6">
+    <Grid Margin="0">
+        <local:gearButton x:Name="gear" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="20" MouseLeftButtonDown="Gear_MouseLeftButtonDown" Margin="0,5.4,0,0" />
+        <Border x:Name="settingsPanel" BorderBrush="#FF335B5B" BorderThickness="1" HorizontalAlignment="Left" Height="156.797" Margin="4.659,36.304,0,0" VerticalAlignment="Top" Width="192.133" Visibility="Collapsed">
+            <Grid x:Name="settingsGrid" RenderTransformOrigin="-0.02,-0.021" Background="#FF1C1F1F" Margin="0">
+                <Label x:Name="label_auto_manual" Content="Auto" HorizontalAlignment="Left" Height="20" Margin="99.348,9.737,0,0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Top" Width="74.585" Foreground="White"/>
+                <local:ToggleButton x:Name="Auto_manual" HorizontalAlignment="Left" Margin="50.349,5.733,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Auto_manual_MouseLeftButtonDown" Height="26.665" Width="46"/>
+                <TextBox x:Name="textbox_distanceBetweenFrames" HorizontalAlignment="Left" Height="20.167" Margin="128.674,45.9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="53.059" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.203"/>
+                <Label x:Name="label_DistanceBetweenFrames" Content="frame distance (cm):" HorizontalAlignment="Left" Height="34.5" Margin="3.335,40.733,0,0" VerticalAlignment="Top" Width="116.004" Foreground="White"/>
+                <Label x:Name="label_pixelsSpacingX" Content="x-axis pixel size (cm):" HorizontalAlignment="Left" Height="34.5" Margin="3.335,75.233,0,0" VerticalAlignment="Top" Width="120.404" Foreground="White"/>
+                <Label x:Name="label_pixelsSpacingY" Content="y-axis pixel size (cm):" HorizontalAlignment="Left" Height="34.5" Margin="3.335,110.297,0,0" VerticalAlignment="Top" Width="120.404" Foreground="White"/>
+                <TextBox x:Name="textbox_pixelSpacingX" HorizontalAlignment="Left" Height="20.167" Margin="128.739,79.233,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0"/>
+                <TextBox x:Name="textbox_pixelSpacingY" HorizontalAlignment="Left" Height="20.167" Margin="128.739,114.833,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

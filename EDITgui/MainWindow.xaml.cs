@@ -1,8 +1,20 @@
-﻿using System;
+﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Shape;
+using Emgu.CV.UI;
+using Kitware.mummy;
+using Kitware.VTK;
+using Microsoft.Win32;
+using Microsoft.Win32;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,24 +22,10 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
-using Microsoft.Win32;
-
-
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.UI;
-using Microsoft.Win32;
-using OpenCvSharp.Extensions;
-using System.Windows.Media.Animation;
-using OpenCvSharp;
-using Emgu.CV.Shape;
-using Kitware.VTK;
-using Kitware.mummy;
-using System.Globalization;
 using Path = System.IO.Path;
 
 namespace EDITgui
@@ -37,6 +35,7 @@ namespace EDITgui
     /// </summary>
     public partial class MainWindow : Window
     {
+        public enum process{ AUTO, ANOTATION}
 
         public string workingPath;
         public string loadedStudyPath = null; //is filled if study is loaded
@@ -45,10 +44,13 @@ namespace EDITgui
     
         public vtkRenderer renderer;
         public List<Geometry> STLGeometries = new List<Geometry>();
+        public process currentProcess;
 
+        Messages messages;
         StudyFile studyFile;
         UltrasoundPart ultrasound;
         PhotoAcousticPart photoAcoustic;
+        settings studySettings;
         SaveActions saveActions;
         LoadActions loadActions;
         coreFunctionality core;
@@ -56,11 +58,14 @@ namespace EDITgui
 
         public static int count = 0;
 
-        Messages messages = new Messages();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            messages = new Messages();
+            
+            currentProcess = process.AUTO;
             studyFile = new StudyFile();
             core = new coreFunctionality();
 
@@ -71,13 +76,14 @@ namespace EDITgui
 
             ultrasound = new UltrasoundPart(this);
             photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
+            studySettings = new settings(this, core, ultrasound, photoAcoustic);
 
             check = new checkBeforeExecute(this, ultrasound, photoAcoustic);
             loadActions = new LoadActions(this, core, ultrasound, photoAcoustic, workingPath);
             saveActions = new SaveActions(this, core, ultrasound, photoAcoustic, workingPath);
 
-            ultrasound.setChecker(check);
-            photoAcoustic.setChecker(check);
+            ultrasound.setSettings(studySettings, check);
+            photoAcoustic.setSettings(studySettings, check);
 
             ultrasound.InitializeCoreFunctionality = core;
             photoAcoustic.InitializeCoreFunctionality = core;
@@ -89,8 +95,16 @@ namespace EDITgui
             photoAcoustic.Margin = new Thickness(777, 0, 0, 0);
             photoAcoustic.Width = 738;
 
+          
+            studySettings.Margin = new Thickness(10, 5, 0, 0);
+            studySettings.HorizontalAlignment = HorizontalAlignment.Left;
+            studySettings.VerticalAlignment = VerticalAlignment.Top;
+            studySettings.Height = 217;
+            studySettings.Width = 199;
+
             this.Rat.Children.Add(ultrasound);
             this.Rat.Children.Add(photoAcoustic);
+            this.totalGrid.Children.Add(studySettings);
 
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
@@ -296,23 +310,6 @@ namespace EDITgui
         }
 
 
-        private void Bu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            switch (labelView.Content)
-            {
-                case "2D":
-                    labelView.Content = "3D";
-                    Rat.Visibility = Visibility.Hidden;
-                    Viewer3D.Visibility = Visibility.Visible;
-                    break;
-                case "3D":
-                    labelView.Content = "2D";
-                    Viewer3D.Visibility = Visibility.Hidden;
-                    Rat.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
-
 
         private vtkPoints txtPointsToPolyData(string filename)
         {
@@ -391,6 +388,23 @@ namespace EDITgui
             if (Directory.Exists(workingPath))
             {
                 Directory.Delete(workingPath, true);
+            }
+        }
+
+        private void Switch_2D_3D_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            switch (switch_2D_3D.currentState)
+            {
+                case twoStatesButton.states.threeDimensional:
+
+                    Rat.Visibility = Visibility.Collapsed;
+                    Viewer3D.Visibility = Visibility.Visible;
+                    break;
+                case twoStatesButton.states.twoDimensional:
+
+                    Viewer3D.Visibility = Visibility.Collapsed;
+                    Rat.Visibility = Visibility.Visible;
+                    break;
             }
         }
     }

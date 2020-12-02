@@ -196,11 +196,20 @@ namespace EDITgui
                 Point clickpoint = new Point();
                 clickpoint.X = (double)settings[settingType.ClickPointX.ToString()];
                 clickpoint.Y = (double)settings[settingType.ClickPointY.ToString()];
-                if (clickpoint.X != 0 && clickpoint.Y != 0)
+                if (ultrasound.startingFrame == -1 || ultrasound.endingFrame == -1)
                 {
-                    ultrasound.userPoints.Add(clickpoint);
-                    ultrasound.userPoints.Add(clickpoint);
+                    ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.INSERT_USER_POINTS;
                 }
+                else
+                {
+                    if (clickpoint.X != 0 && clickpoint.Y != 0)
+                    {
+                        ultrasound.userPoints.Add(clickpoint);
+                        ultrasound.userPoints.Add(clickpoint);
+                        ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
+                    }
+                }
+               
                 ultrasound.Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
                 ultrasound.Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
                 ultrasound.Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
@@ -258,13 +267,19 @@ namespace EDITgui
             if (Directory.Exists(pointsDir))
             {
                 int count = Directory.GetFiles(pointsDir).Length;
-                if (count > 0) photoAcoustic.thickness.Clear();
+                if (count > 0) {
+                    photoAcoustic.thickness.Clear();
+                    photoAcoustic.thicknessArea.Clear();
+                    photoAcoustic.thicknessPerimeter.Clear();
+                }
                 for (int i = 0; i < count; i++)
                 {
                     framePointsFile = pointsDir + Path.DirectorySeparatorChar + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
                         photoAcoustic.thickness.Add(readPointsTXTFile(framePointsFile));
+                        photoAcoustic.thicknessArea.Add(metrics.calulateArea(photoAcoustic.thickness[i]));
+                        photoAcoustic.thicknessPerimeter.Add(metrics.calulatePerimeter(photoAcoustic.thickness[i]));
                     }
                 }
                 if (photoAcoustic.thickness.Any())

@@ -49,7 +49,12 @@ namespace EDITgui
         MainWindow mainWindow;
         UltrasoundPart ultrasound;
         coreFunctionality coreFunctionality;// = new coreFunctionality();
+        settings studySettings;
         checkBeforeExecute check;
+        metricsCalculations metrics;
+
+        SolidColorBrush cyan = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
+        SolidColorBrush yellow = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
 
         public enum ContourSegmentation
         {
@@ -69,7 +74,7 @@ namespace EDITgui
         public string DeOXYDicomFile = null;
         //-------------------------------
 
-
+        //initialization
         public ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
         OxyDeOxyState currentOxyDeOxyState = OxyDeOxyState.OXY;
 
@@ -87,12 +92,13 @@ namespace EDITgui
         public List<double> meanThickness = new List<double>();
         public List<List<Point>> bladderUltrasound = new List<List<Point>>();
         public String thicknessGeometryPath = null;
-     
+
+        public List<double> thicknessArea = new List<double>();
+        public List<double> thicknessPerimeter = new List<double>();
+
         string OXYimagesDir;
         string deOXYimagesDir;
-
         
-
         public PhotoAcousticPart()
         {
             InitializeComponent();
@@ -109,6 +115,7 @@ namespace EDITgui
             InitializeComponent();
             this.ultrasound = ultrasoundPart;
             this.mainWindow = mainWindow;
+            this.metrics = new metricsCalculations();
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
@@ -118,8 +125,9 @@ namespace EDITgui
             // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
 
-        public void setChecker(checkBeforeExecute check)
+        public void setSettings(settings studySettings, checkBeforeExecute check)
         {
+            this.studySettings = studySettings;
             this.check = check;
         }
 
@@ -158,19 +166,37 @@ namespace EDITgui
 
         public void OnBladderPointChanged(List<List<Point>> newBladder)
         {
-            if (!areTherePoints()) return;
+            //if (!ultrasound.areTherePoints()) return;
             
             bladderUltrasound = newBladder.ToList();
             clear_canvas();
             display();
         }
 
-        public void OnrepeatProcess()
+        private void initializeBladderList()
         {
             thickness.Clear();
+            meanThickness.Clear();
+            thicknessArea.Clear();
+            thicknessPerimeter.Clear();
+            List<Point> emptyList = new List<Point>();
+            for (int i = 0; i < fileCount; i++)
+            {
+                thickness.Add(emptyList.ToList());
+                meanThickness.Add(0);
+                thicknessArea.Add(0);
+                thicknessPerimeter.Add(0);
+            }
+        }
+
+
+        public void OnrepeatProcess()
+        {
+            //thickness.Clear();
+            //meanThickness.Clear();
+            initializeBladderList();
             thicknessCvPoints.Clear();
             bladderUltrasound.Clear();
-            meanThickness.Clear();
             metrics_label.Visibility = Visibility.Hidden;
             contourSeg = ContourSegmentation.CORRECTION;
             clear_canvas();
@@ -192,11 +218,13 @@ namespace EDITgui
                 {
                     string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.OXYDicomFile);
                     OXYimagesDir = coreFunctionality.exportOXYImages(dicomPath, true); //enablelogging = true
+                    pixelSpacing = coreFunctionality.pixelSpacing;
                     imageSize = coreFunctionality.imageSize;
 
                 });
                 if (OXYimagesDir != null)
                 {
+                    metrics.setPixelSpacing(pixelSpacing);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     OXYDicomFile = openFileDialog.FileName;
 
@@ -213,6 +241,7 @@ namespace EDITgui
             }
         }
 
+
         private async void LoadDeOXYDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -228,10 +257,12 @@ namespace EDITgui
                 {
                     string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.DeOXYDicomFile);
                     deOXYimagesDir = coreFunctionality.exportDeOXYImages(dicomPath, true); //enablelogging = true
+                    pixelSpacing = coreFunctionality.pixelSpacing;
                     imageSize = coreFunctionality.imageSize;
                 });
                 if (deOXYimagesDir != null)
                 {
+                    metrics.setPixelSpacing(pixelSpacing);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     DeOXYDicomFile = openFileDialog.FileName;
 
@@ -257,6 +288,7 @@ namespace EDITgui
             this.OXYimagesDir = imagesDir;
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
+            metrics.setPixelSpacing(pixelSpacing);
             fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doOXYState();
@@ -274,8 +306,8 @@ namespace EDITgui
             this.deOXYimagesDir = imagesDir;
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
+            metrics.setPixelSpacing(pixelSpacing);
             fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
-
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doDeOXYState();
             BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
@@ -294,16 +326,19 @@ namespace EDITgui
                 return;
             }
 
-            startSpinner();
             double minThick = double.Parse(minThickness.Text.Replace(",","."), CultureInfo.InvariantCulture);
             double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            bool bigTumor = big_tumor.IsChecked.Value;
+            List<List<EDITCore.CVPoint>> bladderCVPoints = ultrasound.getBladderCVPoints();
+            if (!bladderCVPoints.Any()) return;
 
+            startSpinner();
             await Task.Run(() =>
             {
-                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints(), minThick, maxThick);
+                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints(), minThick, maxThick, bigTumor);
                 if (!thicknessCvPoints.Any()) return;
                 thickness = editCVPointToWPFPoint(thicknessCvPoints);
-                fillMeanThicknessList(coreFunctionality.meanThickness);
+                fiillMetrics(coreFunctionality.meanThickness);
             });
             bladderUltrasound = ultrasound.getBladderPoints().ToList();
             displayMetrics();
@@ -326,10 +361,11 @@ namespace EDITgui
 
             double minThick = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            bool bigTumor = big_tumor.IsChecked.Value;
 
             await Task.Run(() =>
             {
-                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick);
+                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick, bigTumor);
                 if (!contourForFix.Any()) return;
                 thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
                 //contourForFix.Clear();
@@ -352,9 +388,10 @@ namespace EDITgui
                 return;
             }
 
-            startSpinner();
             thicknessCvPoints = WPFPointToCVPoint(thickness);
-           // String STLPath = null;
+            if (!thicknessCvPoints.Any()) return;
+
+            startSpinner();
             await Task.Run(() => {
                 thicknessGeometryPath = coreFunctionality.extractThicknessSTL(thicknessCvPoints);
                 });
@@ -376,11 +413,12 @@ namespace EDITgui
                 return;
             }
 
-            startSpinner();
 
             thicknessCvPoints = WPFPointToCVPoint(thickness);
+            if (!thicknessCvPoints.Any()) return;
 
-            List<String> txtPaths = new List<string>(); 
+            startSpinner();
+            List<String> txtPaths = new List<string>();
             await Task.Run(() => {
                 txtPaths = coreFunctionality.extractOXYandDeOXYPoints(ultrasound.getBladderCVPoints(), thicknessCvPoints, ultrasound.bladderGeometryPath, thicknessGeometryPath);
             });
@@ -393,16 +431,6 @@ namespace EDITgui
                  returnThicknessSTL(DeOXYGeometry);
             }
             stopSpinner();
-        }
-
-        private async void Export_Points_Click(object sender, RoutedEventArgs e)
-        {
-            await Task.Run(() =>
-            {
-                thicknessCvPoints = WPFPointToCVPoint(thickness);
-                coreFunctionality.writeThicknessPoints(thicknessCvPoints);
-
-            });
         }
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
@@ -443,7 +471,7 @@ namespace EDITgui
             {
                 Ellipse ellipse = new Ellipse();
                 //ellipse.Fill = Brushes.Blue;
-                ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
+                ellipse.Fill = cyan;
                 ellipse.Width = 2;
                 ellipse.Height = 2;
                 canvasPhotoAcoustic.Children.Add(ellipse);
@@ -496,7 +524,7 @@ namespace EDITgui
                     pl.Points.Add(closeCurvePoints.ElementAt(i));
                     pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
                     //pl.Stroke = System.Windows.Media.Brushes.Yellow;
-                    pl.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
+                    pl.Stroke = yellow;
                     pl.StrokeStartLineCap = PenLineCap.Round;
                     pl.StrokeEndLineCap = PenLineCap.Round;
                     canvasPhotoAcoustic.Children.Add(pl);
@@ -529,7 +557,24 @@ namespace EDITgui
         {
             try
             {
-                metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
+                if (recalculate)
+                {
+                    thicknessArea[slider_value] = metrics.calulateArea(thickness[slider_value]);
+                    thicknessPerimeter[slider_value] = metrics.calulatePerimeter(thickness[slider_value]);
+                }
+
+                if(mainWindow.currentProcess == MainWindow.process.AUTO)
+                {
+                    metrics_label.Content = messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
+                                                            messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2 + Environment.NewLine +
+                                                             messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
+                }
+                else //is MANUAL
+                {
+                    metrics_label.Content = messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
+                                                            messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2;
+                }
+                //metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
             }
             catch (Exception e)
             {
@@ -896,7 +941,7 @@ namespace EDITgui
             Wait.Visibility = Visibility.Hidden;
         }
 
-        private void doCorrection()
+        public void doCorrection()
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;
@@ -905,7 +950,7 @@ namespace EDITgui
             display();
         }
 
-        private void doManual()
+        public void doManual()
         {
             this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
@@ -915,7 +960,7 @@ namespace EDITgui
             display();
         }
 
-        private void doFillPoints()
+        public void doFillPoints()
         {
             this.switch_auto_manual.doFillPointState();
             contourSeg = ContourSegmentation.FILL_POINTS;
@@ -957,18 +1002,30 @@ namespace EDITgui
         //Convert EDITCore.CVPoint to Point
         public List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
         {
-            thicknessCvPoints.Clear();
-            //thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
-            for (int i = ultrasound.getStartingFrame(); i <= ultrasound.getEndingFrame(); i++)
+            string message = check.checkForSegmentationGaps(points);
+            if (message != null)
             {
-                List<EDITCore.CVPoint> contour = new List<EDITCore.CVPoint>();
-                for (int j = 0; j < points[i].Count(); j++)
+                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                return cvp;
+            }
+
+            thicknessCvPoints.Clear();
+            List<EDITCore.CVPoint> contour = new List<EDITCore.CVPoint>();
+            //thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
+           
+            //for (int i = ultrasound.getStartingFrame(); i <= ultrasound.getEndingFrame(); i++)
+            for (int i = 0; i < thickness.Count; i++)
+            {
+                if (thickness[i].Any())
                 {
-                    contour.Add(new EDITCore.CVPoint(points[i][j].X, points[i][j].Y));
+                    for (int j = 0; j < points[i].Count(); j++)
+                    {
+                        contour.Add(new EDITCore.CVPoint(points[i][j].X, points[i][j].Y));
+                    }
+                    cvp.Add(contour.ToList());
+                    contour.Clear();
                 }
-                cvp.Add(contour.ToList());
-                contour.Clear();
             }
             return cvp;
         }
@@ -1074,20 +1131,15 @@ namespace EDITgui
         //-----------------------------------------------
 
 
-        void fillMeanThicknessList(List<double> values)
+        void fiillMetrics(List<double> values)
         {
-            meanThickness.Clear();
-            //meanThickness = new List<double>();
-
-            for(int i=0; i<fileCount; i++)
-            {
-                meanThickness.Add(0.0);
-            }
             int start = ultrasound.getStartingFrame();
             int end = ultrasound.getEndingFrame();
             for (int i=start; i<=end; i++)
             {
                 meanThickness[i] = values[i - start];
+                thicknessArea[i] = metrics.calulateArea(thickness[i]);
+                thicknessPerimeter[i] = metrics.calulatePerimeter(thickness[i]);
             }
 
         }

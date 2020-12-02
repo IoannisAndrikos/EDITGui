@@ -143,9 +143,18 @@
     <Compile Include="CustMessageBox\CustomMessageBoxWindow.xaml.cs">
       <DependentUpon>CustomMessageBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="mainUIComponents\settings.xaml.cs">
+      <DependentUpon>settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControls\twoStatesButton.xaml.cs">
+      <DependentUpon>twoStatesButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControls\gearButton.xaml.cs">
+      <DependentUpon>gearButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Load_Save\LoadActions.cs" />
     <Compile Include="MetricsCalc\metricsCalculations.cs" />
-    <Compile Include="PhotoAcousticPart.xaml.cs">
+    <Compile Include="mainUIComponents\PhotoAcousticPart.xaml.cs">
       <DependentUpon>PhotoAcousticPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Load_Save\SaveActions.cs" />
@@ -156,10 +165,26 @@
       <DependentUpon>ThreeStateButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Load_Save\StudyFile.cs" />
-    <Compile Include="UltrasoundPart.xaml.cs">
+    <Compile Include="mainUIComponents\UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
     <Page Include="CustMessageBox\CustomMessageBoxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="mainUIComponents\settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControls\twoStatesButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControls\gearButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -177,7 +202,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PhotoAcousticPart.xaml">
+    <Page Include="mainUIComponents\PhotoAcousticPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,7 +218,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UltrasoundPart.xaml">
+    <Page Include="mainUIComponents\UltrasoundPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
