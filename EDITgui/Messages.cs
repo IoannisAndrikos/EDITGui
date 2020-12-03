@@ -124,8 +124,9 @@ namespace EDITgui
             return message;
         }
 
+        public string notCorrectUserPass = "Not correct 'Username' or 'Password'";
 
-        public string correctDoubleFormat = "Check the settings settings fields (gear button). None field should be empty, while every demical number should be depicted with the following format: '##.###' or '##,###'.";
+        public string correctDoubleFormat = "Check the settings fields (gear button). None of the fields should be empty, while every demical number should be depicted with the following format: '##.###' or '##,###'.";
 
         //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
         public string limitedSettingsFile = "The 'Settings.xml' file of the loaded study is limited.";

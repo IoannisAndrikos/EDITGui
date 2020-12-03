@@ -565,13 +565,13 @@ namespace EDITgui
 
                 if(mainWindow.currentProcess == MainWindow.process.AUTO)
                 {
-                    metrics_label.Content = messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
-                                                            messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2 + Environment.NewLine +
+                    metrics_label.Content =  messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
+                                                           messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2 + Environment.NewLine +
                                                              messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
                 }
                 else //is MANUAL
                 {
-                    metrics_label.Content = messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
+                    metrics_label.Content =  messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
                                                             messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2;
                 }
                 //metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;

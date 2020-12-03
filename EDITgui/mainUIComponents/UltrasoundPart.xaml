@@ -426,7 +426,7 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
         <Slider x:Name="ultrasound_slider" HorizontalAlignment="Left" Height="514" Margin="742,39,0,0" VerticalAlignment="Top" Width="29.167" Orientation="Vertical" Initialized="Ultrasound_slider_Initialized" ValueChanged="Ultrasound_slider_ValueChanged" Style="{DynamicResource SliderStyle1}" Visibility="Hidden"/>
-        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="27.328" Width="128.253" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
+        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="25.828" Width="84.086" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
 
 
 

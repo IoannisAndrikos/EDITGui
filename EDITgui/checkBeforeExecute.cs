@@ -114,14 +114,12 @@ namespace EDITgui
             return null;
         }
 
-
-
         List<int> segmentationGaps = new List<int>();
         public string checkForSegmentationGaps(List<List<Point>> points)
         {
             segmentationGaps.Clear();
 
-            if (ultrasound.processWasExecutedAuto())
+            if (ultrasound.autoExecutionUserPointsWereSet())
             {
                 for(int i=ultrasound.startingFrame; i<=ultrasound.endingFrame; i++)
                 {

@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="EDITgui.Login"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EDITgui"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="#FF1C1F1F">
+        <Grid HorizontalAlignment="Center" Height="394" Margin="0" VerticalAlignment="Center" Width="706.5">
+            <Rectangle HorizontalAlignment="Center" Height="300" RadiusY="63.5" RadiusX="63.5" Stroke="#FF335B5B" VerticalAlignment="Center" Width="679.5" Margin="10,34,17,60"/>
+
+            <Image HorizontalAlignment="Left" Height="206.168" Margin="30.5,84.666,0,0" VerticalAlignment="Top" Width="358.751">
+                <Image.Source>
+                    <BitmapImage DecodePixelWidth="300" UriSource="../logo/edit.png" />
+                </Image.Source>
+            </Image>
+            <Grid HorizontalAlignment="Left" Height="255.6" Margin="431.55,54.7,0,0" VerticalAlignment="Top" Width="232.8">
+                <Label Content="Login" Height="42.332" Foreground="White" FontSize="24" Margin="81.955,-4.084,81.955,200.552" HorizontalAlignment="Center"/>
+                <Separator Background="#FF335B5B" Margin="1.4,22.199,1.4,183.501" Height="49.9" RenderTransformOrigin="0.5,0.5" Width="230">
+                    <Separator.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="-1"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Separator.RenderTransform>
+                </Separator>
+                <Label Content="Username:" Foreground="White" Margin="0,44.399,0,165.401" VerticalAlignment="Center"/>
+                <TextBox x:Name="textBox_username" Height="28" TextWrapping="Wrap" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" FontSize="18" Margin="0,73.399,0,137.401" SelectionBrush="#FF335B5B" SelectionTextBrush="#FF335B5B" Width="230" HorizontalAlignment="Center"/>
+                <Label Content="Password:" Foreground="White" Margin="0,103.399,0,107.401" Height="28" VerticalAlignment="Center"/>
+                <PasswordBox x:Name="password_box" Height="28" Background="#FF333333" BorderBrush="#FF335B5B" FontSize="18" SelectionBrush="#FF335B5B" SelectionTextBrush="#FF335B5B" Foreground="White" Margin="0,131.399,0,79.401" Width="230" HorizontalAlignment="Center"/>
+                <TextBox x:Name="reveal_password" Height="28" Background="#FF333333" BorderBrush="#FF335B5B" FontSize="18" SelectionBrush="#FF335B5B" SelectionTextBrush="#FF335B5B" Foreground="White" Margin="0,131.399,0,79.401" Width="230" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                <CheckBox x:Name="checkBox_showPassword" Content="Show Password" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="1.4,164.399,138.4,57.568" Click="CheckBox_showPassword_Click" FontSize="10" Width="93"/>
+
+                <Button x:Name="submitButton" Content="Submit" Height="26" Style="{DynamicResource ButtonStyle1}" Width="132.833" Click="SubmitButton_Click" Margin="0,202.8,0,10" HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

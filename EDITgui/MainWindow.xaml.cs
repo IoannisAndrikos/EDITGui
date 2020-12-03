@@ -46,6 +46,7 @@ namespace EDITgui
         public List<Geometry> STLGeometries = new List<Geometry>();
         public process currentProcess;
 
+        Login authentication;
         Messages messages;
         StudyFile studyFile;
         UltrasoundPart ultrasound;
@@ -64,7 +65,15 @@ namespace EDITgui
             InitializeComponent();
 
             messages = new Messages();
-            
+            authentication = new Login(this);
+            authentication.Margin = new Thickness(0, 0, 0, 0);
+            this.totalGrid.Children.Add(authentication);
+        }
+
+
+        public void doAfterAuthentication()
+        {
+            authentication.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
             studyFile = new StudyFile();
             core = new coreFunctionality();
@@ -95,7 +104,7 @@ namespace EDITgui
             photoAcoustic.Margin = new Thickness(777, 0, 0, 0);
             photoAcoustic.Width = 738;
 
-          
+
             studySettings.Margin = new Thickness(10, 5, 0, 0);
             studySettings.HorizontalAlignment = HorizontalAlignment.Left;
             studySettings.VerticalAlignment = VerticalAlignment.Top;
@@ -382,13 +391,16 @@ namespace EDITgui
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            //close logging process
-            core.setLoggingOnOff(false);
-            //Delete working directory
-            if (Directory.Exists(workingPath))
+            if (this.authentication.isAuthenticated)
             {
-                Directory.Delete(workingPath, true);
-            }
+                //close logging process
+                core.setLoggingOnOff(false);
+                //Delete working directory
+                if (Directory.Exists(workingPath))
+                {
+                    Directory.Delete(workingPath, true);
+                }
+            } 
         }
 
         private void Switch_2D_3D_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -183,7 +183,7 @@
             <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
             <CheckBox x:Name="big_tumor" Content="Big tumor" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="83.2" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
         </Grid>
-        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown"/>
+        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="1,40,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
 
 
 
