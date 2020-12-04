@@ -46,16 +46,8 @@ namespace EDITgui
         public List<Geometry> STLGeometries = new List<Geometry>();
         public process currentProcess;
 
-        Login authentication;
-        Messages messages;
-        StudyFile studyFile;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
-        settings studySettings;
-        SaveActions saveActions;
-        LoadActions loadActions;
-        coreFunctionality core;
-        checkBeforeExecute check;
+        Login user;
+        Context context;
 
         public static int count = 0;
 
@@ -63,57 +55,40 @@ namespace EDITgui
         public MainWindow()
         {
             InitializeComponent();
-
-            messages = new Messages();
-            authentication = new Login(this);
-            authentication.Margin = new Thickness(0, 0, 0, 0);
-            this.totalGrid.Children.Add(authentication);
+            user = new Login(this);
+            user.Margin = new Thickness(0, 0, 0, 0);
+            this.totalGrid.Children.Add(user);
         }
 
 
-        public void doAfterAuthentication()
+        public void doAfterUserAuthentication()
         {
-            authentication.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
-            studyFile = new StudyFile();
-            core = new coreFunctionality();
+
+            context = new Context(this, user);
 
             Console.WriteLine(Path.GetTempPath());
 
-            workingPath = studyFile.getWorkspace();
-            core.setExaminationsDirectory(workingPath);
+            workingPath = context.getStudyFile().getWorkspace();
+            context.getCore().setExaminationsDirectory(workingPath);
 
-            ultrasound = new UltrasoundPart(this);
-            photoAcoustic = new PhotoAcousticPart(this, ultrasound); //pass ultasound instance in to photoaccoustic in order to exchange data
-            studySettings = new settings(this, core, ultrasound, photoAcoustic);
+            context.getUltrasoundPart().Width = 772;
+            context.getUltrasoundPart().Margin = new Thickness(0, 0, 0, 0);
+            context.getUltrasoundPart().HorizontalAlignment = HorizontalAlignment.Left;
 
-            check = new checkBeforeExecute(this, ultrasound, photoAcoustic);
-            loadActions = new LoadActions(this, core, ultrasound, photoAcoustic, workingPath);
-            saveActions = new SaveActions(this, core, ultrasound, photoAcoustic, workingPath);
+            context.getPhotoAcousticPart().Margin = new Thickness(777, 0, 0, 0);
+            context.getPhotoAcousticPart().Width = 738;
 
-            ultrasound.setSettings(studySettings, check);
-            photoAcoustic.setSettings(studySettings, check);
+            context.getStudySettings().Margin = new Thickness(10, 5, 0, 0);
+            context.getStudySettings().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getStudySettings().VerticalAlignment = VerticalAlignment.Top;
+            context.getStudySettings().Height = 217;
+            context.getStudySettings().Width = 199;
 
-            ultrasound.InitializeCoreFunctionality = core;
-            photoAcoustic.InitializeCoreFunctionality = core;
-
-            ultrasound.Width = 772;
-            ultrasound.Margin = new Thickness(0, 0, 0, 0);
-            ultrasound.HorizontalAlignment = HorizontalAlignment.Left;
-
-            photoAcoustic.Margin = new Thickness(777, 0, 0, 0);
-            photoAcoustic.Width = 738;
-
-
-            studySettings.Margin = new Thickness(10, 5, 0, 0);
-            studySettings.HorizontalAlignment = HorizontalAlignment.Left;
-            studySettings.VerticalAlignment = VerticalAlignment.Top;
-            studySettings.Height = 217;
-            studySettings.Width = 199;
-
-            this.Rat.Children.Add(ultrasound);
-            this.Rat.Children.Add(photoAcoustic);
-            this.totalGrid.Children.Add(studySettings);
+            this.Rat.Children.Add(context.getUltrasoundPart());
+            this.Rat.Children.Add(context.getPhotoAcousticPart());
+            this.totalGrid.Children.Add(context.getStudySettings());
 
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
@@ -190,7 +165,7 @@ namespace EDITgui
                 visualizeGeometries(geometry);
             }catch(Exception)
             {
-                CustomMessageBox.Show(messages.noObject3DLoaded, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(context.getMessages().noObject3DLoaded, context.getMessages().warning, MessageBoxButton.OK);
             }
             
         }
@@ -351,18 +326,18 @@ namespace EDITgui
         {
             if (loadedStudyPath == null)
             {
-                saveActions.doSave();
+                context.getSaveActions().doSave();
             }
             else
             {
-                MessageBoxResult result = CustomMessageBox.Show(messages.getOverwriteExistingStudyQuestion(loadedStudyPath), messages.warning, MessageBoxButton.YesNoCancel);
+                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
-                    saveActions.saveAvailableData(loadedStudyPath);
+                   context.getSaveActions().saveAvailableData(loadedStudyPath);
                 }
                 else if (result == MessageBoxResult.No)
                 {
-                    saveActions.doSave();
+                    context.getSaveActions().doSave();
                 }
 
             }
@@ -371,7 +346,7 @@ namespace EDITgui
 
         private void LoadStudy_Click(object sender, RoutedEventArgs e)
         {
-            loadActions.doLoad();
+            context.getLoadActions().doLoad();
         }
 
         public void cleanVTKRender()
@@ -385,16 +360,16 @@ namespace EDITgui
             SurfaceAreaMetricsItems.Items.Clear();
             geometryItems.Items.Clear();
             STLGeometries.Clear();
-            ultrasound.bladderGeometryPath = null;
-            photoAcoustic.thicknessGeometryPath = null;
+            context.getUltrasoundPart().bladderGeometryPath = null;
+            context.getPhotoAcousticPart().thicknessGeometryPath = null;
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (this.authentication.isAuthenticated)
+            if (this.user.isAuthenticated)
             {
                 //close logging process
-                core.setLoggingOnOff(false);
+                context.getCore().setLoggingOnOff(false);
                 //Delete working directory
                 if (Directory.Exists(workingPath))
                 {

@@ -14,25 +14,11 @@ namespace EDITgui
 {
     public class SaveActions : StudyFile
     {
+        Context context;
 
-
-        Messages messages;
-        coreFunctionality core;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
-        metricsCalculations metrics;
-        MainWindow mainWindow;
-        string workingPath;
-
-        public SaveActions(MainWindow mainWindow, coreFunctionality core, UltrasoundPart ultrasound, PhotoAcousticPart photo, string workingPath)
+        public SaveActions(Context context)
         {
-            this.mainWindow = mainWindow;
-            this.core = core;
-            this.ultrasound = ultrasound;
-            this.photoAcoustic = photo;
-            this.workingPath = workingPath;
-            metrics = new metricsCalculations();
-            messages = new Messages();
+            this.context = context;
         }
 
         public void doSave()
@@ -44,7 +30,7 @@ namespace EDITgui
             if (saveFileDialog.ShowDialog() == true)
             {
                 saveAvailableData(saveFileDialog.FileName);
-                this.mainWindow.loadedStudyPath = saveFileDialog.FileName;
+                context.getMainWindow().loadedStudyPath = saveFileDialog.FileName;
             }
         }
 
@@ -52,27 +38,27 @@ namespace EDITgui
         public void saveAvailableData(string path)
         {
             //save bladder
-            writePointsToTXT(path, ultrasound.getBladderPoints(), SaveActions.FileType.bladderPoints);
-            writeMetricsToTXT(path, ultrasound.getBladderArea(), SaveActions.FileType.Bladder2DArea);
-            writeMetricsToTXT(path, ultrasound.getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
+            writePointsToTXT(path, context.getUltrasoundPart().getBladderPoints(), SaveActions.FileType.bladderPoints);
+            writeMetricsToTXT(path, context.getUltrasoundPart().getBladderArea(), SaveActions.FileType.Bladder2DArea);
+            writeMetricsToTXT(path, context.getUltrasoundPart().getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
 
             //save thickness
-            writePointsToTXT(path, photoAcoustic.getThicknessPoints(), SaveActions.FileType.thicknessPoints);
-            writeMetricsToTXT(path, photoAcoustic.getMeanThickness(), SaveActions.FileType.MeanThickness);
+            writePointsToTXT(path, context.getPhotoAcousticPart().getThicknessPoints(), SaveActions.FileType.thicknessPoints);
+            writeMetricsToTXT(path, context.getPhotoAcousticPart().getMeanThickness(), SaveActions.FileType.MeanThickness);
 
             //save geometries
-            foreach (Geometry geometry in this.mainWindow.STLGeometries)
+            foreach (Geometry geometry in context.getMainWindow().STLGeometries)
             {
                 copyFileToSaveStudyFolder(path, geometry.Path, geometry.getSaveActionFileType());
             }
 
             //save Dicom
-            if (ultrasound.ultrasoundDicomFile != null) copyFileToSaveStudyFolder(path, ultrasound.ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
-            if (photoAcoustic.OXYDicomFile != null) copyFileToSaveStudyFolder(path, photoAcoustic.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
-            if (photoAcoustic.DeOXYDicomFile != null) copyFileToSaveStudyFolder(path, photoAcoustic.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
+            if (context.getUltrasoundPart().ultrasoundDicomFile != null) copyFileToSaveStudyFolder(path, context.getUltrasoundPart().ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
+            if (context.getPhotoAcousticPart().OXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().OXYDicomFile, SaveActions.FileType.OXYDicomFile);
+            if (context.getPhotoAcousticPart().DeOXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
 
             //save logfiles
-            copyLogFilesToFolderOfStudy(path, workingPath);
+            copyLogFilesToFolderOfStudy(path, context.getStudyFile().getWorkspace());
 
             //save info
             // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
@@ -156,29 +142,29 @@ namespace EDITgui
         public List<StudySetting> collectAllStudySetings()
         {
             List<StudySetting> studyInfo = new List<StudySetting>();
-            studyInfo.Add(new StudySetting() { infoName = settingType.StartingFrame, infoValue = ultrasound.startingFrame });
-            studyInfo.Add(new StudySetting() { infoName = settingType.EndingFrame, infoValue = ultrasound.endingFrame });
+            studyInfo.Add(new StudySetting() { infoName = settingType.StartingFrame, infoValue = context.getUltrasoundPart().startingFrame });
+            studyInfo.Add(new StudySetting() { infoName = settingType.EndingFrame, infoValue = context.getUltrasoundPart().endingFrame });
 
-            if (ultrasound.userPoints.Count ==2)
+            if (context.getUltrasoundPart().userPoints.Count ==2)
             {
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = ultrasound.userPoints[0].X });
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = ultrasound.userPoints[0].Y });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = context.getUltrasoundPart().userPoints[0].X });
+                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = context.getUltrasoundPart().userPoints[0].Y });
             }
             else
             {
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = 0 });
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = 0 });
             }
-            studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(ultrasound.Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(ultrasound.Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(ultrasound.Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(ultrasound.Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(ultrasound.LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(ultrasound.chechBox_FIltering.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Logger, infoValue = double.Parse((ToInt(ultrasound.chechBox_Logger.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(ultrasound.closedSurface.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(photoAcoustic.minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(photoAcoustic.maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(context.getUltrasoundPart().Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(context.getUltrasoundPart().Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(context.getUltrasoundPart().Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(context.getUltrasoundPart().Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(context.getUltrasoundPart().LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_FIltering.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.Logger, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_Logger.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
             return studyInfo;
         }
 

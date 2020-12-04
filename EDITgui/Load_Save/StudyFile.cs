@@ -25,7 +25,6 @@ namespace EDITgui
             UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, Bladder2DArea, Bladder2DPerimeter, MeanThickness
         }
 
-
         public string getWorkspace()
         {
             return Path.GetTempPath() + workspaceDirName;

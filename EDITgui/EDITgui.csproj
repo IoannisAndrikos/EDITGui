@@ -143,6 +143,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="checkBeforeExecute.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="CustMessageBox\CustomMessageBox.cs" />
     <Compile Include="CustMessageBox\CustomMessageBoxWindow.xaml.cs">
       <DependentUpon>CustomMessageBoxWindow.xaml</DependentUpon>

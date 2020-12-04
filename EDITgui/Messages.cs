@@ -108,25 +108,25 @@ namespace EDITgui
 
         public string getOverwriteExistingStudyQuestion(string path)
         {
-            return "The current study will overwrite the existing study : '" + path + "'. Do you agree?. If you want to save it as a new study press 'No'.";
+            return "The current study will overwrite the existing study : '" + path + "'. Do you accept this?. If you want to save it as a new study press 'No'.";
         }
 
         public string makeUserAwareOfSegmentationGaps(List<int> frames)
         {
-            string message = "Frames: [ ";
+            string message = "No segmentation points were found for the frames: [ ";
             foreach(int f in frames)
             {
                 message += f.ToString() + " "; 
             }
 
-            message += "] do not contain segmentation points.";
+            message += "].";
 
             return message;
         }
 
-        public string notCorrectUserPass = "Not correct 'Username' or 'Password'";
+        public string notCorrectUserPass = "Username or Password is not correct.";
 
-        public string correctDoubleFormat = "Check the settings fields (gear button). None of the fields should be empty, while every demical number should be depicted with the following format: '##.###' or '##,###'.";
+        public string correctDoubleFormat = "Check settings fields pressing the gear button. None of the fields should be empty, while every decimal number should be depicted with the following format: '##.###' or '##,###'.";
 
         //--------------------------------------ERROR DURING DATA LOADING-------------------------------------
         public string limitedSettingsFile = "The 'Settings.xml' file of the loaded study is limited.";

@@ -8,9 +8,17 @@ using System.Windows;
 namespace EDITgui
 {
     //here is a class where we calculate some metrics such as contour area, perimeter etc
-    class metricsCalculations
+    public class metricsCalculations
     {
+        Context context;
+
         List<double> pixelSpacing = new List<double>();
+
+        public metricsCalculations(Context context)
+        {
+            this.context = context;
+        }
+
         
         public void setPixelSpacing(List<double> pixelSpacing)
         {

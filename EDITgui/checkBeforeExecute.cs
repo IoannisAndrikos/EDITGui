@@ -9,17 +9,11 @@ namespace EDITgui
 {
     public class checkBeforeExecute
     {
-        Messages messages;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
-        MainWindow mainWindow;
+        Context context;
 
-        public checkBeforeExecute(MainWindow mainWindow, UltrasoundPart ultrasound, PhotoAcousticPart photoAcoustic)
+        public checkBeforeExecute(Context context)
         {
-            this.mainWindow = mainWindow;
-            this.ultrasound = ultrasound;
-            this.photoAcoustic = photoAcoustic;
-            messages = new Messages();
+            this.context = context;
         }
 
         public enum executionType { 
@@ -37,76 +31,76 @@ namespace EDITgui
             switch (type)
             {
                 case executionType.extract2DBladder:
-                    if(ultrasound.ultrasoundDicomFile == null)
+                    if(context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
-                        return messages.ultrasoundFileNotLoaded;
-                        if (ultrasound.userPoints.Count < 2)
+                        return context.getMessages().ultrasoundFileNotLoaded;
+                        if (context.getUltrasoundPart().userPoints.Count < 2)
                         {
-                            return messages.notEnoughUserPoints;
+                            return context.getMessages().notEnoughUserPoints;
                         }
                     }
                     break;
                 case executionType.extract3DBladder:
-                    if (ultrasound.ultrasoundDicomFile == null)
+                    if (context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
-                        return messages.ultrasoundFileNotLoaded;
-                        if (!ultrasound.bladder.Any())
+                        return context.getMessages().ultrasoundFileNotLoaded;
+                        if (!context.getUltrasoundPart().bladder.Any())
                         {
-                            return messages.noBladderSegmentation;
+                            return context.getMessages().noBladderSegmentation;
                         }
                     }
                     break;
                 case executionType.extract3DLayer:
-                    if (ultrasound.ultrasoundDicomFile == null)
+                    if (context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
-                        return messages.ultrasoundFileNotLoaded;
-                        if (!ultrasound.bladder.Any())
+                        return context.getMessages().ultrasoundFileNotLoaded;
+                        if (!context.getUltrasoundPart().bladder.Any())
                         {
-                            return messages.noBladderSegmentation;
+                            return context.getMessages().noBladderSegmentation;
                         }
                     }
                     break;
                 case executionType.extract2DThickness:
-                    if (photoAcoustic.OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
-                        return messages.noOXYdicom;
-                        if (!ultrasound.bladder.Any())
+                        return context.getMessages().noOXYdicom;
+                        if (!context.getUltrasoundPart().bladder.Any())
                         {
-                            return messages.noBladderSegmentation;
+                            return context.getMessages().noBladderSegmentation;
                         }
                     }
                     break;
                 case executionType.recalculate:
-                    if (photoAcoustic.OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
-                        return messages.noOXYdicom;
-                        if (!photoAcoustic.areTherePoints())
+                        return context.getMessages().noOXYdicom;
+                        if (!context.getPhotoAcousticPart().areTherePoints())
                         {
-                            return messages.noThicknessForUniqueFrame;
+                            return context.getMessages().noThicknessForUniqueFrame;
                         }
                     }
                     break;
                 case executionType.extract3DThickness:
-                    if (photoAcoustic.OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
-                        return messages.noOXYdicom;
-                        if (!ultrasound.bladder.Any())
+                        return context.getMessages().noOXYdicom;
+                        if (!context.getUltrasoundPart().bladder.Any())
                         {
-                            return messages.noBladderSegmentation;
+                            return context.getMessages().noBladderSegmentation;
                         }
                     }
                     break;
                 case executionType.extractOXYDeOXY:
-                    if (photoAcoustic.OXYDicomFile == null || photoAcoustic.DeOXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().OXYDicomFile == null || context.getPhotoAcousticPart().DeOXYDicomFile == null)
                     {
-                        return messages.noOXYAndDeOXYImages;
-                        if (!photoAcoustic.thickness.Any())
+                        return context.getMessages().noOXYAndDeOXYImages;
+                        if (!context.getPhotoAcousticPart().thickness.Any())
                         {
-                            return messages.noBladderSegmentation;
+                            return context.getMessages().noBladderSegmentation;
                         }
-                        else if (photoAcoustic.thicknessGeometryPath == null || ultrasound.bladderGeometryPath == null)
+                        else if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
                         {
-                            return messages.noBadderOrThickness3DModels;
+                            return context.getMessages().noBadderOrThickness3DModels;
                         }
                     }
                     break;
@@ -119,9 +113,9 @@ namespace EDITgui
         {
             segmentationGaps.Clear();
 
-            if (ultrasound.autoExecutionUserPointsWereSet())
+            if (context.getUltrasoundPart().autoExecutionUserPointsWereSet())
             {
-                for(int i=ultrasound.startingFrame; i<=ultrasound.endingFrame; i++)
+                for(int i= context.getUltrasoundPart().startingFrame; i<= context.getUltrasoundPart().endingFrame; i++)
                 {
                     if (!points[i].Any())
                     {
@@ -166,7 +160,7 @@ namespace EDITgui
             }
             else
             {
-                return messages.makeUserAwareOfSegmentationGaps(segmentationGaps);
+                return context.getMessages().makeUserAwareOfSegmentationGaps(segmentationGaps);
             }
         }
 

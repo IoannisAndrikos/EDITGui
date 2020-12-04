@@ -44,14 +44,7 @@ namespace EDITgui
         public delegate void STLThicknessHandler(EDITgui.Geometry geometry);
         public static event STLThicknessHandler returnThicknessSTL = delegate { };
 
-        Messages messages = new Messages();
-        StudyFile studyFile = new StudyFile();
-        MainWindow mainWindow;
-        UltrasoundPart ultrasound;
-        coreFunctionality coreFunctionality;// = new coreFunctionality();
-        settings studySettings;
-        checkBeforeExecute check;
-        metricsCalculations metrics;
+        Context context;
 
         SolidColorBrush cyan = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
         SolidColorBrush yellow = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
@@ -105,37 +98,19 @@ namespace EDITgui
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             doOXYState();
-            //chechBox_Logger.IsChecked = true;
-            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
 
-        //my constructor ...I have to pass the ultrasound instance in order to get some data
-        public PhotoAcousticPart(MainWindow mainWindow, UltrasoundPart ultrasoundPart)
+        public PhotoAcousticPart(Context context)
         {
             InitializeComponent();
-            this.ultrasound = ultrasoundPart;
-            this.mainWindow = mainWindow;
-            this.metrics = new metricsCalculations();
+            this.context = context;
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
             UltrasoundPart.repeatPhotoAcousticProcess += OnrepeatProcess;
             doOXYState();
-            //chechBox_Logger.IsChecked = true;
-            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
         }
 
-        public void setSettings(settings studySettings, checkBeforeExecute check)
-        {
-            this.studySettings = studySettings;
-            this.check = check;
-        }
-
-        public coreFunctionality InitializeCoreFunctionality
-        {
-            get { return coreFunctionality; }
-            set { coreFunctionality = value; }
-        }
 
         public void OnUltrasoundSliderValueChanged(int obj)
         {
@@ -150,7 +125,7 @@ namespace EDITgui
                 {
                     BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + obj + ".bmp");
                 }
-                frame_num_label.Content = messages.frame + ": " + slider_value;
+                frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
                 doCorrection();
                 clear_canvas();
                 display();
@@ -206,25 +181,25 @@ namespace EDITgui
         private async void LoadΟΧΥDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = messages.selectDicom;
+            openFileDialog.Title = context.getMessages().selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
 
-                coreFunctionality.repeatSegmentation();
+                context.getCore().repeatSegmentation();
                 OXYDicomFile = null;
 
                 await Task.Run(() =>
                 {
-                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.OXYDicomFile);
-                    OXYimagesDir = coreFunctionality.exportOXYImages(dicomPath, true); //enablelogging = true
-                    pixelSpacing = coreFunctionality.pixelSpacing;
-                    imageSize = coreFunctionality.imageSize;
+                    string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.OXYDicomFile);
+                    OXYimagesDir = context.getCore().exportOXYImages(dicomPath, true); //enablelogging = true
+                    pixelSpacing = context.getCore().pixelSpacing;
+                    imageSize = context.getCore().imageSize;
 
                 });
                 if (OXYimagesDir != null)
                 {
-                    metrics.setPixelSpacing(pixelSpacing);
+                    context.getMetrics().setPixelSpacing(pixelSpacing);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     OXYDicomFile = openFileDialog.FileName;
 
@@ -232,7 +207,7 @@ namespace EDITgui
 
                     BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                     OXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = messages.frame + ": " + slider_value;
+                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     OnrepeatProcess();
                 }
@@ -245,24 +220,24 @@ namespace EDITgui
         private async void LoadDeOXYDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = messages.selectDicom;
+            openFileDialog.Title = context.getMessages().selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 startSpinner();
                 //clear_canvas();
-                coreFunctionality.repeatSegmentation();
+                context.getCore().repeatSegmentation();
                 DeOXYDicomFile = null;
 
                 await Task.Run(() =>
                 {
-                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.DeOXYDicomFile);
-                    deOXYimagesDir = coreFunctionality.exportDeOXYImages(dicomPath, true); //enablelogging = true
-                    pixelSpacing = coreFunctionality.pixelSpacing;
-                    imageSize = coreFunctionality.imageSize;
+                    string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.DeOXYDicomFile);
+                    deOXYimagesDir = context.getCore().exportDeOXYImages(dicomPath, true); //enablelogging = true
+                    pixelSpacing = context.getCore().pixelSpacing;
+                    imageSize = context.getCore().imageSize;
                 });
                 if (deOXYimagesDir != null)
                 {
-                    metrics.setPixelSpacing(pixelSpacing);
+                    context.getMetrics().setPixelSpacing(pixelSpacing);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     DeOXYDicomFile = openFileDialog.FileName;
 
@@ -270,7 +245,7 @@ namespace EDITgui
 
                     BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
                     DeOXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = messages.frame + ": " + slider_value;
+                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
                     fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     // OnrepeatProcess();
                 }
@@ -288,13 +263,13 @@ namespace EDITgui
             this.OXYimagesDir = imagesDir;
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
-            metrics.setPixelSpacing(pixelSpacing);
+            context.getMetrics().setPixelSpacing(pixelSpacing);
             fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doOXYState();
             BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-            OXY_studyname_label.Content = studyName + " " + messages.oxy;
-            frame_num_label.Content = messages.frame + ": " + slider_value;
+            OXY_studyname_label.Content = studyName + " " + context.getMessages().oxy;
+            frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
             fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             OnrepeatProcess();
         }
@@ -306,41 +281,41 @@ namespace EDITgui
             this.deOXYimagesDir = imagesDir;
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
-            metrics.setPixelSpacing(pixelSpacing);
+            context.getMetrics().setPixelSpacing(pixelSpacing);
             fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
             makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
             doDeOXYState();
             BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
-            DeOXY_studyname_label.Content = studyName + " " + messages.deoxy;
-            frame_num_label.Content = messages.frame + ": " + slider_value;
+            DeOXY_studyname_label.Content = studyName + " " + context.getMessages().deoxy;
+            frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
             fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
         }
 
 
         private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extract2DThickness);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DThickness);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
             double minThick = double.Parse(minThickness.Text.Replace(",","."), CultureInfo.InvariantCulture);
             double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             bool bigTumor = big_tumor.IsChecked.Value;
-            List<List<EDITCore.CVPoint>> bladderCVPoints = ultrasound.getBladderCVPoints();
+            List<List<EDITCore.CVPoint>> bladderCVPoints = context.getUltrasoundPart().getBladderCVPoints();
             if (!bladderCVPoints.Any()) return;
 
             startSpinner();
             await Task.Run(() =>
             {
-                thicknessCvPoints = coreFunctionality.extractThickness(ultrasound.getBladderCVPoints(), minThick, maxThick, bigTumor);
+                thicknessCvPoints = context.getCore().extractThickness(context.getUltrasoundPart().getBladderCVPoints(), minThick, maxThick, bigTumor);
                 if (!thicknessCvPoints.Any()) return;
                 thickness = editCVPointToWPFPoint(thicknessCvPoints);
-                fiillMetrics(coreFunctionality.meanThickness);
+                fiillMetrics(context.getCore().meanThickness);
             });
-            bladderUltrasound = ultrasound.getBladderPoints().ToList();
+            bladderUltrasound = context.getUltrasoundPart().getBladderPoints().ToList();
             displayMetrics();
             clear_canvas();
             display();
@@ -349,15 +324,15 @@ namespace EDITgui
 
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.recalculate);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.recalculate);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
             startSpinner();
-            bladderUltrasound = ultrasound.getBladderPoints().ToList();
+            bladderUltrasound = context.getUltrasoundPart().getBladderPoints().ToList();
 
             double minThick = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
@@ -365,12 +340,12 @@ namespace EDITgui
 
             await Task.Run(() =>
             {
-                contourForFix = coreFunctionality.recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick, bigTumor);
+                contourForFix = context.getCore().recalculateThicknessOfContour(slider_value, WPFPointToCVPoint(bladderUltrasound[slider_value]), minThick, maxThick, bigTumor);
                 if (!contourForFix.Any()) return;
                 thickness[slider_value].AddRange(editCVPointToWPFPoint(contourForFix));
                 //contourForFix.Clear();
                 // meanThickness.AddRange(coreFunctionality.meanThickness);
-                meanThickness[slider_value] = coreFunctionality.uniqueContourMeanThickness;
+                meanThickness[slider_value] = context.getCore().uniqueContourMeanThickness;
                // fillMeanThicknessList(coreFunctionality.meanThickness);
             });
             clear_canvas();
@@ -381,10 +356,10 @@ namespace EDITgui
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extract3DThickness);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract3DThickness);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -393,7 +368,7 @@ namespace EDITgui
 
             startSpinner();
             await Task.Run(() => {
-                thicknessGeometryPath = coreFunctionality.extractThicknessSTL(thicknessCvPoints);
+                thicknessGeometryPath = context.getCore().extractThicknessSTL(thicknessCvPoints);
                 });
             EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = "Thickness", Path = thicknessGeometryPath, actor = null };
             if (thicknessGeometryPath != null)
@@ -406,10 +381,10 @@ namespace EDITgui
 
         private async void Extract_OXYDeOXY_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -420,7 +395,7 @@ namespace EDITgui
             startSpinner();
             List<String> txtPaths = new List<string>();
             await Task.Run(() => {
-                txtPaths = coreFunctionality.extractOXYandDeOXYPoints(ultrasound.getBladderCVPoints(), thicknessCvPoints, ultrasound.bladderGeometryPath, thicknessGeometryPath);
+                txtPaths = context.getCore().extractOXYandDeOXYPoints(context.getUltrasoundPart().getBladderCVPoints(), thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
             });
 
             EDITgui.Geometry OXYGeometry = new Geometry() { geometryName = "OXY", Path = txtPaths[0], actor = null };
@@ -446,7 +421,7 @@ namespace EDITgui
                 draw_polyline(thickness[slider_value]);
                 draw_points(thickness[slider_value]);
             }
-            if (image.Source != null && ultrasound.areTherePoints() && bladderUltrasound.Any())
+            if (image.Source != null && context.getUltrasoundPart().areTherePoints() && bladderUltrasound.Any())
             {
                 draw_polyline_ultrasound(bladderUltrasound[slider_value]);
             }
@@ -460,8 +435,6 @@ namespace EDITgui
             {
                 metrics_label.Visibility = Visibility.Hidden;
             }
-
-
         }
 
 
@@ -559,20 +532,20 @@ namespace EDITgui
             {
                 if (recalculate)
                 {
-                    thicknessArea[slider_value] = metrics.calulateArea(thickness[slider_value]);
-                    thicknessPerimeter[slider_value] = metrics.calulatePerimeter(thickness[slider_value]);
+                    thicknessArea[slider_value] = context.getMetrics().calulateArea(thickness[slider_value]);
+                    thicknessPerimeter[slider_value] = context.getMetrics().calulatePerimeter(thickness[slider_value]);
                 }
 
-                if(mainWindow.currentProcess == MainWindow.process.AUTO)
+                if(context.getMainWindow().currentProcess == MainWindow.process.AUTO)
                 {
-                    metrics_label.Content =  messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
-                                                           messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2 + Environment.NewLine +
-                                                             messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
+                    metrics_label.Content = context.getMessages().perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                          context.getMessages().area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + context.getMessages().mmB2 + Environment.NewLine +
+                                                            context.getMessages().meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + context.getMessages().mm;
                 }
                 else //is MANUAL
                 {
-                    metrics_label.Content =  messages.perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
-                                                            messages.area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + messages.mmB2;
+                    metrics_label.Content = context.getMessages().perimeter + " = " + Math.Round(thicknessPerimeter[slider_value], 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                           context.getMessages().area + " = " + Math.Round(thicknessArea[slider_value], 2) + " " + context.getMessages().mmB2;
                 }
                 //metrics_label.Content = messages.meanThickness + " = " + Math.Round(meanThickness[slider_value], 2) + " " + messages.mm;
             }
@@ -930,14 +903,14 @@ namespace EDITgui
         public void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
-            mainWindow.Rat.IsEnabled = false;
+            context.getMainWindow().Rat.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         public void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
-            mainWindow.Rat.IsEnabled = true;
+            context.getMainWindow().Rat.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
@@ -983,7 +956,7 @@ namespace EDITgui
             {
                 points.Add(new List<Point>(cvp[0].Count));
             }
-            int count = ultrasound.getStartingFrame();
+            int count = context.getUltrasoundPart().getStartingFrame();
             for (int i = 0; i < cvp.Count; i++)
             {
                 List<Point> contour = new List<Point>();
@@ -1003,10 +976,10 @@ namespace EDITgui
         public List<List<EDITCore.CVPoint>> WPFPointToCVPoint(List<List<Point>> points)
         {
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
-            string message = check.checkForSegmentationGaps(points);
+            string message = context.getCheck().checkForSegmentationGaps(points);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return cvp;
             }
 
@@ -1068,13 +1041,13 @@ namespace EDITgui
 
         private void doOXYState()
         {
-            oxy_deoxy_label.Content = "  " + messages.oxy;
+            oxy_deoxy_label.Content = "  " + context.getMessages().oxy;
             oxy_deoxy_switch.setCustomDotToLeft();
             currentOxyDeOxyState = OxyDeOxyState.OXY;
             if (OXYDicomFile!=null)
             {
                 BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-                frame_num_label.Content = messages.frame + ":" + " " + slider_value;
+                frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value;
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
                 DeOXY_studyname_label.Visibility = Visibility.Hidden;
                 OXY_studyname_label.Visibility = Visibility.Visible;
@@ -1095,13 +1068,13 @@ namespace EDITgui
 
         private void doDeOXYState()
         {
-            oxy_deoxy_label.Content = messages.deoxy;
+            oxy_deoxy_label.Content = context.getMessages().deoxy;
             oxy_deoxy_switch.setCustomDotToRight();
             currentOxyDeOxyState = OxyDeOxyState.DEOXY;
             if (DeOXYDicomFile!=null)
             {
                 BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-                frame_num_label.Content = messages.frame + ":" + " " + slider_value;
+                frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value;
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
                 OXY_studyname_label.Visibility = Visibility.Hidden;
                 DeOXY_studyname_label.Visibility = Visibility.Visible;
@@ -1122,9 +1095,9 @@ namespace EDITgui
 
         private void makeVisibeOrUnvisibleSliderLeftTickBar(Visibility visibility)
         {
-            if (ultrasound.ultrasound_slider.IsLoaded)
+            if (context.getUltrasoundPart().ultrasound_slider.IsLoaded)
             {
-                UIElement ultrasoundSliderLeftTickBar = (UIElement)ultrasound.ultrasound_slider.Template.FindName("BottomTick", ultrasound.ultrasound_slider);
+                UIElement ultrasoundSliderLeftTickBar = (UIElement)context.getUltrasoundPart().ultrasound_slider.Template.FindName("BottomTick", context.getUltrasoundPart().ultrasound_slider);
                 ultrasoundSliderLeftTickBar.Visibility = visibility;
             }
         }
@@ -1133,13 +1106,13 @@ namespace EDITgui
 
         void fiillMetrics(List<double> values)
         {
-            int start = ultrasound.getStartingFrame();
-            int end = ultrasound.getEndingFrame();
+            int start = context.getUltrasoundPart().getStartingFrame();
+            int end = context.getUltrasoundPart().getEndingFrame();
             for (int i=start; i<=end; i++)
             {
                 meanThickness[i] = values[i - start];
-                thicknessArea[i] = metrics.calulateArea(thickness[i]);
-                thicknessPerimeter[i] = metrics.calulatePerimeter(thickness[i]);
+                thicknessArea[i] = context.getMetrics().calulateArea(thickness[i]);
+                thicknessPerimeter[i] = context.getMetrics().calulatePerimeter(thickness[i]);
             }
 
         }

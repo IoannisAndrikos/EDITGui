@@ -20,6 +20,8 @@ namespace EDITgui
     /// </summary>
     public partial class Login : UserControl
     {
+        Context context;
+
         MainWindow mainWindow;
         Messages messages;
 
@@ -37,6 +39,12 @@ namespace EDITgui
             this.messages = new Messages();
         }
 
+        public Login(Context context)
+        {
+            InitializeComponent();
+            this.context = context;
+        }
+
         string username;
         string password;
 
@@ -50,7 +58,7 @@ namespace EDITgui
             if(username =="lime" && password == "lime")
             {
                 isAuthenticated = true;
-                mainWindow.doAfterAuthentication();
+                mainWindow.doAfterUserAuthentication();
             }
             else
             {

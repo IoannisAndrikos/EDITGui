@@ -11,10 +11,16 @@ namespace EDITgui
     //here is the core functionality of backend
     public class coreFunctionality
     {
+        Context context;
+
+        public coreFunctionality(Context context)
+        {
+            this.context = context;
+        }
+
         public static EDITProcessor.Processor editPro = new EDITProcessor.Processor();
         public static EDITCore.EDITResponse response = EDITCore.EDITResponse.Instance;
 
-        public static Messages errorMessages = new Messages();
 
 
         public bool fillHoles = true;
@@ -32,7 +38,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
         }
 
@@ -45,7 +51,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
         }
 
@@ -69,7 +75,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -85,7 +91,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
         }
 
@@ -108,7 +114,7 @@ namespace EDITgui
                 }
                 
             }catch(Exception e){
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -135,7 +141,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -150,7 +156,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
         }
 
@@ -173,7 +179,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -199,7 +205,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -225,7 +231,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -251,7 +257,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return new List<List<EDITCore.CVPoint>>();
         }
@@ -276,7 +282,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return new List<EDITCore.CVPoint>();
         }
@@ -300,7 +306,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -324,7 +330,7 @@ namespace EDITgui
             }
             catch (Exception e)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
             return null;
         }
@@ -342,7 +348,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
 
         }
@@ -363,7 +369,7 @@ namespace EDITgui
             }
             catch (Exception)
             {
-                displayFailureMessage(errorMessages.errorOccured);
+                displayFailureMessage(context.getMessages().errorOccured);
             }
         }
 
@@ -372,7 +378,7 @@ namespace EDITgui
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                CustomMessageBox.Show(message, errorMessages.error, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().error, MessageBoxButton.OK);
             }));
             return;
         }

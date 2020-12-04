@@ -13,26 +13,12 @@ namespace EDITgui
 {
    public class LoadActions : StudyFile
    {
-        Messages messages;
-        coreFunctionality core;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
-        metricsCalculations metrics;
-        MainWindow mainWindow;
-        string workingPath;
-        List<string> ObjectsPath;
+        Context context;
 
-        public LoadActions(MainWindow mainWindow, coreFunctionality core, UltrasoundPart ultrasound, PhotoAcousticPart photo, string workingPath)
+        public LoadActions(Context context)
         {
-            this.mainWindow = mainWindow;
-            this.core = core;
-            this.ultrasound = ultrasound;
-            this.photoAcoustic = photo;
-            this.workingPath = workingPath;
-            metrics = new metricsCalculations();
-            messages = new Messages();
+            this.context = context;
         }
-
 
         public void doLoad()
         {
@@ -42,7 +28,7 @@ namespace EDITgui
             {
                 //load available 2D Data
                 loadAvailableData(browserDialog.SelectedPath);
-                this.mainWindow.loadedStudyPath = browserDialog.SelectedPath;
+                context.getMainWindow().loadedStudyPath = browserDialog.SelectedPath;
             }
         }
 
@@ -56,8 +42,8 @@ namespace EDITgui
             string UltrasoundimagesDir = null;
             string OXYImagesDir = null;
             string DeOXYImagesDir = null;
-            ultrasound.startSpinner();
-            photoAcoustic.startSpinner();
+            context.getUltrasoundPart().startSpinner();
+            context.getPhotoAcousticPart().startSpinner();
             string studyName = Path.GetFileName(path);
 
             await Task.Run(() =>
@@ -66,41 +52,41 @@ namespace EDITgui
                 if (File.Exists(ultrasoundDicomFile))
                 {
                     ultrasoundDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), ultrasoundDicomFile, FileType.UltrasoundDicomFile);
-                    UltrasoundimagesDir = core.exportImages(ultrasoundDicomFile, false);
-                    pixelSpacing = core.pixelSpacing;
-                    imageSize = core.imageSize;
+                    UltrasoundimagesDir = context.getCore().exportImages(ultrasoundDicomFile, false);
+                    pixelSpacing = context.getCore().pixelSpacing;
+                    imageSize = context.getCore().imageSize;
                 }
                 OXYDicomFile = getFolderName(path, FileType.OXYDicomFile, false) + Path.DirectorySeparatorChar + getProperFileName(FileType.OXYDicomFile);
                 if (File.Exists(OXYDicomFile))
                 {
                     OXYDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), OXYDicomFile, FileType.OXYDicomFile);
-                    OXYImagesDir = core.exportOXYImages(OXYDicomFile, false);
+                    OXYImagesDir = context.getCore().exportOXYImages(OXYDicomFile, false);
                 }
                 DeOXYDicomFile = getFolderName(path, FileType.DeOXYDicomFile, false) + Path.DirectorySeparatorChar + getProperFileName(FileType.DeOXYDicomFile);
                 if (File.Exists(DeOXYDicomFile))
                 {
                     DeOXYDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), DeOXYDicomFile, FileType.DeOXYDicomFile);
-                    DeOXYImagesDir = core.exportDeOXYImages(DeOXYDicomFile, false);
+                    DeOXYImagesDir = context.getCore().exportDeOXYImages(DeOXYDicomFile, false);
                 }
             });
 
-            ultrasound.stopSpinner();
-            photoAcoustic.stopSpinner();
+            context.getUltrasoundPart().stopSpinner();
+            context.getPhotoAcousticPart().stopSpinner();
 
             if (UltrasoundimagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                metrics.setPixelSpacing(pixelSpacing);
-                ultrasound.AfterLoadUltrasoundDicom(studyName, ultrasoundDicomFile, UltrasoundimagesDir, pixelSpacing, imageSize);
+                context.getMetrics().setPixelSpacing(pixelSpacing);
+                context.getUltrasoundPart().AfterLoadUltrasoundDicom(studyName, ultrasoundDicomFile, UltrasoundimagesDir, pixelSpacing, imageSize);
             }
 
             if (OXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                photoAcoustic.AfterLoadOXYDicom(studyName, OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
+                context.getPhotoAcousticPart().AfterLoadOXYDicom(studyName, OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
             }
 
             if (DeOXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                photoAcoustic.AfterLoadDeOXYDicom(studyName, DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
+                context.getPhotoAcousticPart().AfterLoadDeOXYDicom(studyName, DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
             }
 
             //The order below plays significant role! Be careful here!
@@ -116,7 +102,7 @@ namespace EDITgui
         {
             string oblectFileLocation = getWorkingObjetcts3DPath();
 
-            mainWindow.cleanVTKRender();
+            context.getMainWindow().cleanVTKRender();
 
             string object3D;
             EDITgui.Geometry geometry;
@@ -127,8 +113,8 @@ namespace EDITgui
                 object3D = oblectFileLocation + getProperFileName(FileType.Bladder3D);
                 File.Copy(Oblect3DFile, object3D, true);
                 geometry = new Geometry() { geometryName = "Bladder", Path = object3D, actor = null };
-                mainWindow.OnAddAvailableGeometry(geometry);
-                ultrasound.bladderGeometryPath = object3D;
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
+                context.getUltrasoundPart().bladderGeometryPath = object3D;
             }
             Oblect3DFile = getFolderName(path, FileType.Thickness3D, false) + getProperFileName(FileType.Thickness3D);
             if (File.Exists(Oblect3DFile))
@@ -136,8 +122,8 @@ namespace EDITgui
                 object3D = oblectFileLocation + getProperFileName(FileType.Thickness3D);
                 File.Copy(Oblect3DFile, object3D, true);
                 geometry = new Geometry() { geometryName = "Thickness", Path = object3D, actor = null };
-                mainWindow.OnAddAvailableGeometry(geometry);
-                photoAcoustic.thicknessGeometryPath = object3D;
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
+                context.getPhotoAcousticPart().thicknessGeometryPath = object3D;
             }
             Oblect3DFile = getFolderName(path, FileType.Layer3D, false) + getProperFileName(FileType.Layer3D);
             if (File.Exists(Oblect3DFile))
@@ -145,7 +131,7 @@ namespace EDITgui
                 object3D = oblectFileLocation + getProperFileName(FileType.Layer3D);
                 File.Copy(Oblect3DFile, object3D, true);
                 geometry = new Geometry() { geometryName = "Layer", Path = object3D, actor = null };
-                mainWindow.OnAddAvailableGeometry(geometry);
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
             Oblect3DFile = getFolderName(path, FileType.OXY3D, false) + getProperFileName(FileType.OXY3D);
             if (File.Exists(Oblect3DFile))
@@ -153,7 +139,7 @@ namespace EDITgui
                 object3D = oblectFileLocation + getProperFileName(FileType.OXY3D);
                 File.Copy(Oblect3DFile, object3D, true);
                 geometry = new Geometry() { geometryName = "OXY", Path = object3D, actor = null };
-                mainWindow.OnAddAvailableGeometry(geometry);
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
             Oblect3DFile = getFolderName(path, FileType.DeOXY3D, false) + getProperFileName(FileType.DeOXY3D);
             if (File.Exists(Oblect3DFile))
@@ -161,7 +147,7 @@ namespace EDITgui
                 object3D = oblectFileLocation + getProperFileName(FileType.DeOXY3D);
                 File.Copy(Oblect3DFile, object3D, true);
                 geometry = new Geometry() { geometryName = "DeOXY", Path = object3D, actor = null };
-                mainWindow.OnAddAvailableGeometry(geometry);
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
 
 
@@ -191,36 +177,36 @@ namespace EDITgui
             try
             {
                 //set settings of study
-                ultrasound.startingFrame = (int)settings[settingType.StartingFrame.ToString()];
-                ultrasound.endingFrame = (int)settings[settingType.EndingFrame.ToString()];
+                context.getUltrasoundPart().startingFrame = (int)settings[settingType.StartingFrame.ToString()];
+                context.getUltrasoundPart().endingFrame = (int)settings[settingType.EndingFrame.ToString()];
                 Point clickpoint = new Point();
                 clickpoint.X = (double)settings[settingType.ClickPointX.ToString()];
                 clickpoint.Y = (double)settings[settingType.ClickPointY.ToString()];
-                if (ultrasound.startingFrame == -1 || ultrasound.endingFrame == -1)
+                if (context.getUltrasoundPart().startingFrame == -1 || context.getUltrasoundPart().endingFrame == -1)
                 {
-                    ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.INSERT_USER_POINTS;
+                    context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.INSERT_USER_POINTS;
                 }
                 else
                 {
                     if (clickpoint.X != 0 && clickpoint.Y != 0)
                     {
-                        ultrasound.userPoints.Add(clickpoint);
-                        ultrasound.userPoints.Add(clickpoint);
-                        ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
+                        context.getUltrasoundPart().userPoints.Add(clickpoint);
+                        context.getUltrasoundPart().userPoints.Add(clickpoint);
+                        context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
                     }
                 }
-               
-                ultrasound.Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
-                ultrasound.Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
-                ultrasound.Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
-                ultrasound.Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
-                ultrasound.LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
-                ultrasound.chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
-                ultrasound.chechBox_Logger.IsChecked = ToBool((int)settings[settingType.Logger.ToString()]);
-                ultrasound.closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
-                core.fillHoles = ultrasound.closedSurface.IsChecked.Value;
-                photoAcoustic.minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
-                photoAcoustic.maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
+
+                context.getUltrasoundPart().Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
+                context.getUltrasoundPart().Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
+                context.getUltrasoundPart().Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
+                context.getUltrasoundPart().Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
+                context.getUltrasoundPart().LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
+                context.getUltrasoundPart().chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
+                context.getUltrasoundPart().chechBox_Logger.IsChecked = ToBool((int)settings[settingType.Logger.ToString()]);
+                context.getUltrasoundPart().closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
+                context.getCore().fillHoles = context.getUltrasoundPart().closedSurface.IsChecked.Value;
+                context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
+                context.getPhotoAcousticPart().maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
             }
             catch (Exception e)
             {
@@ -237,23 +223,23 @@ namespace EDITgui
                 int count = Directory.GetFiles(pointsDir).Length;
                 if (count > 0)
                 {
-                    ultrasound.bladder.Clear();
-                    ultrasound.bladderArea.Clear();
-                    ultrasound.bladderPerimeter.Clear();
+                    context.getUltrasoundPart().bladder.Clear();
+                    context.getUltrasoundPart().bladderArea.Clear();
+                    context.getUltrasoundPart().bladderPerimeter.Clear();
                 }
                 for (int i=0; i<count; i++)
                 {
                     framePointsFile = pointsDir + Path.DirectorySeparatorChar + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
-                        ultrasound.bladder.Add(readPointsTXTFile(framePointsFile));
-                        ultrasound.bladderArea.Add(metrics.calulateArea(ultrasound.bladder[i]));
-                        ultrasound.bladderPerimeter.Add(metrics.calulatePerimeter(ultrasound.bladder[i]));
+                        context.getUltrasoundPart().bladder.Add(readPointsTXTFile(framePointsFile));
+                        context.getUltrasoundPart().bladderArea.Add(context.getMetrics().calulateArea(context.getUltrasoundPart().bladder[i]));
+                        context.getUltrasoundPart().bladderPerimeter.Add(context.getMetrics().calulatePerimeter(context.getUltrasoundPart().bladder[i]));
                     }
                 }
-                if (ultrasound.bladder.Any())
+                if (context.getUltrasoundPart().bladder.Any())
                 {
-                    ultrasound.contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
+                    context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
                 }
             }   
         }
@@ -268,23 +254,23 @@ namespace EDITgui
             {
                 int count = Directory.GetFiles(pointsDir).Length;
                 if (count > 0) {
-                    photoAcoustic.thickness.Clear();
-                    photoAcoustic.thicknessArea.Clear();
-                    photoAcoustic.thicknessPerimeter.Clear();
+                    context.getPhotoAcousticPart().thickness.Clear();
+                    context.getPhotoAcousticPart().thicknessArea.Clear();
+                    context.getPhotoAcousticPart().thicknessPerimeter.Clear();
                 }
                 for (int i = 0; i < count; i++)
                 {
                     framePointsFile = pointsDir + Path.DirectorySeparatorChar + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
-                        photoAcoustic.thickness.Add(readPointsTXTFile(framePointsFile));
-                        photoAcoustic.thicknessArea.Add(metrics.calulateArea(photoAcoustic.thickness[i]));
-                        photoAcoustic.thicknessPerimeter.Add(metrics.calulatePerimeter(photoAcoustic.thickness[i]));
+                        context.getPhotoAcousticPart().thickness.Add(readPointsTXTFile(framePointsFile));
+                        context.getPhotoAcousticPart().thicknessArea.Add(context.getMetrics().calulateArea(context.getPhotoAcousticPart().thickness[i]));
+                        context.getPhotoAcousticPart().thicknessPerimeter.Add(context.getMetrics().calulatePerimeter(context.getPhotoAcousticPart().thickness[i]));
                     }
                 }
-                if (photoAcoustic.thickness.Any())
+                if (context.getPhotoAcousticPart().thickness.Any())
                 {
-                    photoAcoustic.contourSeg = PhotoAcousticPart.ContourSegmentation.CORRECTION;
+                    context.getPhotoAcousticPart().contourSeg = PhotoAcousticPart.ContourSegmentation.CORRECTION;
                     //photoAcoustic.bladderUltrasound = ultrasound.getBladderPoints().ToList();
                 }
             }
@@ -301,8 +287,8 @@ namespace EDITgui
                 metricsFile = metricsDir + getProperFileName(FileType.MeanThickness);
                 if (File.Exists(metricsFile))
                 {
-                    photoAcoustic.meanThickness.Clear();
-                    photoAcoustic.meanThickness = readMetricsTXTFile(metricsFile);
+                    context.getPhotoAcousticPart().meanThickness.Clear();
+                    context.getPhotoAcousticPart().meanThickness = readMetricsTXTFile(metricsFile);
                 }
             }
         }
@@ -359,9 +345,9 @@ namespace EDITgui
 
         void fill2DBackendVariables()
         {
-            if(ultrasound.startingFrame!=-1 && ultrasound.endingFrame != -1)
+            if(context.getUltrasoundPart().startingFrame!=-1 && context.getUltrasoundPart().endingFrame != -1)
             {
-                core.fill2DVariablesWhenLoadDataFromUI(ultrasound.startingFrame, ultrasound.endingFrame);
+                context.getCore().fill2DVariablesWhenLoadDataFromUI(context.getUltrasoundPart().startingFrame, context.getUltrasoundPart().endingFrame);
             }
         }
     }

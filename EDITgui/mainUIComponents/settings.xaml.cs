@@ -21,11 +21,7 @@ namespace EDITgui
     /// </summary>
     public partial class settings : UserControl
     {
-        MainWindow mainWindow;
-        UltrasoundPart ultrasound;
-        PhotoAcousticPart photoAcoustic;
-        coreFunctionality core;
-        Messages messages;
+        Context context;
 
         double xspace = 0;
         double yspace = 0;
@@ -36,14 +32,11 @@ namespace EDITgui
             InitializeComponent();
         }
 
-        public settings(MainWindow mainWindow, coreFunctionality coreFunctionality, UltrasoundPart ultrasound, PhotoAcousticPart photoAcoustic)
+
+        public settings(Context context)
         {
             InitializeComponent();
-            this.mainWindow = mainWindow;
-            this.ultrasound = ultrasound;
-            this.photoAcoustic = photoAcoustic;
-            this.core = coreFunctionality;
-            this.messages = new Messages();
+            this.context = context;
         }
 
 
@@ -79,22 +72,22 @@ namespace EDITgui
 
         private void doManual()
         {
-            mainWindow.currentProcess = MainWindow.process.ANOTATION;
-            ultrasound.extract_bladder.IsEnabled = false;
-            photoAcoustic.extract_thickness.IsEnabled = false;
-            photoAcoustic.recalculate.IsEnabled = false;
-            ultrasound.doCorrection();
-            photoAcoustic.doCorrection();
+            context.getMainWindow().currentProcess = MainWindow.process.ANOTATION;
+            context.getUltrasoundPart().extract_bladder.IsEnabled = false;
+            context.getPhotoAcousticPart().extract_thickness.IsEnabled = false;
+            context.getPhotoAcousticPart().recalculate.IsEnabled = false;
+            context.getUltrasoundPart().doCorrection();
+            context.getPhotoAcousticPart().doCorrection();
         }
 
 
         private void doAuto()
         {
-            mainWindow.currentProcess = MainWindow.process.AUTO;
-            ultrasound.extract_bladder.IsEnabled = true;
-            photoAcoustic.extract_thickness.IsEnabled = true;
-            photoAcoustic.recalculate.IsEnabled = true;
-            ultrasound.doRepeatProcess();
+            context.getMainWindow().currentProcess = MainWindow.process.AUTO;
+            context.getUltrasoundPart().extract_bladder.IsEnabled = true;
+            context.getPhotoAcousticPart().extract_thickness.IsEnabled = true;
+            context.getPhotoAcousticPart().recalculate.IsEnabled = true;
+            context.getUltrasoundPart().doRepeatProcess();
         }
 
         public void setPixelSpacing(List<double> pixelsSpacing){
@@ -110,11 +103,11 @@ namespace EDITgui
                 distaceBetweenFrames = double.Parse(textbox_distanceBetweenFrames.Text.Replace(",", "."), CultureInfo.InvariantCulture);
                 xspace = double.Parse(textbox_pixelSpacingX.Text.Replace(",", "."), CultureInfo.InvariantCulture);
                 yspace = double.Parse(textbox_pixelSpacingY.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-                core.setStudySettings(distaceBetweenFrames, xspace, yspace);
+                context.getCore().setStudySettings(distaceBetweenFrames, xspace, yspace);
             }
             catch(Exception ex)
             {
-                CustomMessageBox.Show(messages.correctDoubleFormat, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(context.getMessages().correctDoubleFormat, context.getMessages().warning, MessageBoxButton.OK);
             }
 
             

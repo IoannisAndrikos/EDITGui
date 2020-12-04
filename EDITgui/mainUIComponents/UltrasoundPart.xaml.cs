@@ -95,15 +95,8 @@ namespace EDITgui
 
         public String bladderGeometryPath = null;
 
-        MainWindow mainWindow;
-
         //create objects of the other classes
-        StudyFile studyFile = new StudyFile();
-        Messages messages = new Messages();
-        coreFunctionality coreFunctionality;
-        metricsCalculations metrics = new metricsCalculations();
-        settings studySettings;
-        checkBeforeExecute check;
+        Context context;
 
         public UltrasoundPart()
         {
@@ -114,26 +107,14 @@ namespace EDITgui
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
 
-        public UltrasoundPart(MainWindow mainWindow)
+
+        public UltrasoundPart(Context context)
         {
             InitializeComponent();
-            this.mainWindow = mainWindow;
+            this.context = context;
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             chechBox_Logger.IsChecked = true;
-            // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
-            contourSeg = ContourSegmentation.INSERT_USER_POINTS;
-        }
-
-        public void setSettings(settings studySettings ,checkBeforeExecute check)
-        {
-            this.studySettings = studySettings;
-            this.check = check;
-        }
-
-        public coreFunctionality InitializeCoreFunctionality
-        {
-            get { return coreFunctionality; }
-            set { coreFunctionality = value; }
+            doInsertUserPoints();
         }
 
 
@@ -147,32 +128,32 @@ namespace EDITgui
         private async void LoadDicom_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = messages.selectDicom;
+            openFileDialog.Title = context.getMessages().selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
                 metrics_label.Visibility = Visibility.Hidden;
                 startSpinner();
                 if (bladder != null) bladder.Clear();
                 clear_canvas();
-                coreFunctionality.repeatSegmentation();
+                context.getCore().repeatSegmentation();
                 ultrasoundDicomFile = null;
                 bool enablelogging = chechBox_Logger.IsChecked.Value;
                 await Task.Run(() => {
-                    string dicomPath = studyFile.copyFileToWorkspace(studyFile.getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.UltrasoundDicomFile);
-                    imagesDir = coreFunctionality.exportImages(dicomPath, enablelogging);
-                    pixelSpacing = coreFunctionality.pixelSpacing;
-                    imageSize = coreFunctionality.imageSize;
+                    string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.UltrasoundDicomFile);
+                    imagesDir = context.getCore().exportImages(dicomPath, enablelogging);
+                    pixelSpacing = context.getCore().pixelSpacing;
+                    imageSize = context.getCore().imageSize;
                 });
                 if (imagesDir != null)
                 {
-                    metrics.setPixelSpacing(pixelSpacing);
-                    studySettings.setPixelSpacing(pixelSpacing);
+                    context.getMetrics().setPixelSpacing(pixelSpacing);
+                    context.getStudySettings().setPixelSpacing(pixelSpacing);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     ultrasoundDicomFile = openFileDialog.FileName;
                     BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
 
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = messages.frame + ":" + " " + "0";
+                    frame_num_label.Content = context.getMessages().frame + ":" + " " + "0";
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
                     slider.Value = 0;
                     sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
@@ -204,12 +185,12 @@ namespace EDITgui
             this.imagesDir = imagesDir;
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
-            metrics.setPixelSpacing(this.pixelSpacing);
-            studySettings.setPixelSpacing(this.pixelSpacing);
+            context.getMetrics().setPixelSpacing(this.pixelSpacing);
+            context.getStudySettings().setPixelSpacing(this.pixelSpacing);
             fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
             //image.Source = BitmapFromUri(new Uri(imagesDir + "/0.bmp"));
             BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");
-            ultrasound_studyname_label.Content = studyName + " " + messages.ultrasound;
+            ultrasound_studyname_label.Content = studyName + " " + context.getMessages().ultrasound;
             frame_num_label.Content = "Frame:" + " " + "0";
             fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             slider.Value = 0;
@@ -243,10 +224,10 @@ namespace EDITgui
 
         private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extract2DBladder);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DBladder);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -267,7 +248,7 @@ namespace EDITgui
             } 
 
             await Task.Run(() => {
-                bladderCvPoints = coreFunctionality.Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
+                bladderCvPoints = context.getCore().Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
                 if (!bladderCvPoints.Any()) return; 
                 bladder = editCVPointToWPFPoint(bladderCvPoints);
             });
@@ -280,7 +261,7 @@ namespace EDITgui
         {
             if(bladder.Any())
             {
-                MessageBoxResult result = CustomMessageBox.Show(messages.makeUserAwareOfRepeatProcess, messages.warning, MessageBoxButton.YesNoCancel);
+                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().makeUserAwareOfRepeatProcess, context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
                     doRepeatProcess();
@@ -301,11 +282,11 @@ namespace EDITgui
             //bladderPerimeter.Clear();
             initializeBladderList();
             metrics_label.Visibility = Visibility.Hidden;
-            coreFunctionality.repeatSegmentation();
+            context.getCore().repeatSegmentation();
             startingFrame = -1;
             endingFrame = -1;
             doInsertUserPoints();
-            mainWindow.cleanVTKRender();
+            context.getMainWindow().cleanVTKRender();
             repeatPhotoAcousticProcess(); //trigger repeat process of photoAcousticPart
         }
 
@@ -313,10 +294,10 @@ namespace EDITgui
         double distanceBetweenFrames;
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extract3DBladder);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract3DBladder);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -325,7 +306,7 @@ namespace EDITgui
             if (!bladderCvPoints.Any()) return;
             startSpinner();
             await Task.Run(() => {
-                bladderGeometryPath = coreFunctionality.extractBladderSTL(bladderCvPoints);
+                bladderGeometryPath = context.getCore().extractBladderSTL(bladderCvPoints);
             });
             
             if (bladderGeometryPath != null)
@@ -338,10 +319,10 @@ namespace EDITgui
 
         private async void Export_Skin_Click(object sender, RoutedEventArgs e)
         {
-            string message = check.getMessage(checkBeforeExecute.executionType.extract3DLayer);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract3DLayer);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return;
             }
 
@@ -350,7 +331,7 @@ namespace EDITgui
             startSpinner();
             String STLPath = null;
             await Task.Run(() => {
-                STLPath = coreFunctionality.extractSkin(bladderCvPoints);
+                STLPath = context.getCore().extractSkin(bladderCvPoints);
             });
             EDITgui.Geometry skinGeometry = new Geometry() { geometryName = "Layer", Path = STLPath, actor = null };
             if(STLPath != null) returnSkinSTL(skinGeometry);
@@ -366,8 +347,8 @@ namespace EDITgui
                 slider_value = (int)slider.Value;
                 sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
                 BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
-                frame_num_label.Content = messages.frame + ":" + " " + slider_value.ToString();
-                switch (mainWindow.currentProcess)
+                frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value.ToString();
+                switch (context.getMainWindow().currentProcess)
                 {
                     case MainWindow.process.AUTO:
                         if (userPoints.Count == 2){
@@ -452,13 +433,13 @@ namespace EDITgui
         {
             if (recalculate)
             {
-                bladderArea[slider_value] = metrics.calulateArea(bladder[slider_value]);
-                bladderPerimeter[slider_value] = metrics.calulatePerimeter(bladder[slider_value]);
+                bladderArea[slider_value] = context.getMetrics().calulateArea(bladder[slider_value]);
+                bladderPerimeter[slider_value] = context.getMetrics().calulatePerimeter(bladder[slider_value]);
             }
             try
             {
-                metrics_label.Content = messages.perimeter + " = " + Math.Round(bladderPerimeter[slider_value], 2) + " " + messages.mm + Environment.NewLine +
-                                        messages.area + " = " + Math.Round(bladderArea[slider_value], 2) + " " + messages.mmB2;
+                metrics_label.Content = context.getMessages().perimeter + " = " + Math.Round(bladderPerimeter[slider_value], 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                        context.getMessages().area + " = " + Math.Round(bladderArea[slider_value], 2) + " " + context.getMessages().mmB2;
 
             }
             catch (Exception e)
@@ -471,8 +452,8 @@ namespace EDITgui
         {
             if(contourSeg == ContourSegmentation.MANUAL && bladder[slider_value].Any())
             {
-                bladderArea[slider_value] = metrics.calulateArea(bladder[slider_value]);
-                bladderPerimeter[slider_value] = metrics.calulatePerimeter(bladder[slider_value]);
+                bladderArea[slider_value] = context.getMetrics().calulateArea(bladder[slider_value]);
+                bladderPerimeter[slider_value] = context.getMetrics().calulatePerimeter(bladder[slider_value]);
             }
         }
 
@@ -486,7 +467,7 @@ namespace EDITgui
 
                 if (e.ChangedButton == MouseButton.Left)
                 {
-                    if (mainWindow.currentProcess == MainWindow.process.AUTO && contourSeg == ContourSegmentation.INSERT_USER_POINTS && userPoints.Count < 2)
+                    if (context.getMainWindow().currentProcess == MainWindow.process.AUTO && contourSeg == ContourSegmentation.INSERT_USER_POINTS && userPoints.Count < 2)
                     {
                         clear_canvas();
                         points.Clear();
@@ -871,12 +852,12 @@ namespace EDITgui
 
         private void ClosedSurface_Click(object sender, RoutedEventArgs e)
         {
-            coreFunctionality.fillHoles = closedSurface.IsChecked.Value;
+            context.getCore().fillHoles = closedSurface.IsChecked.Value;
         }
 
         private void ChechBox_Logger_Click(object sender, RoutedEventArgs e)
         {
-            coreFunctionality.setLoggingOnOff(chechBox_Logger.IsChecked.Value);
+            context.getCore().setLoggingOnOff(chechBox_Logger.IsChecked.Value);
         }
 
 
@@ -884,7 +865,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
             //applicationGrid.IsEnabled = false;
-            mainWindow.Rat.IsEnabled = false;
+            context.getMainWindow().Rat.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
@@ -892,7 +873,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
             //applicationGrid.IsEnabled = true;
-            mainWindow.Rat.IsEnabled = true;
+            context.getMainWindow().Rat.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
@@ -927,7 +908,7 @@ namespace EDITgui
         public void doInsertUserPoints()
         {
             this.switch_auto_manual.doCorrectionState();
-            if(mainWindow.currentProcess == MainWindow.process.ANOTATION)
+            if(context.getMainWindow().currentProcess == MainWindow.process.ANOTATION)
             {
                 contourSeg = ContourSegmentation.CORRECTION;
             }
@@ -981,8 +962,8 @@ namespace EDITgui
             //after extracting the 2D bladder segmentation we calculate and some metrics
             for (int i = 0; i < points.Count; i++)
             {
-                bladderArea.Add(metrics.calulateArea(points[i]));
-                bladderPerimeter.Add(metrics.calulatePerimeter(points[i]));
+                bladderArea.Add(context.getMetrics().calulateArea(points[i]));
+                bladderPerimeter.Add(context.getMetrics().calulatePerimeter(points[i]));
             }
             return points;
         }
@@ -993,10 +974,10 @@ namespace EDITgui
         {
             List<List<EDITCore.CVPoint>> cvp = new List<List<EDITCore.CVPoint>>();
 
-            string message = check.checkForSegmentationGaps(points);
+            string message = context.getCheck().checkForSegmentationGaps(points);
             if (message != null)
             {
-                CustomMessageBox.Show(message, messages.warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
                 return cvp;
             }
 
@@ -1055,7 +1036,7 @@ namespace EDITgui
 
         public bool autoExecutionUserPointsWereSet()
         {
-            return (mainWindow.currentProcess == MainWindow.process.AUTO && startingFrame != -1 && endingFrame != -1);
+            return (context.getMainWindow().currentProcess == MainWindow.process.AUTO && startingFrame != -1 && endingFrame != -1);
         }
     }
 }
