@@ -1052,6 +1052,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Visibility = Visibility.Hidden;
                 OXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
+                manage2DObect.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1061,6 +1062,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
+                manage2DObect.Visibility = Visibility.Hidden;
             }
             clear_canvas();
             display();
@@ -1079,6 +1081,7 @@ namespace EDITgui
                 OXY_studyname_label.Visibility = Visibility.Hidden;
                 DeOXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
+                manage2DObect.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1088,6 +1091,7 @@ namespace EDITgui
                 OXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
+                manage2DObect.Visibility = Visibility.Hidden;
             }
             clear_canvas();
             display();

@@ -57,6 +57,7 @@ namespace EDITgui
             InitializeComponent();
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
+            //user.Visibility = Visibility.Collapsed;
             this.totalGrid.Children.Add(user);
         }
 

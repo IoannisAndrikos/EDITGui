@@ -154,6 +154,9 @@
     <Compile Include="mainUIComponents\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="obectsDropdown.xaml.cs">
+      <DependentUpon>obectsDropdown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIControls\twoStatesButton.xaml.cs">
       <DependentUpon>twoStatesButton.xaml</DependentUpon>
     </Compile>
@@ -189,6 +192,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="mainUIComponents\settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="obectsDropdown.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
