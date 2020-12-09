@@ -82,10 +82,11 @@ namespace EDITgui
         List<List<EDITCore.CVPoint>> thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
         public List<List<Point>> thickness = new List<List<Point>>();
         List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
-        public List<double> meanThickness = new List<double>();
+      
         public List<List<Point>> bladderUltrasound = new List<List<Point>>();
         public String thicknessGeometryPath = null;
 
+        public List<double> meanThickness = new List<double>();
         public List<double> thicknessArea = new List<double>();
         public List<double> thicknessPerimeter = new List<double>();
 
@@ -104,6 +105,8 @@ namespace EDITgui
         {
             InitializeComponent();
             this.context = context;
+            applicationGrid.Children.Add(context.getPhotoAcousticPoints2D());
+            //add tumor annotation option here
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             UltrasoundPart.bladderPointChanged += OnBladderPointChanged;
@@ -903,14 +906,14 @@ namespace EDITgui
         public void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
-            context.getMainWindow().Rat.IsEnabled = false;
+            context.getMainWindow().components2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         public void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
-            context.getMainWindow().Rat.IsEnabled = true;
+            context.getMainWindow().components2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
@@ -1052,7 +1055,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Visibility = Visibility.Hidden;
                 OXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
-                manage2DObect.Visibility = Visibility.Visible;
+                context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
             }
             else
             {
@@ -1062,7 +1065,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
-                manage2DObect.Visibility = Visibility.Hidden;
+                context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
             }
             clear_canvas();
             display();
@@ -1081,7 +1084,7 @@ namespace EDITgui
                 OXY_studyname_label.Visibility = Visibility.Hidden;
                 DeOXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
-                manage2DObect.Visibility = Visibility.Visible;
+                context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
             }
             else
             {
@@ -1091,7 +1094,7 @@ namespace EDITgui
                 OXY_studyname_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
-                manage2DObect.Visibility = Visibility.Hidden;
+                context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
             }
             clear_canvas();
             display();

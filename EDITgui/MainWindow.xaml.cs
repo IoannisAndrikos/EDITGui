@@ -57,14 +57,14 @@ namespace EDITgui
             InitializeComponent();
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
-            //user.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed;
             this.totalGrid.Children.Add(user);
         }
 
 
         public void doAfterUserAuthentication()
         {
-            user.Visibility = Visibility.Collapsed;
+          //  user.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
 
             context = new Context(this, user);
@@ -87,10 +87,21 @@ namespace EDITgui
             context.getStudySettings().Height = 217;
             context.getStudySettings().Width = 199;
 
-            this.Rat.Children.Add(context.getUltrasoundPart());
-            this.Rat.Children.Add(context.getPhotoAcousticPart());
-            this.totalGrid.Children.Add(context.getStudySettings());
+            context.getUltrasoundPoints2D().Margin = new Thickness(5, 97.6, 0, 0);
+            context.getUltrasoundPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getUltrasoundPoints2D().VerticalAlignment = VerticalAlignment.Top;
+            context.getUltrasoundPoints2D().Height = 454.4;
 
+            context.getPhotoAcousticPoints2D().Margin = new Thickness(11, 95, 0, 0);
+            context.getPhotoAcousticPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getPhotoAcousticPoints2D().VerticalAlignment = VerticalAlignment.Top;
+            context.getPhotoAcousticPoints2D().Height = 454.4;
+
+            this.components2D.Children.Add(context.getUltrasoundPart());
+            this.components2D.Children.Add(context.getPhotoAcousticPart());
+            //context.getUltrasoundPart().applicationGrid.Children.Add(context.getTumorsUlrasound());
+            this.totalGrid.Children.Add(context.getStudySettings());
+            
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
             PhotoAcousticPart.returnThicknessSTL += OnAddAvailableGeometry;
@@ -385,13 +396,13 @@ namespace EDITgui
             {
                 case twoStatesButton.states.threeDimensional:
 
-                    Rat.Visibility = Visibility.Collapsed;
+                    components2D.Visibility = Visibility.Collapsed;
                     Viewer3D.Visibility = Visibility.Visible;
                     break;
                 case twoStatesButton.states.twoDimensional:
 
                     Viewer3D.Visibility = Visibility.Collapsed;
-                    Rat.Visibility = Visibility.Visible;
+                    components2D.Visibility = Visibility.Visible;
                     break;
             }
         }

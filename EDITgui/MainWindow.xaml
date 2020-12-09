@@ -50,7 +50,7 @@
     <Grid x:Name="totalGrid" Margin="0">
         <local:twoStatesButton x:Name="switch_2D_3D" Margin="0,5.836,0,0" VerticalAlignment="Top" Height="30.664" Width="150.001" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown"/>
 
-        <Grid x:Name="Rat" Background="#FF1C1F1F" Margin="0,40,0,0" HorizontalAlignment="Center">
+        <Grid x:Name="components2D" Background="#FF1C1F1F" Margin="0,40,0,0" HorizontalAlignment="Center">
             <!-- -->
 
 

@@ -144,6 +144,13 @@
     </ApplicationDefinition>
     <Compile Include="checkBeforeExecute.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="mainUIComponents\manage2DPhotoAcoustic.xaml.cs">
+      <DependentUpon>manage2DPhotoAcoustic.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="manage2DPoints\Points2D.cs" />
+    <Compile Include="UIControls\tumorCheckbox.xaml.cs">
+      <DependentUpon>tumorCheckbox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustMessageBox\CustomMessageBox.cs" />
     <Compile Include="CustMessageBox\CustomMessageBoxWindow.xaml.cs">
       <DependentUpon>CustomMessageBoxWindow.xaml</DependentUpon>
@@ -154,8 +161,8 @@
     <Compile Include="mainUIComponents\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="obectsDropdown.xaml.cs">
-      <DependentUpon>obectsDropdown.xaml</DependentUpon>
+    <Compile Include="mainUIComponents\manage2DUltrasound.xaml.cs">
+      <DependentUpon>manage2DUltrasound.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIControls\twoStatesButton.xaml.cs">
       <DependentUpon>twoStatesButton.xaml</DependentUpon>
@@ -179,6 +186,14 @@
     <Compile Include="mainUIComponents\UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
+    <Page Include="mainUIComponents\manage2DPhotoAcoustic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControls\tumorCheckbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustMessageBox\CustomMessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -195,7 +210,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="obectsDropdown.xaml">
+    <Page Include="mainUIComponents\manage2DUltrasound.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

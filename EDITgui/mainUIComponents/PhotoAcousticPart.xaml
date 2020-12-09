@@ -184,7 +184,6 @@
             <CheckBox x:Name="big_tumor" Content="Big tumor" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="83.2" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
         </Grid>
         <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
-        <local:obectsDropdown x:Name="manage2DObect" HorizontalAlignment="Left" VerticalAlignment="Top" Height="185.734" Margin="10,367,0,0" Visibility="Hidden"/>
 
 
 

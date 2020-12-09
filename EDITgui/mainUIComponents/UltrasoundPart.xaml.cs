@@ -65,7 +65,7 @@ namespace EDITgui
         //-----------for slider----------
         Slider slider;
         public int slider_value = 0;
-        int fileCount;
+        public int fileCount;
         public string ultrasoundDicomFile = null;
         string imagesDir;
         //-------------------------------
@@ -103,7 +103,6 @@ namespace EDITgui
             InitializeComponent();
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             chechBox_Logger.IsChecked = true;
-           // coreFunctionality.setExaminationsDirectory("C:/Users/Legion Y540/Desktop/EDIT_STUDIES");
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
 
@@ -113,6 +112,7 @@ namespace EDITgui
             InitializeComponent();
             this.context = context;
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
+            applicationGrid.Children.Add(context.getUltrasoundPoints2D()); //add tumor annotation option here
             chechBox_Logger.IsChecked = true;
             doInsertUserPoints();
         }
@@ -163,7 +163,7 @@ namespace EDITgui
                     slider.TickFrequency = 1;
                     slider.Visibility = Visibility.Visible;
                     switch_auto_manual.Visibility = Visibility.Visible;
-                    manage2DObect.Visibility = Visibility.Visible;
+                    context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
                 }
@@ -173,8 +173,8 @@ namespace EDITgui
                     frame_num_label.Content = "";
                     image.Source = null;
                     switch_auto_manual.Visibility = Visibility.Hidden;
-                    manage2DObect.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
+                    context.getUltrasoundPoints2D().Visibility = Visibility.Collapsed;
                 }
                 doRepeatProcess();
                 stopSpinner();
@@ -203,7 +203,7 @@ namespace EDITgui
             slider.TickFrequency = 1;
             slider.Visibility = Visibility.Visible;
             switch_auto_manual.Visibility = Visibility.Visible;
-            manage2DObect.Visibility = Visibility.Visible;
+            context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
             calibration_x = image.Source.Width / canvasUltrasound.Width;
             calibration_y = image.Source.Height / canvasUltrasound.Height;
             doRepeatProcess();
@@ -222,6 +222,8 @@ namespace EDITgui
                 bladderArea.Add(0);
                 bladderPerimeter.Add(0);
             }
+            context.getUltrasoundPoints2D().initializeTumors(); //initialize both image modality tumors
+            context.getPhotoAcousticPoints2D().initializeTumors();
         }
 
 
@@ -812,7 +814,7 @@ namespace EDITgui
             Thickness ConfigMargin = segmentation_config.Margin;
             Thickness waitMargin = Wait.Margin;
             Thickness switchAutoManual = switch_auto_manual.Margin;
-            Thickness managa2DObject = manage2DObect.Margin;
+            Thickness tumorsPanelMargin = context.getUltrasoundPoints2D().Margin;
 
             ImageRectangleMargin.Left = value;
             ImageBorderMargin.Left = value + 1;
@@ -820,7 +822,7 @@ namespace EDITgui
             ConfigMargin.Left = value + 1;
             waitMargin.Left = 736 - width / 2 - Wait.Width / 2;
             switchAutoManual.Left = value + 7;
-            managa2DObject.Left = value + 10;
+            tumorsPanelMargin.Left = value + 10;
 
             image_Rectangle.Margin = ImageRectangleMargin;
             imageborder.Margin = ImageBorderMargin;
@@ -828,7 +830,7 @@ namespace EDITgui
             segmentation_config.Margin = ConfigMargin;
             Wait.Margin = waitMargin;
             switch_auto_manual.Margin = switchAutoManual;
-            manage2DObect.Margin = managa2DObject;
+           context.getUltrasoundPoints2D().Margin = tumorsPanelMargin;
 
 
             image_Rectangle.Width = width + 2;
@@ -871,7 +873,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
             //applicationGrid.IsEnabled = false;
-            context.getMainWindow().Rat.IsEnabled = false;
+            context.getMainWindow().components2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
@@ -879,7 +881,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
             //applicationGrid.IsEnabled = true;
-            context.getMainWindow().Rat.IsEnabled = true;
+            context.getMainWindow().components2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
