@@ -137,9 +137,7 @@
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasPhotoAcoustic" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasPhotoAcoustic_MouseDown" MouseLeftButtonDown="canvasPhotoAcoustic_MouseLeftButtonDown" MouseLeftButtonUp="canvasPhotoAcoustic_MouseLeftButtonUp" MouseMove="canvasPhotoAcoustic_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasPhotoAcoustic_MouseWheel" MouseRightButtonDown="canvasPhotoAcoustic_MouseRightButtonDown" MouseRightButtonUp="canvasPhotoAcoustic_MouseRightButtonUp">
-                <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Image x:Name="image" Height="512" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                </Canvas>
+                <Image x:Name="image" Height="512" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Canvas>
         </Border>
         <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="580,41,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="157.11" Height="54.413" Background="{x:Null}"/>

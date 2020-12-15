@@ -22,7 +22,7 @@ namespace EDITgui
         public enum FileType
         {
             bladderPoints, thicknessPoints, settings, Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D,
-            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, Bladder2DArea, Bladder2DPerimeter, MeanThickness
+            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, MeanThickness, Tumors
         }
 
         public string getWorkspace()
@@ -51,12 +51,6 @@ namespace EDITgui
             string filename = null;
             switch (type)
             {
-                case FileType.Bladder2DArea:
-                    filename = messages.bladderAreaTXT;
-                    break;
-                case FileType.Bladder2DPerimeter:
-                    filename = messages.bladderPerimeterTXT;
-                    break;
                 case FileType.MeanThickness:
                     filename = messages.meanThicknessTXT;
                     break;
@@ -105,6 +99,9 @@ namespace EDITgui
                 case FileType.thicknessPoints:
                     dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.thicknessPoints + Path.DirectorySeparatorChar;
                     break;
+                case FileType.Tumors:
+                    dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.tumors + Path.DirectorySeparatorChar;
+                    break;
                 case FileType.settings:
                     dir = path + Path.DirectorySeparatorChar;
                     break;
@@ -120,8 +117,6 @@ namespace EDITgui
                 case FileType.DeOXYDicomFile:
                     dir = path + Path.DirectorySeparatorChar + messages.dicomFiles + Path.DirectorySeparatorChar;
                     break;
-                case FileType.Bladder2DArea:
-                case FileType.Bladder2DPerimeter:
                 case FileType.MeanThickness:
                     dir = path + Path.DirectorySeparatorChar + messages.metrics + Path.DirectorySeparatorChar;
                     break;

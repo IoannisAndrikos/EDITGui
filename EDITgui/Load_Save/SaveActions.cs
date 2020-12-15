@@ -38,13 +38,13 @@ namespace EDITgui
         public void saveAvailableData(string path)
         {
             //save bladder
-            writePointsToTXT(path, context.getUltrasoundPart().getBladderPoints(), SaveActions.FileType.bladderPoints);
-            writeMetricsToTXT(path, context.getUltrasoundPart().getBladderArea(), SaveActions.FileType.Bladder2DArea);
-            writeMetricsToTXT(path, context.getUltrasoundPart().getBladderPerimeter(), SaveActions.FileType.Bladder2DPerimeter);
+            writeBladderData(path);
 
             //save thickness
-            writePointsToTXT(path, context.getPhotoAcousticPart().getThicknessPoints(), SaveActions.FileType.thicknessPoints);
-            writeMetricsToTXT(path, context.getPhotoAcousticPart().getMeanThickness(), SaveActions.FileType.MeanThickness);
+            writeThicknessData(path);
+            writeMetricsToTXT(path, context.getImages().getTotalMeanThickness(), FileType.MeanThickness);
+
+            writeTumorData(path);
 
             //save geometries
             foreach (Geometry geometry in context.getMainWindow().STLGeometries)
@@ -67,29 +67,74 @@ namespace EDITgui
 
 
 
-        public void writePointsToTXT(string path, List<List<Point>> points, FileType type) 
+        public void writeBladderData(string path) 
         {
+            List<List<Point>> bladder = context.getImages().getTotalBladderPoints();
             string filePath;
-            for (int i=0; i<points.Count; i++)
+            for (int i=0; i< bladder.Count; i++)
             {
-                filePath = getFolderName(path, type, true) + i.ToString() + ".txt";
+                filePath = getFolderName(path, SaveActions.FileType.bladderPoints, true) + i.ToString() + ".txt";
                StreamWriter sw = new StreamWriter(filePath);
-               for(int j=0; j<points[i].Count; j++)
+               for(int j=0; j< bladder[i].Count; j++)
                {
-                    sw.WriteLine(points[i][j].X + " " + points[i][j].Y);
+                    sw.WriteLine(bladder[i][j].X + " " + bladder[i][j].Y);
                }
                 sw.Close();
             }
+            bladder.Clear();
         }
+
+
+        public void writeThicknessData(string path)
+        {
+            List<List<Point>> thickness = context.getImages().getTotalThicknessPoints();
+
+            string filePath;
+            for (int i = 0; i < thickness.Count; i++)
+            {
+                filePath = getFolderName(path, FileType.thicknessPoints, true) + i.ToString() + ".txt";
+                StreamWriter sw = new StreamWriter(filePath);
+                for (int j = 0; j < thickness[i].Count; j++)
+                {
+                    sw.WriteLine(thickness[i][j].X + " " + thickness[i][j].Y);
+                }
+                sw.Close();
+            }
+            thickness.Clear();
+        }
+
+        public void writeTumorData(string path)
+        {
+            string filePath;
+            List<List<List<Point>>> tumors = context.getImages().getTotalTumorPoints();
+            StreamWriter sw;
+            for (int i = 0; i <tumors.Count; i++)
+            {
+                filePath = getFolderName(path, SaveActions.FileType.Tumors, true) + i.ToString() + ".txt";
+                sw = new StreamWriter(filePath);
+                for (int j = 0; j < tumors[i].Count; j++)
+                {
+                    sw.WriteLine("tumor: " + j.ToString() );
+                    for (int k = 0; k < tumors[i][j].Count; k++)
+                    {
+                        sw.WriteLine(tumors[i][j][k].X + " " + tumors[i][j][k].Y);
+                    }
+                }
+                sw.Close();
+            }
+            tumors.Clear();
+        }
+
 
         public void writeMetricsToTXT(string path, List<double> metrics, FileType type)
         {
             if (!metrics.Any()) return;
 
-            string filename = getProperFileName(type);
+            string filename = getProperFileName(FileType.MeanThickness);
 
-            string filePath = getFolderName(path, type, true) + filename;
+            string filePath = getFolderName(path, FileType.MeanThickness, true) + filename;
             StreamWriter sw = new StreamWriter(filePath);
+
             for (int i = 0; i < metrics.Count; i++)
             {
                 sw.WriteLine(messages.frame + i.ToString() + " " + metrics[i]);

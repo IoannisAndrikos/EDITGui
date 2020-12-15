@@ -20,25 +20,28 @@ namespace EDITgui
     /// </summary>
     public partial class manage2DPhotoAcoustic : UserControl
     {
+        static double tumorCheckbox_topMargin = 6.5;
         Thickness itemMargin = new Thickness(15, tumorCheckbox_topMargin, 0, 0);
-        Thickness hasItems = new Thickness(29, 156, 0, 0);
 
-        public delegate void addTumorItemHandler(tumorItem obj);
+        public delegate void addTumorItemHandler(int index);
         public static event addTumorItemHandler tumorWasAdded = delegate { };
 
-        public delegate void removeTumorItemHandler(tumorCheckbox obj);
+        public delegate void removeTumorItemHandler(int index);
         public static event removeTumorItemHandler tumorWasRemoved = delegate { };
 
         Context context;
-        int selectedItem = -1;
 
-        static double tumorCheckbox_topMargin = 6.5;
+        int slider_value = 0;
+
+        public int selectedItem = -1;
+
+        double checkBoxMinHeight = 19.97;
         static int maxItemNumber = 14; //taking into account the UI size
         int leftMarginHasItems = 25;
         int leftMarginHasNoItems = 4;
 
-        public List<List<tumorItem>> tumors = new List<List<tumorItem>>();
-        public List<double> objectsPanelHeight = new List<double>();
+        private List<double> objectsPanelHeight = new List<double>();
+
 
         public manage2DPhotoAcoustic()
         {
@@ -50,25 +53,27 @@ namespace EDITgui
             InitializeComponent();
             this.Visibility = Visibility.Collapsed;
             this.context = context;
-            manage2DUltrasound.tumorWasAdded += onAddTumorItem;
-            manage2DUltrasound.tumorWasRemoved += onRemoveTumorItem;
+            manage2DUltrasound.tumorWasAdded += onAddTumorCheckbox;
+            manage2DUltrasound.tumorWasRemoved += onRemoveTumorCheckbox;
         }
 
-
-        List<tumorItem> emptyList = new List<tumorItem>();
         public void initializeTumors()
         {
-            tumors.Clear();
+            setThicknessAsSelected();
             objectsPanelHeight.Clear();
             checkboxItems.Children.Clear();
             for (int i = 0; i < context.getUltrasoundPart().fileCount; i++)
             {
                 objectsPanelHeight.Add(34);
-                tumors.Add(emptyList.ToList());
             }
             doHasNoItems();
             objectsPanel.Height = 34;
             UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
+        }
+
+        public void setThicknessAsSelected()
+        {
+            this.selectedItem = -1;
         }
 
 
@@ -89,113 +94,116 @@ namespace EDITgui
         //--------------------EXTERNAL HANDLERS----------------------------
         private void OnUltrasoundSliderValueChanged(int obj)
         {
+            setThicknessAsSelected();
             objectsPanel.Height = objectsPanelHeight[(int)obj];
             checkboxItems.Children.Clear();
-            if (!tumors[(int)obj].Any())
+            if (context.getImages().getTumorItemsCount() == 0)
             {
                 doHasNoItems();
             }
             else
             {
-                foreach (tumorItem tm in tumors[(int)obj])
+                objectsPanelHeight[slider_value] = 34;
+                objectsPanel.Height = 34;
+                for (int i = 0; i < context.getImages().getTumorItemsCount(); i++)
                 {
-                    checkboxItems.Children.Add(tm.checkbox);
+                    increaseDropdownHeight();
+                    tumorCheckbox checkbox = new tumorCheckbox(this, i, false);
+                    checkbox.Margin = itemMargin;
+                    checkboxItems.Children.Add(checkbox);
                 }
                 doHasItems();
             }
         }
 
-        private void onAddTumorItem(tumorItem item)
+        private void onAddTumorCheckbox(int index)
         {
-            if (tumors[context.getUltrasoundPart().slider_value].Count <= maxItemNumber)
+            if (checkboxItems.Children.Count <= maxItemNumber)
             {
-                if (tumors[context.getUltrasoundPart().slider_value].Count >= 1)
-                {
-                    objectsPanelHeight[context.getUltrasoundPart().slider_value] += tumors[context.getUltrasoundPart().slider_value][0].checkbox.Height + tumorCheckbox_topMargin;
-                    objectsPanel.Height = objectsPanelHeight[context.getUltrasoundPart().slider_value];
-                }
-                tumorCheckbox cb = new tumorCheckbox(this, false);
-                cb.setIndex(item.checkbox.getIndex());//-----------------?
-                cb.Margin = itemMargin;
-                tumorItem tumor = new tumorItem() { index = tumors.Count, points = new List<Point>(), checkbox = cb };
-                tumors[context.getUltrasoundPart().slider_value].Add(tumor);
-                checkboxItems.Children.Add(tumor.checkbox);
+                tumorCheckbox newCheckbox = new tumorCheckbox(this, index, false);
+                increaseDropdownHeight();
+                newCheckbox.Margin = itemMargin;
+                checkboxItems.Children.Add(newCheckbox);
             }
             doHasItems();
         }
 
-        private void onRemoveTumorItem(tumorCheckbox item)
+        private void onRemoveTumorCheckbox(int index)
         {
             decreaseDropdownHeight();
-            checkboxItems.Children.Remove(item);
-            getCurrentFrameTumors().RemoveAt(item.getIndex());
-            //Be careful here!
+            checkboxItems.Children.RemoveAt(index);
+            bool theRemovedCheckboxIsChecked = true; //to mange the selected item
             int i = 0;
-            foreach (tumorItem tm in getCurrentFrameTumors())
+            foreach (tumorCheckbox ch in checkboxItems.Children)
             {
-                tm.index = i;
-                tm.checkbox.setIndex(i++);
+                ch.setIndex(i++);
+                if (ch.check_box.IsChecked == true) theRemovedCheckboxIsChecked = false;
             }
+            if (theRemovedCheckboxIsChecked) setThicknessAsSelected(); //if it was selected set as selected the bladder
 
-            if (!getCurrentFrameTumors().Any())
-            {
-                doHasNoItems();
-            }
+            if (checkboxItems.Children.Count == 0) doHasNoItems();
+            updateCanvas();
+
         }
         //-----------------------------------------------------------
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            doHasItems();
-            addItem();
-        }
-
-        public void addItem(bool setJustcreatedCheckbocChecked = true)
-        {
-            if (tumors[context.getUltrasoundPart().slider_value].Count <= maxItemNumber)
+            if (context.getPhotoAcousticPart().areTherePoints())
             {
-                if (tumors[context.getUltrasoundPart().slider_value].Count >= 1)
-                {
-                    objectsPanelHeight[context.getUltrasoundPart().slider_value] += tumors[context.getUltrasoundPart().slider_value][0].checkbox.Height + tumorCheckbox_topMargin;
-                    objectsPanel.Height = objectsPanelHeight[context.getUltrasoundPart().slider_value];
-                }
-                tumorCheckbox cb = new tumorCheckbox(this, setJustcreatedCheckbocChecked);
-                cb.setIndex(tumors[context.getUltrasoundPart().slider_value].Count);//-----------------?
-                cb.Margin = itemMargin;
-                tumorItem tumor = new tumorItem() { index = tumors.Count, points = new List<Point>(), checkbox = cb };
-                tumors[context.getUltrasoundPart().slider_value].Add(tumor);
-                checkboxItems.Children.Add(tumor.checkbox);
-                tumorWasAdded(tumor);
+                doHasItems();
+                addItem();
+            }
+            else
+            {
+                CustomMessageBox.Show(context.getMessages().addTumorWithoutThicknessAnnotation, context.getMessages().warning, MessageBoxButton.OK);
             }
         }
 
-        public void removeItem(tumorCheckbox item)
+        public void addItem()
         {
+            if (checkboxItems.Children.Count <= maxItemNumber)
+            {
+                increaseDropdownHeight();
+                int index = context.getImages().addTumor();
+                tumorCheckbox checkbox = new tumorCheckbox(this, index);
+                checkbox.Margin = itemMargin;
+                checkboxItems.Children.Add(checkbox);
+                tumorWasAdded(checkbox.getIndex());
+            }
+        }
+
+        public void removeItem(tumorCheckbox checkbox)
+        {
+            if (checkbox.check_box.IsChecked == true) setThicknessAsSelected();
             decreaseDropdownHeight();
-            checkboxItems.Children.Remove(item);
-            getCurrentFrameTumors().RemoveAt(item.getIndex());
-            //Be careful here!
+            context.getImages().removeTumor(checkbox.getIndex());
+            checkboxItems.Children.Remove(checkbox);
             int i = 0;
-            foreach (tumorItem tm in getCurrentFrameTumors())
+            foreach (tumorCheckbox ch in checkboxItems.Children)
             {
-                tm.index = i;
-                tm.checkbox.setIndex(i++);
+                ch.setIndex(i++);
             }
-
-            if (!getCurrentFrameTumors().Any())
-            {
-                doHasNoItems();
-            }
-            tumorWasRemoved(item);
+            if (checkboxItems.Children.Count == 0) doHasNoItems();
+            tumorWasRemoved(checkbox.getIndex());
+            updateCanvas();
         }
 
+        private void increaseDropdownHeight()
+        {
+            if (this.checkboxItems.Children.Count >= 1)
+            {
+                objectsPanelHeight[slider_value] += checkBoxMinHeight + tumorCheckbox_topMargin;
+                objectsPanel.Height = objectsPanelHeight[slider_value];
+            }
+        }
 
         public void decreaseDropdownHeight()
         {
-            if (tumors[context.getUltrasoundPart().slider_value].Count > 1)
+            if (objectsPanel.Height > 2 * checkBoxMinHeight)
             {
-                objectsPanelHeight[context.getUltrasoundPart().slider_value] -= (tumors[context.getUltrasoundPart().slider_value][0].checkbox.Height + tumorCheckbox_topMargin);
-                objectsPanel.Height = objectsPanelHeight[context.getUltrasoundPart().slider_value];
+                objectsPanelHeight[slider_value] -= (checkBoxMinHeight + tumorCheckbox_topMargin);
+                objectsPanel.Height = objectsPanelHeight[slider_value];
             }
         }
 
@@ -204,6 +212,12 @@ namespace EDITgui
             Thickness addButtonMargin = addButton.Margin;
             addButtonMargin.Left = leftMarginHasItems;
             addButton.Margin = addButtonMargin;
+        }
+
+        public void updateCanvas()
+        {
+            context.getPhotoAcousticPart().doCorrection();
+            context.getPhotoAcousticPart().updateCanvas();
         }
 
         public void doHasNoItems()
@@ -215,52 +229,134 @@ namespace EDITgui
             openButton.Content = "\u2B9D";
         }
 
-        public void setTumors(List<tumorCheckbox> tumors)
+
+        Selected2DObject selectedObject = new Selected2DObject() { points = null, metrics = null, polylineColor = null };
+        public Selected2DObject getSelectedObject2D()
         {
-            this.tumors.Clear();
-            foreach (tumorCheckbox tm in checkboxItems.Children)
+            try
             {
-                checkboxItems.Children.Remove(tm);
-            }
-            foreach (tumorCheckbox tm in tumors)
-            {
-                tumors.Add(tm);
-                checkboxItems.Children.Add(tm);
-            }
-
-        }
-
-        public List<tumorItem> getCurrentFrameTumors()
-        {
-            return tumors[context.getUltrasoundPart().slider_value];
-        }
-
-
-        private int getSelectedItemIndex()
-        {
-            foreach (tumorCheckbox tcb in checkboxItems.Children)
-            {
-                if (tcb.check_box.IsChecked == true)
+                if (selectedItem >= 0)
                 {
-                    return tcb.getIndex();
-                    break;
+                    selectedObject.points = context.getImages().getTumorPoints(selectedItem);
+                    selectedObject.polylineColor = ViewAspects.magenta;
+                    selectedObject.metrics = getTumorMetricsString();
+                }
+                else
+                {
+                    selectedObject.points = context.getImages().getThicknessPoints();
+                    selectedObject.polylineColor = ViewAspects.cyan;
+                    selectedObject.metrics = getThicknessMetricsString();
+                }
+
+                return selectedObject;
+            }
+            catch (Exception ex)
+            {
+                setThicknessAsSelected();
+                selectedObject.points = context.getImages().getBladderPoints();
+                selectedObject.polylineColor = ViewAspects.cyan;
+                selectedObject.metrics = getThicknessMetricsString();
+                return selectedObject;
+            }
+        }
+
+
+        List<UIElement> polylines = new List<UIElement>();
+        List<Point> tempPoints = new List<Point>();
+        public List<UIElement> getNoSelectedObject2DPolylines()
+        {
+            polylines.Clear();
+            if (selectedItem != -1)
+            {
+                tempPoints = context.getImages().getThicknessPoints().ToList();
+                if (tempPoints.Any())
+                {
+                    tempPoints.Add(tempPoints[0]);
+                    for (int i = 0; i < tempPoints.Count - 1; i++)
+                    {
+                        Polyline pl = new Polyline();
+                        pl.FillRule = FillRule.EvenOdd;
+                        pl.StrokeThickness = 0.5;
+                        pl.Points.Add(tempPoints.ElementAt(i));
+                        pl.Points.Add(tempPoints.ElementAt(i + 1));
+                        pl.Stroke = ViewAspects.cyan;
+                        pl.StrokeStartLineCap = PenLineCap.Round;
+                        pl.StrokeEndLineCap = PenLineCap.Round;
+                        polylines.Add(pl);
+                    }
+                }
+                tempPoints.Clear();
+            }
+            for (int i = 0; i < context.getImages().getTumorItemsCount(); i++)
+            {
+                if (i != selectedItem)
+                {
+                    tempPoints = context.getImages().getTumorPoints(i).ToList();
+                    if (tempPoints.Any())
+                    {
+                        tempPoints.Add(tempPoints[0]);
+                        for (int j = 0; j < tempPoints.Count - 1; j++)
+                        {
+                            Polyline pl = new Polyline();
+                            pl.FillRule = FillRule.EvenOdd;
+                            pl.StrokeThickness = 0.5;
+                            pl.Points.Add(tempPoints.ElementAt(j));
+                            pl.Points.Add(tempPoints.ElementAt(j + 1));
+                            pl.Stroke = ViewAspects.magenta;
+                            pl.StrokeStartLineCap = PenLineCap.Round;
+                            pl.StrokeStartLineCap = PenLineCap.Round;
+                            pl.StrokeEndLineCap = PenLineCap.Round;
+                            polylines.Add(pl);
+                        }
+                        tempPoints.Clear();
+                    }
                 }
             }
-            return -1;
+            return polylines;
+        }
+
+        FrameMetrics metrics;
+        private string getThicknessMetricsString()
+        {
+            string metricsString;
+
+            metrics = context.getImages().getThicknessMetrics();
+            metricsString = context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+
+            if (context.getMainWindow().currentProcess == MainWindow.process.AUTO)
+            {
+                metricsString += Environment.NewLine + context.getMessages().meanThickness + " = " + Math.Round(metrics.meanThickness, 2) + " " + context.getMessages().mm;
+            }
+            return metricsString;
+        }
+
+        private string getTumorMetricsString()
+        {
+
+            metrics = context.getImages().getTumorMetrics(selectedItem);
+            return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
         }
 
 
-        public List<Point> getSelectedObject2D()
+        public void updateSelectedObjectMetrics()
         {
-            selectedItem = getSelectedItemIndex();
-            if (selectedItem == -1)
+            if (selectedItem >= 0)
             {
-                return context.getPoints2D().getObjectPoints2D(Points2D.oject2DType.thickness, selectedItem);
+                context.getImages().recalculateTumorMetrics(selectedItem);
             }
             else
             {
-                return context.getPoints2D().getObjectPoints2D(Points2D.oject2DType.tumor, selectedItem);
+                context.getImages().recalculateThicknessMetrics();
             }
         }
     }
+    public class Selected2DObject
+    {
+        public List<Point> points { set; get; }
+        public string metrics { set; get; }
+        public SolidColorBrush polylineColor { set; get; }
+    }
+
 }

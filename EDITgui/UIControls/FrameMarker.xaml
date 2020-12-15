@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="EDITgui.FrameMarker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EDITgui"
+             mc:Ignorable="d" 
+             d:DesignHeight="14.626" d:DesignWidth="13.25" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid x:Name="marker" Height="14.626" Width="13.25" Margin="-6.64,-7.304,6.639,7.303">
+        <Rectangle x:Name="rec1" HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1.064" ScaleX="0.94"/>
+                    <SkewTransform AngleX="-4.903"/>
+                    <RotateTransform Angle="53.643"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+        <Rectangle x:Name="rec2" HorizontalAlignment="Left" Height="2.245" Margin="-2.178,5.965,-2.523,0" VerticalAlignment="Top" Width="17.951" Fill="Lime" RadiusY="1.14" RadiusX="1.14" RenderTransformOrigin="0.5,0.5">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1.066" ScaleX="0.938"/>
+                    <SkewTransform AngleY="4.985"/>
+                    <RotateTransform Angle="122.656"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </Grid>
+</UserControl>

@@ -57,14 +57,14 @@ namespace EDITgui
             InitializeComponent();
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
-            user.Visibility = Visibility.Collapsed;
+            //user.Visibility = Visibility.Collapsed;
             this.totalGrid.Children.Add(user);
         }
 
 
         public void doAfterUserAuthentication()
         {
-          //  user.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
 
             context = new Context(this, user);

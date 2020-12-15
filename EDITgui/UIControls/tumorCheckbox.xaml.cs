@@ -28,22 +28,20 @@ namespace EDITgui
             InitializeComponent();
         }
 
-        //public tumorCheckbox(tumorObjectsUltrasound dropdownContainer)
-        //{
-        //    InitializeComponent();
-        //    this.tumorsDropdownUltrasound = dropdownContainer;
-        //    setJustCreatedCheckBoxToChecked();
-        //}
-
-        public tumorCheckbox(object dropdownContainer, bool setJustcreatedCheckbocChecked)
+        public tumorCheckbox(object dropdownContainer, int index, bool setChecked = true)
         {
             InitializeComponent(); 
             this.dropdownContainer = dropdownContainer;
-            if (setJustcreatedCheckbocChecked)
+            this.index = index;
+            check_box.Content = index.ToString();
+            if (setChecked)
             {
-                foreach (tumorItem tm in getCurrentFrameTumors())
+                foreach (tumorCheckbox tm in getItemPanel().Children)
                 {
-                    tm.checkbox.check_box.IsChecked = false;
+                    if (tm.index != this.index)
+                    {
+                        tm.check_box.IsChecked = false;
+                    }
                 }
                 this.check_box.IsChecked = true;
             }
@@ -62,56 +60,68 @@ namespace EDITgui
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-
             if (dropdownContainer is manage2DPhotoAcoustic)
             {
                  ((manage2DPhotoAcoustic)dropdownContainer).removeItem(this);
+                 ((manage2DPhotoAcoustic)dropdownContainer).updateCanvas();
             }
-            else //if((dropdownContainer is tumorObjectsUltrasound))
+            else if((dropdownContainer is manage2DUltrasound))
             {
                ((manage2DUltrasound)dropdownContainer).removeItem(this);
+                ((manage2DUltrasound)dropdownContainer).updateCanvas();
             }
-           // tumorsDropdownUltrasound.removeItem(this);
         }
 
-
-
-        private List<tumorItem> getCurrentFrameTumors()
+        private StackPanel getItemPanel()
         {
             if(dropdownContainer is manage2DPhotoAcoustic)
             {
-                return ((manage2DPhotoAcoustic)dropdownContainer).getCurrentFrameTumors();
-            }else //if((dropdownContainer is tumorObjectsUltrasound))
+                return ((manage2DPhotoAcoustic)dropdownContainer).checkboxItems;
+            }else if((dropdownContainer is manage2DUltrasound))
             {
-                return ((manage2DUltrasound)dropdownContainer).getCurrentFrameTumors();
+                return ((manage2DUltrasound)dropdownContainer).checkboxItems;
             }
+
+            return null;
         }
 
         private void Check_box_Click(object sender, RoutedEventArgs e)
         {
-            if(this.check_box.IsChecked == true)
+            if (this.check_box.IsChecked == false)
             {
-                foreach (tumorItem tm in getCurrentFrameTumors())
+                if (dropdownContainer is manage2DPhotoAcoustic)
                 {
-                    if (tm.index != this.index)
-                    {
-                        tm.checkbox.check_box.IsChecked = false;
-                    }
+                    ((manage2DPhotoAcoustic)dropdownContainer).setThicknessAsSelected();
+                    ((manage2DPhotoAcoustic)dropdownContainer).updateCanvas();
                 }
-                this.check_box.IsChecked = true;
-            }
-            else
-            {
-
-                this.check_box.IsChecked = false;
+                else if ((dropdownContainer is manage2DUltrasound))
+                {
+                    ((manage2DUltrasound)dropdownContainer).setBladderAsSelected();
+                    ((manage2DUltrasound)dropdownContainer).updateCanvas();
+                }
             }
         }
-    }
 
-    public class tumorItem
-    {
-        public int index { get; set; }
-        public List<Point> points { get; set; }
-        public tumorCheckbox checkbox { get; set; }
+        private void Check_box_Checked(object sender, RoutedEventArgs e)
+        {
+            if (dropdownContainer is manage2DPhotoAcoustic)
+            {
+                ((manage2DPhotoAcoustic)dropdownContainer).selectedItem = this.index;
+                ((manage2DPhotoAcoustic)dropdownContainer).updateCanvas();
+            }
+            else if ((dropdownContainer is manage2DUltrasound))
+            {
+                ((manage2DUltrasound)dropdownContainer).selectedItem = this.index;
+                ((manage2DUltrasound)dropdownContainer).updateCanvas();
+            }
+
+            foreach (tumorCheckbox tm in getItemPanel().Children)
+            {
+                if (tm.index != this.index)
+                {
+                    tm.check_box.IsChecked = false;
+                }
+            }
+        }
     }
 }

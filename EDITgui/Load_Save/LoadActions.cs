@@ -93,9 +93,12 @@ namespace EDITgui
             loadAvailableBladderPoints(path);
             loadXMLSettingsFile(path);
             loadAvailableThicknessPoints(path);
-            loadAvailableThicknessMetrics(path);
+            loadAvailableTumorsPoints(path);
             load3DAvailableData(path);
             fill2DBackendVariables();
+
+            context.getUltrasoundPart().updateCanvas();
+            context.getPhotoAcousticPart().updateCanvas();
         }
 
         public void load3DAvailableData(string path)
@@ -221,27 +224,16 @@ namespace EDITgui
             if (Directory.Exists(pointsDir))
             {
                 int count = Directory.GetFiles(pointsDir).Length;
-                if (count > 0)
+            
+                for (int i = 0; i < count; i++)
                 {
-                    context.getUltrasoundPart().bladder.Clear();
-                    context.getUltrasoundPart().bladderArea.Clear();
-                    context.getUltrasoundPart().bladderPerimeter.Clear();
-                }
-                for (int i=0; i<count; i++)
-                {
-                    framePointsFile = pointsDir + Path.DirectorySeparatorChar + i.ToString() + ".txt";
+                    framePointsFile = pointsDir  + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
-                        context.getUltrasoundPart().bladder.Add(readPointsTXTFile(framePointsFile));
-                        context.getUltrasoundPart().bladderArea.Add(context.getMetrics().calulateArea(context.getUltrasoundPart().bladder[i]));
-                        context.getUltrasoundPart().bladderPerimeter.Add(context.getMetrics().calulatePerimeter(context.getUltrasoundPart().bladder[i]));
+                        context.getImages().setBladderData(i, readPointsTXTFile(framePointsFile));
                     }
                 }
-                if (context.getUltrasoundPart().bladder.Any())
-                {
-                    context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
-                }
-            }   
+            }
         }
 
 
@@ -252,33 +244,68 @@ namespace EDITgui
             string pointsDir = getFolderName(path, FileType.thicknessPoints, false);
             if (Directory.Exists(pointsDir))
             {
+                List<double> meanThinchnesslist = loadAvailableThicknessMetrics(path);
+
                 int count = Directory.GetFiles(pointsDir).Length;
-                if (count > 0) {
-                    context.getPhotoAcousticPart().thickness.Clear();
-                    context.getPhotoAcousticPart().thicknessArea.Clear();
-                    context.getPhotoAcousticPart().thicknessPerimeter.Clear();
-                }
                 for (int i = 0; i < count; i++)
                 {
-                    framePointsFile = pointsDir + Path.DirectorySeparatorChar + i.ToString() + ".txt";
+                    framePointsFile = pointsDir + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
-                        context.getPhotoAcousticPart().thickness.Add(readPointsTXTFile(framePointsFile));
-                        context.getPhotoAcousticPart().thicknessArea.Add(context.getMetrics().calulateArea(context.getPhotoAcousticPart().thickness[i]));
-                        context.getPhotoAcousticPart().thicknessPerimeter.Add(context.getMetrics().calulatePerimeter(context.getPhotoAcousticPart().thickness[i]));
+                        context.getImages().setThicknessData(i, readPointsTXTFile(framePointsFile), meanThinchnesslist[i]);
                     }
                 }
-                if (context.getPhotoAcousticPart().thickness.Any())
+
+                meanThinchnesslist.Clear();
+            }
+        }
+
+        private void loadAvailableTumorsPoints(string path)
+        {
+            string framePointsFile;
+            string pointsDir = getFolderName(path, FileType.Tumors, false);
+            List<List<Point>> points = new List<List<Point>>();
+            if (Directory.Exists(pointsDir))
+            {
+                int count = Directory.GetFiles(pointsDir).Length;
+                for (int i = 0; i < count; i++)
                 {
-                    context.getPhotoAcousticPart().contourSeg = PhotoAcousticPart.ContourSegmentation.CORRECTION;
-                    //photoAcoustic.bladderUltrasound = ultrasound.getBladderPoints().ToList();
+                    framePointsFile = pointsDir + i.ToString() + ".txt";
+                    if (File.Exists(framePointsFile))
+                    {
+                        StreamReader sr = new StreamReader(framePointsFile);
+                        String line;
+                        double x, y;
+                        int k = -1;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (line.Contains("tumor"))
+                            {
+                                k++;
+                                points.Add(new List<Point>());
+                            }
+                            else
+                            {
+                                string[] col = line.Split(' ');
+                                x = double.Parse(col[0].Replace(",", "."), CultureInfo.InvariantCulture);
+                                y = double.Parse(col[1].Replace(",", "."), CultureInfo.InvariantCulture);
+                                points[k].Add(new Point(x, y));
+                            }
+                        }
+                        sr.Close();
+                        context.getImages().setTumorsData(i, points);
+                        points.Clear();
+                    }
                 }
             }
         }
 
 
-        private void loadAvailableThicknessMetrics(string path)
+
+        private List<double> loadAvailableThicknessMetrics(string path)
         {
+            List<double> meanThicknessList = new List<double>();
+
             string metricsFile;
             string metricsDir = getFolderName(path, FileType.MeanThickness, false);
             if (Directory.Exists(metricsDir))
@@ -287,10 +314,15 @@ namespace EDITgui
                 metricsFile = metricsDir + getProperFileName(FileType.MeanThickness);
                 if (File.Exists(metricsFile))
                 {
-                    context.getPhotoAcousticPart().meanThickness.Clear();
-                    context.getPhotoAcousticPart().meanThickness = readMetricsTXTFile(metricsFile);
+                    List<double> meanthickness = readMetricsTXTFile(metricsFile);
+                    for (int i = 0; i < meanthickness.Count; i++)
+                    {
+                        meanThicknessList.Add(meanthickness[i]);
+                    }
                 }
             }
+
+            return meanThicknessList;
         }
 
         private List<Point> readPointsTXTFile(string filename)

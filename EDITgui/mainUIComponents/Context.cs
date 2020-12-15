@@ -10,7 +10,7 @@ namespace EDITgui
     {
         private MainWindow mainWindow;
         private Login user;
-        private Points2D points2D;
+        private ImageSequence images;
         private UltrasoundPart ultrasoundPart;
         private PhotoAcousticPart photoAcousticPart;
         private manage2DUltrasound ultrasoundPoints2D;
@@ -27,21 +27,21 @@ namespace EDITgui
         public Context(MainWindow mainWindow, Login user)
         {
             //Be careful here! The order below plays significant role
+            this.user = user;
             this.messages = new Messages();
             this.mainWindow = mainWindow;
-            this.points2D = new Points2D(this);
+            this.images = new ImageSequence(this);
             this.ultrasoundPoints2D = new manage2DUltrasound(this);
             this.photoAcousticPoints2D = new manage2DPhotoAcoustic(this);
-            this.user = user;
             this.ultrasoundPart = new UltrasoundPart(this);
             this.photoAcousticPart = new PhotoAcousticPart(this);
             this.metrics = new metricsCalculations(this);
             this.core = new coreFunctionality(this);
             this.studySettings = new settings(this);
             this.check = new checkBeforeExecute(this);
-            this.studyFile = new StudyFile();
             this.loadActions = new LoadActions(this);
             this.saveActions = new SaveActions(this);
+            this.studyFile = new StudyFile();
         }
 
 
@@ -55,9 +55,9 @@ namespace EDITgui
             return this.user;
         }
 
-        public Points2D getPoints2D()
+        public ImageSequence getImages()
         {
-            return this.points2D;
+            return this.images;
         }
 
         public UltrasoundPart getUltrasoundPart()
@@ -105,11 +105,6 @@ namespace EDITgui
             return this.check;
         }
 
-        public StudyFile getStudyFile()
-        {
-            return this.studyFile;
-        }
-
         public LoadActions getLoadActions()
         {
             return this.loadActions;
@@ -120,6 +115,9 @@ namespace EDITgui
             return this.saveActions;
         }
 
-
+        public StudyFile getStudyFile()
+        {
+            return this.studyFile;
+        }
     }
 }

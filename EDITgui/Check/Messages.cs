@@ -77,6 +77,8 @@ namespace EDITgui
 
         public string thicknessPoints = "Thickness_Points";
 
+        public string tumors = "Tumors";
+
         public string bladderAreaTXT = "BladderArea.txt";
 
         public string bladderPerimeterTXT = "BladderPerimeter.txt";
@@ -105,6 +107,14 @@ namespace EDITgui
         public string warning = "Warning";
 
         public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost.";
+
+        public string addTumorWithoutBladderAnnotation = "Before proceeding with the tumor annotation you should have performed the bladder annotation";
+
+        public string addTumorWithoutThicknessAnnotation = "Before proceeding with the tumor annotation you should have performed the thickness annotation";
+        
+        public string loadOXYWithoutUltraasound = "Before loading the OXY image modality you should have loaded the ultrasound image modality";
+
+        public string loadDeOXYWithoutUltraasound = "Before loading the DeOXY image modality you should have loaded the ultrasound image modality";
 
         public string getOverwriteExistingStudyQuestion(string path)
         {

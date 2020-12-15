@@ -34,40 +34,28 @@ namespace EDITgui
                     if(context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
                         return context.getMessages().ultrasoundFileNotLoaded;
-                        if (context.getUltrasoundPart().userPoints.Count < 2)
-                        {
-                            return context.getMessages().notEnoughUserPoints;
-                        }
+                    }
+                    if (context.getUltrasoundPart().userPoints.Count < 2)
+                    {
+                        return context.getMessages().notEnoughUserPoints;
                     }
                     break;
                 case executionType.extract3DBladder:
                     if (context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
                         return context.getMessages().ultrasoundFileNotLoaded;
-                        if (!context.getUltrasoundPart().bladder.Any())
-                        {
-                            return context.getMessages().noBladderSegmentation;
-                        }
                     }
                     break;
                 case executionType.extract3DLayer:
                     if (context.getUltrasoundPart().ultrasoundDicomFile == null)
                     {
                         return context.getMessages().ultrasoundFileNotLoaded;
-                        if (!context.getUltrasoundPart().bladder.Any())
-                        {
-                            return context.getMessages().noBladderSegmentation;
-                        }
                     }
                     break;
                 case executionType.extract2DThickness:
                     if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
-                        if (!context.getUltrasoundPart().bladder.Any())
-                        {
-                            return context.getMessages().noBladderSegmentation;
-                        }
                     }
                     break;
                 case executionType.recalculate:
@@ -84,21 +72,13 @@ namespace EDITgui
                     if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
-                        if (!context.getUltrasoundPart().bladder.Any())
-                        {
-                            return context.getMessages().noBladderSegmentation;
-                        }
                     }
                     break;
                 case executionType.extractOXYDeOXY:
                     if (context.getPhotoAcousticPart().OXYDicomFile == null || context.getPhotoAcousticPart().DeOXYDicomFile == null)
                     {
                         return context.getMessages().noOXYAndDeOXYImages;
-                        if (!context.getPhotoAcousticPart().thickness.Any())
-                        {
-                            return context.getMessages().noBladderSegmentation;
-                        }
-                        else if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
+                        if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
                         {
                             return context.getMessages().noBadderOrThickness3DModels;
                         }

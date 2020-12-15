@@ -142,12 +142,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="checkBeforeExecute.cs" />
-    <Compile Include="Context.cs" />
+    <Compile Include="Check\checkBeforeExecute.cs" />
+    <Compile Include="UIControls\ViewAspects.cs" />
+    <Compile Include="UIControls\FrameMarker.xaml.cs">
+      <DependentUpon>FrameMarker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="mainUIComponents\Context.cs" />
+    <Compile Include="manage2DPoints\ImageSequence.cs" />
     <Compile Include="mainUIComponents\manage2DPhotoAcoustic.xaml.cs">
       <DependentUpon>manage2DPhotoAcoustic.xaml</DependentUpon>
     </Compile>
-    <Compile Include="manage2DPoints\Points2D.cs" />
+    <Compile Include="manage2DPoints\Frame.cs" />
     <Compile Include="UIControls\tumorCheckbox.xaml.cs">
       <DependentUpon>tumorCheckbox.xaml</DependentUpon>
     </Compile>
@@ -186,6 +191,10 @@
     <Compile Include="mainUIComponents\UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
+    <Page Include="UIControls\FrameMarker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="mainUIComponents\manage2DPhotoAcoustic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -230,8 +239,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Messages.cs" />
-    <Compile Include="coreFunctionality.cs" />
+    <Compile Include="Check\Messages.cs" />
+    <Compile Include="core\coreFunctionality.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
