@@ -78,10 +78,10 @@ namespace EDITgui
                     if (context.getPhotoAcousticPart().OXYDicomFile == null || context.getPhotoAcousticPart().DeOXYDicomFile == null)
                     {
                         return context.getMessages().noOXYAndDeOXYImages;
-                        if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
-                        {
-                            return context.getMessages().noBadderOrThickness3DModels;
-                        }
+                    }
+                    if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
+                    {
+                        return context.getMessages().noBadderOrThickness3DModels;
                     }
                     break;
             }

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:EDITgui"
              mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top" Width="83.957" Height="25.459">
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Height="25.542" VerticalAlignment="Top" HorizontalAlignment="Left" Width="83.957">
-        <Rectangle x:Name="back3" Fill="#FF1C1F1F" HorizontalAlignment="Left" Height="25.542" VerticalAlignment="Top" Width="83.957" RadiusY="5" RadiusX="5" Stroke="#FF335B5B"/>
+        <Rectangle x:Name="back3" Fill="#FF335B5B" HorizontalAlignment="Left" Height="25.542" VerticalAlignment="Top" Width="83.957" RadiusY="5" RadiusX="5" Stroke="#FF335B5B"/>
         <Label x:Name="content" Content="Correction" Height="17.166" Margin="0" Style="{DynamicResource SimpleLabel}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
     </Grid>

@@ -634,7 +634,7 @@ namespace EDITgui
         Rectangle rectRemovePoints;
         private void canvasPhotoAcoustic_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
+            if (!selectedObjectHasPoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
             _start = Mouse.GetPosition(image);
             rectRemovePoints = new Rectangle();
@@ -650,7 +650,7 @@ namespace EDITgui
         int indexA;
         private void canvasPhotoAcoustic_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!areTherePoints() || contourSeg == ContourSegmentation.MANUAL) return;
+            if (!selectedObjectHasPoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
             List<Point> pointsToRemove = new List<Point>();
             int count = 0;

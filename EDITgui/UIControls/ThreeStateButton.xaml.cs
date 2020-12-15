@@ -36,7 +36,8 @@ namespace EDITgui
         {
             myState = CurrentState.FILL_POINTS;
             content.Content = "Interpolation";
-            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF5B5B33"));
+            //back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF5B5B33"));
+            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1C7A5A"));
 
         }
 
@@ -44,7 +45,8 @@ namespace EDITgui
         {
             myState = CurrentState.CORRECTION;
             content.Content = "Correction";
-            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1C1F1F"));
+            //back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1C1F1F"));
+            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF335B5B"));
         }
 
 
@@ -52,7 +54,8 @@ namespace EDITgui
         {
             myState = CurrentState.MANUAL;
             content.Content = "Manual";
-            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF5A2531"));
+            //back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF5A2531"));
+            back3.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFA23636"));
         }
 
 
