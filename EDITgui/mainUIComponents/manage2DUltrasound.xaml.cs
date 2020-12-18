@@ -67,7 +67,6 @@ namespace EDITgui
             }
             doHasNoItems();
             objectsPanel.Height = 34;
-            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
         }
 
         public void setBladderAsSelected()
@@ -91,13 +90,13 @@ namespace EDITgui
         }
 
         //--------------------EXTERNAL HANDLERS----------------------------
-        private void OnUltrasoundSliderValueChanged(int obj)
+        public void updatePanel (int value)
         {
 
-            slider_value = (int)obj;
+            slider_value = value;
 
             setBladderAsSelected();
-            objectsPanel.Height = objectsPanelHeight[(int)obj];
+            objectsPanel.Height = objectsPanelHeight[value];
             checkboxItems.Children.Clear();
             if (context.getImages().getTumorItemsCount() == 0)
             {
@@ -321,6 +320,8 @@ namespace EDITgui
         private string getBladderMetricsString()
         {
             metrics = context.getImages().getBladderMetrics();
+            if (metrics.area == 0) return "";
+
             return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
         }
@@ -328,6 +329,7 @@ namespace EDITgui
         private string getTumorMetricsString()
         {
             metrics = context.getImages().getTumorMetrics(selectedItem);
+            if (metrics.area == 0) return "";
             return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
         }

@@ -68,7 +68,6 @@ namespace EDITgui
             }
             doHasNoItems();
             objectsPanel.Height = 34;
-            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
         }
 
         public void setThicknessAsSelected()
@@ -92,10 +91,12 @@ namespace EDITgui
         }
 
         //--------------------EXTERNAL HANDLERS----------------------------
-        private void OnUltrasoundSliderValueChanged(int obj)
+        public void updatePanel(int value)
         {
+            slider_value = value;
+
             setThicknessAsSelected();
-            objectsPanel.Height = objectsPanelHeight[(int)obj];
+            objectsPanel.Height = objectsPanelHeight[value];
             checkboxItems.Children.Clear();
             if (context.getImages().getTumorItemsCount() == 0)
             {
@@ -318,13 +319,17 @@ namespace EDITgui
         FrameMetrics metrics;
         private string getThicknessMetricsString()
         {
+            metrics = context.getImages().getThicknessMetrics();
+
+            if (metrics.area == 0) return "";
+
             string metricsString;
 
-            metrics = context.getImages().getThicknessMetrics();
+
             metricsString = context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
 
-            if (context.getMainWindow().currentProcess == MainWindow.process.AUTO)
+            if (metrics.meanThickness>0 && context.getMainWindow().currentProcess == MainWindow.process.AUTO)
             {
                 metricsString += Environment.NewLine + context.getMessages().meanThickness + " = " + Math.Round(metrics.meanThickness, 2) + " " + context.getMessages().mm;
             }
@@ -333,8 +338,10 @@ namespace EDITgui
 
         private string getTumorMetricsString()
         {
-
             metrics = context.getImages().getTumorMetrics(selectedItem);
+
+            if (metrics.area == 0) return "";
+
             return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
         }

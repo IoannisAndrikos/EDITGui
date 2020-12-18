@@ -33,13 +33,6 @@ namespace EDITgui
     /// </summary>
     public partial class UltrasoundPart : UserControl
     {
-
-        public delegate void repeatProcessHandler();
-        public static event repeatProcessHandler repeatPhotoAcousticProcess = delegate { };
-
-        public delegate void sliderValueChangedHandler(int obj);
-        public static event sliderValueChangedHandler sliderValueChanged = delegate { };
-
         public delegate void zoomUltrasoundChangedHandler(List<Matrix> obj);
         public static event zoomUltrasoundChangedHandler zoomUltrasoundChanged = delegate { };
 
@@ -148,7 +141,7 @@ namespace EDITgui
                     ultrasound_studyname_label.Content = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = context.getMessages().frame + ":" + " " + "0";
                     slider.Value = 0;
-                    sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
+                    context.getPhotoAcousticPart().sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
                     slider.TickFrequency = 1 / (double)fileCount;
                     slider.Minimum = 0;
                     slider.Maximum = fileCount - 1;
@@ -187,7 +180,7 @@ namespace EDITgui
             ultrasound_studyname_label.Content = studyName + " " + context.getMessages().ultrasound;
             frame_num_label.Content = "Frame:" + " " + "0";
             slider.Value = 0;
-            sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
+            context.getPhotoAcousticPart().sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
             slider.TickFrequency = 1 / (double)fileCount;
             slider.Minimum = 0;
             slider.Maximum = fileCount - 1;
@@ -263,7 +256,7 @@ namespace EDITgui
             endingFrame = -1;
             doInsertUserPoints();
             context.getMainWindow().cleanVTKRender();
-            repeatPhotoAcousticProcess(); //trigger repeat process of photoAcousticPart
+            context.getPhotoAcousticPart().doRepeatProcess(); //trigger repeat process of photoAcousticPart
         }
 
         private async void Extract_STL_Click(object sender, RoutedEventArgs e)
@@ -319,20 +312,24 @@ namespace EDITgui
             {
                 recalculateMetricsAfterManualSegmentation(); //make sure that we have caclulated metrics before change frame
                 slider_value = (int)slider.Value;
-                sliderValueChanged(slider_value);// here we pass slider_value to Photoaccoustic part 
                 BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value.ToString();
                 switch (context.getMainWindow().currentProcess)
                 {
                     case MainWindow.process.AUTO:
                         if (userPoints.Count == 2){
-                            doCorrection(false);
+                            doCorrection(false,false);
                         }
                         break;
                     case MainWindow.process.ANOTATION:
-                        doCorrection(false);
+                        doCorrection(false,false);
                         break;
                 }
+
+                context.getPhotoAcousticPart().sliderValueChanged(slider_value); //here we pass slider_value to Photoaccoustic part
+                context.getUltrasoundPoints2D().updatePanel(slider_value);
+                context.getPhotoAcousticPoints2D().updatePanel(slider_value);
+
                 updateCanvas();
             }
             catch(Exception ex){
@@ -725,32 +722,22 @@ namespace EDITgui
                 drawPolylineOfRest2DObjects();
                 draw_polyline(selectedObject);
                 draw_points(selectedObject);
-                if (contourSeg == ContourSegmentation.CORRECTION && selectedObject.points.Any())
+                metrics_label.Foreground = selectedObject.polylineColor;
+                metrics_label.Content = selectedObject.metrics;
+
+                if (slider_value == startingFrame && !context.getImages().getBladderPoints().Any())
                 {
-                    metrics_label.Foreground = selectedObject.polylineColor;
-                    metrics_label.Content = selectedObject.metrics;
-                    metrics_label.Visibility = Visibility.Visible;
+                    canvasUltrasound.Children.Add(startingFrameMarker);
+                    Canvas.SetLeft(startingFrameMarker, userPoints[0].X);
+                    Canvas.SetTop(startingFrameMarker, userPoints[0].Y);
                 }
-                else
+                if (slider_value == endingFrame && !context.getImages().getBladderPoints().Any())
                 {
-                    metrics_label.Visibility = Visibility.Hidden;
+                    canvasUltrasound.Children.Add(endingFrameMarker);
+                    Canvas.SetLeft(endingFrameMarker, userPoints[1].X);
+                    Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
                 }
-                if (!context.getImages().getBladderPoints().Any())
-                {
-                    metrics_label.Visibility = Visibility.Hidden;
-                    if (slider_value == startingFrame)
-                    {
-                        canvasUltrasound.Children.Add(startingFrameMarker);
-                        Canvas.SetLeft(startingFrameMarker, userPoints[0].X);
-                        Canvas.SetTop(startingFrameMarker, userPoints[0].Y);
-                    }
-                    if (slider_value == endingFrame)
-                    {
-                        canvasUltrasound.Children.Add(endingFrameMarker);
-                        Canvas.SetLeft(endingFrameMarker, userPoints[1].X);
-                        Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
-                    }
-                }
+
             }
         }
 
@@ -819,8 +806,8 @@ namespace EDITgui
         {
             if (this.contourSeg == ContourSegmentation.MANUAL)
             {
-                doCorrection();
                 context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                doCorrection();
             }
             else if (this.contourSeg == ContourSegmentation.CORRECTION)
             {
@@ -828,8 +815,8 @@ namespace EDITgui
             }
             else if (this.contourSeg == ContourSegmentation.FILL_POINTS)
             {
-                doCorrection();
                 context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                doCorrection();
             }
         }
 
@@ -860,21 +847,20 @@ namespace EDITgui
             Wait.Visibility = Visibility.Hidden;
         }
 
-        public void doCorrection(bool update = true)
+        public void doCorrection(bool update = true, bool updatePhotoAcoustic = true)
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;
-            context.getPhotoAcousticPart().updateCanvas();
-            if (update)
-            {
-                updateCanvas();
-            }
+            metrics_label.Visibility = Visibility.Visible;
+            if(update) updateCanvas();
+            if(updatePhotoAcoustic) context.getPhotoAcousticPart().updateCanvas();
         }
 
         public void doManual()
         {
            this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
+            metrics_label.Visibility = Visibility.Hidden;
             if (selectedObjectHasPoints()) context.getUltrasoundPoints2D().getSelectedObject2D().points.Clear();
             updateCanvas();
         }
@@ -883,6 +869,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.doFillPointState();
             contourSeg = ContourSegmentation.FILL_POINTS;
+            metrics_label.Visibility = Visibility.Hidden;
             updateCanvas();
         }
 

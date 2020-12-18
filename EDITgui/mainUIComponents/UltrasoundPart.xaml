@@ -64,7 +64,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,0,0,2"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True"/>
@@ -361,7 +361,7 @@
             <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click"/>
         </Grid>
         <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">
-            <Button x:Name="loadDicom" Content="Load Dicom" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
+            <Button x:Name="loadDicom" Content="Load Ultrasound" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
             <Button x:Name="extract_bladder" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
             <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
             <Button x:Name="Export_Skin" Content="Extract Layer" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>

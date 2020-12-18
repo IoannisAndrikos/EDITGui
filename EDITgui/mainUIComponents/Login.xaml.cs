@@ -51,7 +51,7 @@ namespace EDITgui
             username = textBox_username.Text;
             password = password_box.Password;
 
-            if(username =="lime" && password == "lime")
+            if (username =="lime" && password == "lime")
             {
                 isAuthenticated = true;
                 mainWindow.doAfterUserAuthentication();
@@ -68,9 +68,11 @@ namespace EDITgui
             {
                 reveal_password.Text = password_box.Password;
                 reveal_password.Visibility = Visibility.Visible;
+
             }
             else
             {
+                password_box.Password = reveal_password.Text;
                 reveal_password.Visibility = Visibility.Collapsed;
             }
         }

@@ -85,7 +85,6 @@ namespace EDITgui
         public PhotoAcousticPart()
         {
             InitializeComponent();
-            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             doOXYState();
         }
@@ -96,28 +95,26 @@ namespace EDITgui
             this.context = context;
             applicationGrid.Children.Add(context.getPhotoAcousticPoints2D());
             //add tumor annotation option here
-            UltrasoundPart.sliderValueChanged += OnUltrasoundSliderValueChanged;
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
-            UltrasoundPart.repeatPhotoAcousticProcess += OnrepeatProcess;
             doOXYState();
         }
 
 
-        public void OnUltrasoundSliderValueChanged(int obj)
+        public void sliderValueChanged(int value)
         {
-            slider_value = (int)obj;
+            slider_value = value;
             if (slider_value < fileCount)
             {
                 if (currentOxyDeOxyState == OxyDeOxyState.OXY && OXYDicomFile != null )
                 {
-                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + obj + ".bmp");
+                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + value + ".bmp");
                 }
                 else if (currentOxyDeOxyState == OxyDeOxyState.DEOXY && DeOXYDicomFile != null)
                 {
-                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + obj + ".bmp");
+                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + value + ".bmp");
                 }
                 frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-                doCorrection();
+                doCorrection(true, false);
             }
         }
 
@@ -128,7 +125,7 @@ namespace EDITgui
             zoom_out = obj;
         }
 
-        public void OnrepeatProcess()
+        public void doRepeatProcess()
         {
             thicknessCvPoints.Clear();
             metrics_label.Visibility = Visibility.Hidden;
@@ -172,7 +169,7 @@ namespace EDITgui
                     BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                     OXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-                    OnrepeatProcess();
+                    doRepeatProcess();
                 }
                 doOXYState();
                 stopSpinner();
@@ -239,7 +236,7 @@ namespace EDITgui
             BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
             OXY_studyname_label.Content = studyName + " " + context.getMessages().oxy;
             frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-            OnrepeatProcess();
+            doRepeatProcess();
         }
 
 
@@ -386,25 +383,9 @@ namespace EDITgui
                 drawPolylineOfRest2DObjects();
                 draw_polyline(selectedObject);
                 draw_points(selectedObject);
-                if (contourSeg == ContourSegmentation.CORRECTION && selectedObject.points.Any())
-                {
-                    metrics_label.Foreground = selectedObject.polylineColor;
-                    metrics_label.Content = selectedObject.metrics;
-                    metrics_label.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    metrics_label.Visibility = Visibility.Hidden;
-                }
-
-                if (!context.getImages().getThicknessPoints().Any())
-                {
-                    metrics_label.Visibility = Visibility.Hidden;
-                }
-                if (context.getUltrasoundPart().areTherePoints())
-                {
-                    draw_polyline_ultrasound(context.getImages().getBladderPoints());
-                }
+                metrics_label.Foreground = selectedObject.polylineColor;
+                metrics_label.Content = selectedObject.metrics;
+                draw_polyline_ultrasound(context.getImages().getBladderPoints());
             }
         }
 
@@ -829,18 +810,21 @@ namespace EDITgui
             Wait.Visibility = Visibility.Hidden;
         }
 
-        public void doCorrection()
+        public void doCorrection(bool update = true, bool updateUlrasound = true)
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;
-            context.getUltrasoundPart().updateCanvas();
-            updateCanvas();
+            metrics_label.Visibility = Visibility.Visible;
+            if (update) updateCanvas();
+            if(updateUlrasound) context.getUltrasoundPart().updateCanvas();
+
         }
 
         public void doManual()
         {
             this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
+            metrics_label.Visibility = Visibility.Hidden;
             if (selectedObjectHasPoints()) context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Clear();
             updateCanvas();
         }
@@ -849,6 +833,7 @@ namespace EDITgui
         {
             this.switch_auto_manual.doFillPointState();
             contourSeg = ContourSegmentation.FILL_POINTS;
+            metrics_label.Visibility = Visibility.Hidden;
             updateCanvas();
         }
 
@@ -892,6 +877,7 @@ namespace EDITgui
                 OXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
                 context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
+                metrics_label.Visibility = Visibility.Visible;
             }
             else
             {
@@ -902,6 +888,7 @@ namespace EDITgui
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
                 context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
+                metrics_label.Visibility = Visibility.Hidden;
             }
             updateCanvas();
         }
@@ -920,6 +907,7 @@ namespace EDITgui
                 DeOXY_studyname_label.Visibility = Visibility.Visible;
                 switch_auto_manual.Visibility = Visibility.Visible;
                 context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
+                metrics_label.Visibility = Visibility.Visible;
             }
             else
             {
@@ -930,6 +918,7 @@ namespace EDITgui
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
                 context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
+                metrics_label.Visibility = Visibility.Hidden;
             }
             updateCanvas();
         }
