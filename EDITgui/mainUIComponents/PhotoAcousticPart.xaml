@@ -124,6 +124,40 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,0,0,2"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp" Margin="0">
 
@@ -158,7 +192,9 @@
                 </local:ToggleButton.RenderTransform>
             </local:ToggleButton>
             <Label x:Name="oxy_deoxy_label" Content="  OXY" HorizontalAlignment="Left" Height="26" Margin="19.831,1.334,0,0" VerticalAlignment="Top" Width="49.164" Foreground="White"/>
-            <Button x:Name="Extract_DeOXY" Content="Extract OXY and DeOXY Points" HorizontalAlignment="Left" Height="26.001" Margin="108.999,109.166,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="279.334" Click="Extract_OXYDeOXY_Click"/>
+            <Button x:Name="Extract_DeOXY" Content="OXY  DeOXY" HorizontalAlignment="Left" Height="26.001" Margin="108.999,109.166,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_OXYDeOXY_Click"/>
+            <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Left" Height="26.001" Margin="255.167,78.164,0,0" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="127.833" Click="Extract_Tumor_Click"/>
+            <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Left" Height="26.001" Margin="255.167,109.5,0,0" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="127.833" Click="Extract_Tumor_3D_Click"/>
         </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.426,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">

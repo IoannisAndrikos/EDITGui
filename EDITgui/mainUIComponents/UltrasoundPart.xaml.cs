@@ -237,6 +237,46 @@ namespace EDITgui
             stopSpinner();
         }
 
+        private async void FixArtifact_Click(object sender, RoutedEventArgs e)
+        {
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DBladder);
+            if (message != null)
+            {
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
+
+            startSpinner();
+            int repeats = int.Parse(Repeats.Text);
+            int smoothing = int.Parse(Smoothing.Text);
+            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            int levelsetSize = int.Parse(LevelsetSize.Text);
+            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
+
+            //the code bellow is to avoid an issue when user marks the starting frame after the ending frame
+            if (endingFrame < startingFrame)
+            {
+                int temp = startingFrame;
+                startingFrame = endingFrame;
+                endingFrame = temp;
+            }
+
+            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+
+            if (!bladderCvPoints.Any()) return;
+
+            await Task.Run(() => {
+                bladderCvPoints = context.getCore().fixArtifact(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints, bladderCvPoints);
+                if (!bladderCvPoints.Any()) return;
+                context.getImages().fillBladderFromBackEnd(bladderCvPoints, this.startingFrame);
+            });
+            doCorrection();
+            stopSpinner();
+        }
+
+
+
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = CustomMessageBox.Show(context.getMessages().makeUserAwareOfRepeatProcess, context.getMessages().warning, MessageBoxButton.YesNoCancel);
@@ -293,7 +333,8 @@ namespace EDITgui
                 return;
             }
 
-            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+           // bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
             if (!bladderCvPoints.Any()) return;
             startSpinner();
             String STLPath = null;
@@ -917,7 +958,6 @@ namespace EDITgui
             return endingFrame;
         }
 
-        
         public bool autoExecutionUserPointsWereSet()
         {
             return (context.getMainWindow().currentProcess == MainWindow.process.AUTO && startingFrame != -1 && endingFrame != -1);

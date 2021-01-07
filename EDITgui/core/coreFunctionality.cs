@@ -119,6 +119,34 @@ namespace EDITgui
             return new List<List<EDITCore.CVPoint>>();
         }
 
+        [HandleProcessCorruptedStateExceptions]
+        public List<List<EDITCore.CVPoint>> fixArtifact(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
+            int startingFrame, int endingFrame, List<Point> userPoints, List<List<EDITCore.CVPoint>> bladderCvPoints)
+        {
+            try
+            {
+                editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
+                editPro.fixArtifact(new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y), bladderCvPoints);
+                if (response.isSuccessful())
+                {
+                    return response.getAllFramesData();
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+
+            }
+            catch (Exception e)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return new List<List<EDITCore.CVPoint>>();
+        }
+
+
+
+
         public void repeatSegmentation()
         {
             editPro.repeatSegmentation();
@@ -335,6 +363,56 @@ namespace EDITgui
             return null;
         }
 
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public List<List<EDITCore.CVPoint>> Tumor2DExtraction2D(Point startingPoint, List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints, String bladderGeometryPath, String thicknessGeometryPath)
+        {
+            try
+            {
+                editPro.extractTumor2D(new EDITCore.CVPoint(startingPoint.X, startingPoint.Y), bladderCvPoints, thicknessCvPoints, bladderGeometryPath, thicknessGeometryPath);
+                if (response.isSuccessful())
+                {
+                    return response.getAllFramesData();
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+
+            }
+            catch (Exception e)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return null;
+        }
+
+
+
+        [HandleProcessCorruptedStateExceptions]
+        public String Tumor2DExtraction3D()
+        {
+            try
+            {
+                editPro.extractTumor3D();
+                if (response.isSuccessful())
+                {
+                    List<String> paths = response.getPaths();
+                    return paths[0];
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+
+            }
+            catch (Exception e)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return null;
+        }
 
 
 

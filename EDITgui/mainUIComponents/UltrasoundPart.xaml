@@ -366,6 +366,7 @@
             <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
             <Button x:Name="Export_Skin" Content="Extract Layer" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
             <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
+            <Button x:Name="fixArtifact" Content="Artifact" HorizontalAlignment="Left" Height="26.001" Margin="164.147,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="FixArtifact_Click"/>
         </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.523,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">

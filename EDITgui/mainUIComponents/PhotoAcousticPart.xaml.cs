@@ -323,7 +323,7 @@ namespace EDITgui
             await Task.Run(() => {
                 thicknessGeometryPath = context.getCore().extractThicknessSTL(thicknessCvPoints);
                 });
-            EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = "Thickness", Path = thicknessGeometryPath, actor = null };
+            EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = "Outer Wall", Path = thicknessGeometryPath, actor = null };
             if (thicknessGeometryPath != null)
             {
                 returnThicknessSTL(thicknessGeometry);
@@ -360,6 +360,65 @@ namespace EDITgui
             }
             stopSpinner();
         }
+
+
+        private async void Extract_Tumor_Click(object sender, RoutedEventArgs e)
+        {
+            //string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
+            //if (message != null)
+            //{
+            //    CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+            //    return;
+            //}
+
+            thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
+            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+            if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
+
+            Point startingPoint = context.getUltrasoundPart().userPoints[0];
+
+            startSpinner();
+  
+            await Task.Run(() => {
+                thicknessCvPoints = context.getCore().Tumor2DExtraction2D(startingPoint, bladderCvPoints, thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
+                if(!thicknessCvPoints.Any()) return;
+                context.getImages().fillTumorFromBackEnd(thicknessCvPoints, context.getUltrasoundPart().startingFrame);
+            });
+            context.getPhotoAcousticPoints2D().updatePanel(slider_value);
+            context.getUltrasoundPoints2D().updatePanel(slider_value);
+            updateCanvas();
+            stopSpinner();
+        }
+
+        private async void Extract_Tumor_3D_Click(object sender, RoutedEventArgs e)
+        {
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
+            if (message != null)
+            {
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
+
+            thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
+            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+            if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
+
+            Point startingPoint = context.getUltrasoundPart().userPoints[0];
+
+            startSpinner();
+            String txtPath = null;
+            await Task.Run(() => {
+                txtPath = context.getCore().Tumor2DExtraction3D();
+            });
+
+            EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = "Tumor", Path = txtPath, actor = null };
+            if (txtPath != null)
+            {
+                returnThicknessSTL(TumorGeometry);
+            }
+            stopSpinner();
+        }
+
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
         public void updateCanvas()

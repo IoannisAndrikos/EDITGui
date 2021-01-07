@@ -147,7 +147,7 @@ namespace EDITgui
         }
         //-----------------------------------------------------------
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        public void AddButton_Click(object sender, RoutedEventArgs e)
         {
             if (context.getUltrasoundPart().areTherePoints())
             {

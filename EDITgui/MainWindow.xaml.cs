@@ -231,7 +231,7 @@ namespace EDITgui
                         actor.GetProperty().SetColor(1, 1, 1);
                         actor.GetProperty().SetOpacity(1);
                         break;
-                    case "Thickness":
+                    case "Outer Wall":
                         actor.GetProperty().SetColor(1, 1, 0);
                         actor.GetProperty().SetOpacity(0.8);
                         break;
@@ -245,6 +245,10 @@ namespace EDITgui
                         break;
                     case "DeOXY":
                         actor.GetProperty().SetColor(0, 0, 1);
+                        actor.GetProperty().SetOpacity(0.6);
+                        break;
+                    case "Tumor":
+                        actor.GetProperty().SetColor(1, 0, 1);
                         actor.GetProperty().SetOpacity(0.6);
                         break;
                 }
@@ -431,6 +435,8 @@ namespace EDITgui
                     return SaveActions.FileType.OXY3D;
                 case "DeOXY":
                     return SaveActions.FileType.DeOXY3D;
+                case "Tumor":
+                    return SaveActions.FileType.Tumors;
             }
 
             return SaveActions.FileType.Bladder3D; //never

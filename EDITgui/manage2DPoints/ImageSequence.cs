@@ -207,6 +207,27 @@ namespace EDITgui
             }
         }
 
+
+        public void fillTumorFromBackEnd(List<List<EDITCore.CVPoint>> cvp, int startingFrame)
+        {
+            for (int i = 0; i < cvp.Count; i++)
+            {
+                frames[i + startingFrame].Tumors.Clear();
+                tumorItem tumor = new tumorItem() { points = new List<Point>(), area = 0, perimeter = 0 };
+                for (int j = 0; j < cvp[i].Count(); j++)
+                {
+                    tumor.points.Add(new Point(cvp[i][j].X, cvp[i][j].Y));
+                   
+                    frames[i + startingFrame].Bladder.area = context.getMetrics().calulateArea(frames[i + startingFrame].Bladder.points);
+                    frames[i + startingFrame].Bladder.perimeter = context.getMetrics().calulatePerimeter(frames[i + startingFrame].Bladder.points);
+                }
+                tumor.area = context.getMetrics().calulateArea(tumor.points);
+                tumor.perimeter = context.getMetrics().calulatePerimeter(tumor.points);
+                frames[i + startingFrame].Tumors.Add(tumor);
+            }
+        }
+
+
         public void fillThicknessFromBackEnd(List<List<EDITCore.CVPoint>> cvp, List<double> meanThickness, int startingFrame)
         {
             for (int i = 0; i < cvp.Count; i++)
