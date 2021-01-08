@@ -102,6 +102,18 @@ namespace EDITgui
         public string deoxyTXT = "DeOXY.txt";
 
         public string layerSTL = "Layer.stl";
+        //--------------------------------------OBJECTS 3D MESSAGES-------------------------------------------
+        public const string outerWallGeometry = "Outer Wall";
+
+        public const string bladderGeometry = "Bladder";
+
+        public const string tumorGeometry = "Tumor";
+
+        public const string layerGeometry = "Layer";
+
+        public const string oxyGeometry = "OXY";
+
+        public const string deoxyGeometry = "DeOXY";
         //--------------------------------------NOTIFY MESSAGES-----------------------------------------------
 
         public string warning = "Warning";

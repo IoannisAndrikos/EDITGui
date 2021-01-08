@@ -219,6 +219,7 @@ namespace EDITgui
             double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             int levelsetSize = int.Parse(LevelsetSize.Text);
             bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
+            bool fixArtifact = chechBox_ArtifactCorrection.IsChecked.Value;
 
             //the code bellow is to avoid an issue when user marks the starting frame after the ending frame
             if (endingFrame < startingFrame)
@@ -229,53 +230,13 @@ namespace EDITgui
             } 
 
             await Task.Run(() => {
-                bladderCvPoints = context.getCore().Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints);
+                bladderCvPoints = context.getCore().Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints, fixArtifact);
                 if (!bladderCvPoints.Any()) return; 
                 context.getImages().fillBladderFromBackEnd(bladderCvPoints, this.startingFrame);
             });
             doCorrection();
             stopSpinner();
         }
-
-        private async void FixArtifact_Click(object sender, RoutedEventArgs e)
-        {
-            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DBladder);
-            if (message != null)
-            {
-                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
-                return;
-            }
-
-            startSpinner();
-            int repeats = int.Parse(Repeats.Text);
-            int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            int levelsetSize = int.Parse(LevelsetSize.Text);
-            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-
-            //the code bellow is to avoid an issue when user marks the starting frame after the ending frame
-            if (endingFrame < startingFrame)
-            {
-                int temp = startingFrame;
-                startingFrame = endingFrame;
-                endingFrame = temp;
-            }
-
-            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
-
-            if (!bladderCvPoints.Any()) return;
-
-            await Task.Run(() => {
-                bladderCvPoints = context.getCore().fixArtifact(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints, bladderCvPoints);
-                if (!bladderCvPoints.Any()) return;
-                context.getImages().fillBladderFromBackEnd(bladderCvPoints, this.startingFrame);
-            });
-            doCorrection();
-            stopSpinner();
-        }
-
-
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
         {
@@ -318,7 +279,7 @@ namespace EDITgui
             
             if (bladderGeometryPath != null)
             {
-                EDITgui.Geometry bladderGeometry = new Geometry() { geometryName = "Bladder", Path = bladderGeometryPath, actor = null };
+                EDITgui.Geometry bladderGeometry = new Geometry() { geometryName = Messages.bladderGeometry, Path = bladderGeometryPath, actor = null };
                 returnBladderSTL(bladderGeometry);
             }
             stopSpinner();
@@ -341,7 +302,7 @@ namespace EDITgui
             await Task.Run(() => {
                 STLPath = context.getCore().extractSkin(bladderCvPoints);
             });
-            EDITgui.Geometry skinGeometry = new Geometry() { geometryName = "Layer", Path = STLPath, actor = null };
+            EDITgui.Geometry skinGeometry = new Geometry() { geometryName = Messages.layerGeometry, Path = STLPath, actor = null };
             if(STLPath != null) returnSkinSTL(skinGeometry);
             stopSpinner();
         }
@@ -351,7 +312,6 @@ namespace EDITgui
         {
             try
             {
-                recalculateMetricsAfterManualSegmentation(); //make sure that we have caclulated metrics before change frame
                 slider_value = (int)slider.Value;
                 BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value.ToString();
@@ -445,17 +405,6 @@ namespace EDITgui
                 canvasUltrasound.Children.Add(pl);
             }
             list.Clear();
-        }
-
-
-
-        private void recalculateMetricsAfterManualSegmentation()
-        {
-            //if(contourSeg == ContourSegmentation.MANUAL && context.getUltrasoundPoints2D().getSelectedObject2D().Any())
-            //{
-            //    context.getFrame().Bladder[slider_value].area = context.getMetrics().calulateArea(context.getUltrasoundPoints2D().getSelectedObject2D());
-            //    context.getFrame().Bladder[slider_value].perimeter = (context.getMetrics().calulatePerimeter(context.getUltrasoundPoints2D().getSelectedObject2D()));
-            //}
         }
 
         private void canvasUltrasound_MouseDown(object sender, MouseButtonEventArgs e)

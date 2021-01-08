@@ -98,12 +98,12 @@ namespace EDITgui
 
         [HandleProcessCorruptedStateExceptions]
         public List<List<EDITCore.CVPoint>> Bladder2DExtraction(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
-            int startingFrame, int endingFrame, List<Point> userPoints)
+            int startingFrame, int endingFrame, List<Point> userPoints, bool fixArtifact)
         {
             try
             {
                 editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
-                editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y));
+                editPro.extractBladder(startingFrame, endingFrame, new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y), fixArtifact);
                 if (response.isSuccessful())
                 {
                     return response.getAllFramesData();
@@ -119,30 +119,31 @@ namespace EDITgui
             return new List<List<EDITCore.CVPoint>>();
         }
 
-        [HandleProcessCorruptedStateExceptions]
-        public List<List<EDITCore.CVPoint>> fixArtifact(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
-            int startingFrame, int endingFrame, List<Point> userPoints, List<List<EDITCore.CVPoint>> bladderCvPoints)
-        {
-            try
-            {
-                editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
-                editPro.fixArtifact(new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y), bladderCvPoints);
-                if (response.isSuccessful())
-                {
-                    return response.getAllFramesData();
-                }
-                else
-                {
-                    displayFailureMessage(response.getFailure());
-                }
+        //[HandleProcessCorruptedStateExceptions]
+        //public List<List<EDITCore.CVPoint>> fixArtifact(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
+        //   int startingFrame, int endingFrame, List<Point> userPoints, List<List<EDITCore.CVPoint>> bladderCvPoints)
+        //{
+        //    try
+        //    {
+        //        editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
+        //        editPro.fixArtifact(new EDITCore.CVPoint(userPoints[0].X, userPoints[0].Y), bladderCvPoints);
+        //        if (response.isSuccessful())
+        //        {
+        //            return response.getAllFramesData();
+        //        }
+        //        else
+        //        {
+        //            displayFailureMessage(response.getFailure());
+        //        }
 
-            }
-            catch (Exception e)
-            {
-                displayFailureMessage(context.getMessages().errorOccured);
-            }
-            return new List<List<EDITCore.CVPoint>>();
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        displayFailureMessage(context.getMessages().errorOccured);
+        //    }
+        //    return new List<List<EDITCore.CVPoint>>();
+        //}
+
 
 
 

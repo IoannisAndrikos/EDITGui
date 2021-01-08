@@ -199,8 +199,8 @@ namespace EDITgui
                    vtkMassProperties mass = vtkMassProperties.New();
                    mass.SetInput(reader.GetOutput());
                    mass.Update();
-                   geometry.volumeLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetVolume(), 2)  + "mm\xB3";
-                   geometry.surfaceAreaLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + "mm\xB2"; 
+                   geometry.volumeLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetVolume(), 2)  + " mm\xB3";
+                   geometry.surfaceAreaLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + " mm\xB2"; 
                 }
 
 
@@ -227,27 +227,27 @@ namespace EDITgui
             {
                 switch (geometry.geometryName)
                 {
-                    case "Bladder":
+                    case Messages.bladderGeometry:
                         actor.GetProperty().SetColor(1, 1, 1);
                         actor.GetProperty().SetOpacity(1);
                         break;
-                    case "Outer Wall":
+                    case Messages.outerWallGeometry:
                         actor.GetProperty().SetColor(1, 1, 0);
                         actor.GetProperty().SetOpacity(0.8);
                         break;
-                    case "Layer":
+                    case Messages.layerGeometry:
                         actor.GetProperty().SetColor(0, 1, 0);
                         actor.GetProperty().SetOpacity(0.3);
                         break;
-                    case "OXY":
+                    case Messages.oxyGeometry:
                         actor.GetProperty().SetColor(1, 0, 0);
                         actor.GetProperty().SetOpacity(0.6);
                         break;
-                    case "DeOXY":
+                    case Messages.deoxyGeometry:
                         actor.GetProperty().SetColor(0, 0, 1);
                         actor.GetProperty().SetOpacity(0.6);
                         break;
-                    case "Tumor":
+                    case Messages.tumorGeometry:
                         actor.GetProperty().SetColor(1, 0, 1);
                         actor.GetProperty().SetOpacity(0.6);
                         break;
@@ -425,17 +425,17 @@ namespace EDITgui
         {
             switch (geometryName)
             {
-                case "Bladder":
+                case Messages.bladderGeometry:
                     return SaveActions.FileType.Bladder3D;
-                case "Thickness":
+                case Messages.outerWallGeometry:
                     return SaveActions.FileType.Thickness3D;
-                case "Layer":
+                case Messages.layerGeometry:
                     return SaveActions.FileType.Layer3D;
-                case "OXY":
+                case Messages.oxyGeometry:
                     return SaveActions.FileType.OXY3D;
-                case "DeOXY":
+                case Messages.deoxyGeometry:
                     return SaveActions.FileType.DeOXY3D;
-                case "Tumor":
+                case Messages.tumorGeometry:
                     return SaveActions.FileType.Tumors;
             }
 

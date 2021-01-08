@@ -323,7 +323,7 @@ namespace EDITgui
             await Task.Run(() => {
                 thicknessGeometryPath = context.getCore().extractThicknessSTL(thicknessCvPoints);
                 });
-            EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = "Outer Wall", Path = thicknessGeometryPath, actor = null };
+            EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = Messages.outerWallGeometry, Path = thicknessGeometryPath, actor = null };
             if (thicknessGeometryPath != null)
             {
                 returnThicknessSTL(thicknessGeometry);
@@ -351,8 +351,8 @@ namespace EDITgui
                 txtPaths = context.getCore().extractOXYandDeOXYPoints(bladderCvPoints, thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
             });
 
-            EDITgui.Geometry OXYGeometry = new Geometry() { geometryName = "OXY", Path = txtPaths[0], actor = null };
-            EDITgui.Geometry DeOXYGeometry = new Geometry() { geometryName = "DeOXY", Path = txtPaths[1], actor = null };
+            EDITgui.Geometry OXYGeometry = new Geometry() { geometryName = Messages.oxyGeometry, Path = txtPaths[0], actor = null };
+            EDITgui.Geometry DeOXYGeometry = new Geometry() { geometryName = Messages.deoxyGeometry, Path = txtPaths[1], actor = null };
             if (txtPaths.Any())
             {
                 returnThicknessSTL(OXYGeometry);
@@ -411,7 +411,7 @@ namespace EDITgui
                 txtPath = context.getCore().Tumor2DExtraction3D();
             });
 
-            EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = "Tumor", Path = txtPath, actor = null };
+            EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = Messages.tumorGeometry, Path = txtPath, actor = null };
             if (txtPath != null)
             {
                 returnThicknessSTL(TumorGeometry);

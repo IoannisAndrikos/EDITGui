@@ -341,11 +341,11 @@
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
-               <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
+                <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
         <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="601.89,39,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
-        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="266">
+        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="316.667">
             <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="93.49,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
             <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="93.49,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
             <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="93.49,60.075,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
@@ -356,17 +356,17 @@
             <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,55.408,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
             <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,81.326,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
             <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,106.07,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="27.333" Margin="162.156,10,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB"/>
-            <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" Click="ChechBox_Logger_Click"/>
-            <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click"/>
+            <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="27.333" Margin="162.156,10,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
+            <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" Click="ChechBox_Logger_Click" FontSize="11"/>
+            <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click" FontSize="11"/>
+            <CheckBox x:Name="chechBox_ArtifactCorrection" Content="Probe Artifact Correction" HorizontalAlignment="Left" Height="27.333" Margin="162.156,35.167,0,0" VerticalAlignment="Top" Width="144.511" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
         </Grid>
         <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">
             <Button x:Name="loadDicom" Content="Load Ultrasound" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
-            <Button x:Name="extract_bladder" Content="Extract 2D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
-            <Button x:Name="Extract_STL" Content="Extract 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Skin" Content="Extract Layer" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
+            <Button x:Name="extract_bladder" Content="Bladder 2D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
+            <Button x:Name="Extract_STL" Content="Bladder 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
+            <Button x:Name="Export_Skin" Content="Layer 3D" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
             <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
-            <Button x:Name="fixArtifact" Content="Artifact" HorizontalAlignment="Left" Height="26.001" Margin="164.147,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="FixArtifact_Click"/>
         </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.523,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
