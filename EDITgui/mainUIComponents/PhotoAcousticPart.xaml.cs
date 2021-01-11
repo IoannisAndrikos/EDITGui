@@ -364,12 +364,12 @@ namespace EDITgui
 
         private async void Extract_Tumor_Click(object sender, RoutedEventArgs e)
         {
-            //string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
-            //if (message != null)
-            //{
-            //    CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
-            //    return;
-            //}
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DTumor);
+            if (message != null)
+            {
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
 
             thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
             bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
@@ -386,13 +386,14 @@ namespace EDITgui
             });
             context.getPhotoAcousticPoints2D().updatePanel(slider_value);
             context.getUltrasoundPoints2D().updatePanel(slider_value);
+            context.getUltrasoundPart().updateCanvas();
             updateCanvas();
             stopSpinner();
         }
 
         private async void Extract_Tumor_3D_Click(object sender, RoutedEventArgs e)
         {
-            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract3DTumor);
             if (message != null)
             {
                 CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);

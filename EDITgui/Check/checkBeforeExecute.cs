@@ -21,9 +21,11 @@ namespace EDITgui
             extract3DBladder, 
             extract3DLayer, 
             extract2DThickness,
+            extract2DTumor,
             recalculate, 
             extract3DThickness,
-            extractOXYDeOXY
+            extractOXYDeOXY,
+            extract3DTumor
         };
 
         public string getMessage(executionType type)
@@ -58,6 +60,12 @@ namespace EDITgui
                         return context.getMessages().noOXYdicom;
                     }
                     break;
+                case executionType.extract2DTumor:
+                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
+                    {
+                        return context.getMessages().noOXYdicom;
+                    }
+                    break;
                 case executionType.recalculate:
                     if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
@@ -79,6 +87,12 @@ namespace EDITgui
                     {
                         return context.getMessages().noOXYAndDeOXYImages;
                     }
+                    if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
+                    {
+                        return context.getMessages().noBadderOrThickness3DModels;
+                    }
+                    break;
+                case executionType.extract3DTumor:
                     if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
                     {
                         return context.getMessages().noBadderOrThickness3DModels;
