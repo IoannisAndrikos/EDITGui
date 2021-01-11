@@ -174,6 +174,8 @@ namespace EDITgui
         public string noOXYAndDeOXYImages = "No OXY Or DeOXY DICOM file was loaded.";
 
         public string noBadderOrThickness3DModels = "Before proceeding with the extraction of the OXY and DeOXY points you have to extract both the bladder and thickness 3D model.";
+        
+        public string noBadderOrThickness3DModelsForTumor = "Before proceeding with the extraction of the Tumor 3D points you have to extract both the bladder and thickness 3D model.";
 
         //------------------------------PROBLEM TO PRODUCE THE STL-------------------------------------------------------
         public string problemToProduceSTL = "Cannot produce the STL object. There is an issue on the 2D segmnetation.";

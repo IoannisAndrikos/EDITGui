@@ -95,7 +95,7 @@ namespace EDITgui
                 case executionType.extract3DTumor:
                     if (context.getPhotoAcousticPart().thicknessGeometryPath == null || context.getUltrasoundPart().bladderGeometryPath == null)
                     {
-                        return context.getMessages().noBadderOrThickness3DModels;
+                        return context.getMessages().noBadderOrThickness3DModelsForTumor;
                     }
                     break;
             }
