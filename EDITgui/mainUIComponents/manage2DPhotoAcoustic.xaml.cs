@@ -254,7 +254,7 @@ namespace EDITgui
             catch (Exception ex)
             {
                 setThicknessAsSelected();
-                selectedObject.points = context.getImages().getBladderPoints();
+                selectedObject.points = context.getImages().getThicknessPoints();
                 selectedObject.polylineColor = ViewAspects.cyan;
                 selectedObject.metrics = getThicknessMetricsString();
                 return selectedObject;
