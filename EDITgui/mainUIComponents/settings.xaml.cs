@@ -23,9 +23,9 @@ namespace EDITgui
     {
         Context context;
 
-        double xspace = 0;
-        double yspace = 0;
-        double distaceBetweenFrames;
+        public double xspace = 0;
+        public double yspace = 0;
+        public double distaceBetweenFrames = 0.203;
 
         public settings()
         {
@@ -93,6 +93,8 @@ namespace EDITgui
         public void setPixelSpacing(List<double> pixelsSpacing){
             textbox_pixelSpacingX.Text = pixelsSpacing[0].ToString();
             textbox_pixelSpacingY.Text = pixelsSpacing[1].ToString();
+            this.xspace = pixelsSpacing[0];
+            this.yspace = pixelsSpacing[1];
         }
 
        
@@ -100,7 +102,7 @@ namespace EDITgui
         {  
             try
             {
-                distaceBetweenFrames = double.Parse(textbox_distanceBetweenFrames.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+                this.distaceBetweenFrames = double.Parse(textbox_distanceBetweenFrames.Text.Replace(",", "."), CultureInfo.InvariantCulture);
                 xspace = double.Parse(textbox_pixelSpacingX.Text.Replace(",", "."), CultureInfo.InvariantCulture);
                 yspace = double.Parse(textbox_pixelSpacingY.Text.Replace(",", "."), CultureInfo.InvariantCulture);
                 context.getCore().setStudySettings(distaceBetweenFrames, xspace, yspace);

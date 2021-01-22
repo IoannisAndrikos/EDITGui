@@ -143,6 +143,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Check\checkBeforeExecute.cs" />
+    <Compile Include="mainUIComponents\Registration.xaml.cs">
+      <DependentUpon>Registration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControls\RegistrationMarker.xaml.cs">
+      <DependentUpon>RegistrationMarker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIControls\ViewAspects.cs" />
     <Compile Include="UIControls\FrameMarker.xaml.cs">
       <DependentUpon>FrameMarker.xaml</DependentUpon>
@@ -191,6 +197,17 @@
     <Compile Include="mainUIComponents\UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Slicer3D.xaml.cs">
+      <DependentUpon>Slicer3D.xaml</DependentUpon>
+    </Compile>
+    <Page Include="mainUIComponents\Registration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControls\RegistrationMarker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIControls\FrameMarker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -265,6 +282,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Slicer3D.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -321,6 +342,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Edit_logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="edit_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="edit_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="black_image.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

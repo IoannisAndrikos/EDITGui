@@ -41,7 +41,9 @@ namespace EDITgui
         public string loadedStudyPath = null; //is filled if study is loaded
         public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
-    
+        vtkAxesActor axesActor;
+        vtkOrientationMarkerWidget axes;
+
         public vtkRenderer renderer;
         public List<Geometry> STLGeometries = new List<Geometry>();
         public process currentProcess;
@@ -57,14 +59,14 @@ namespace EDITgui
             InitializeComponent();
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
-            //user.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed; //-------------
             this.totalGrid.Children.Add(user);
         }
 
 
         public void doAfterUserAuthentication()
         {
-            user.Visibility = Visibility.Collapsed;
+            //user.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
 
             context = new Context(this, user);
@@ -92,6 +94,19 @@ namespace EDITgui
             context.getUltrasoundPoints2D().VerticalAlignment = VerticalAlignment.Top;
             context.getUltrasoundPoints2D().Height = 454.4;
 
+
+            context.getSlicer().Margin = new Thickness(28.135, 267.588, 0, 0);
+            context.getSlicer().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getSlicer().VerticalAlignment = VerticalAlignment.Top;
+            context.getSlicer().Width = 201.87;
+            context.getSlicer().Height = 445.037;
+
+            context.getRegistration().Margin = new Thickness(585, 420.279, 0, 0);
+            context.getRegistration().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getRegistration().VerticalAlignment = VerticalAlignment.Top;
+            context.getRegistration().Height = 133;
+
+
             context.getPhotoAcousticPoints2D().Margin = new Thickness(11, 95, 0, 0);
             context.getPhotoAcousticPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
             context.getPhotoAcousticPoints2D().VerticalAlignment = VerticalAlignment.Top;
@@ -99,9 +114,11 @@ namespace EDITgui
 
             this.components2D.Children.Add(context.getUltrasoundPart());
             this.components2D.Children.Add(context.getPhotoAcousticPart());
-            //context.getUltrasoundPart().applicationGrid.Children.Add(context.getTumorsUlrasound());
+      
             this.totalGrid.Children.Add(context.getStudySettings());
+            this.Viewer3D.Children.Add(context.getSlicer());
             
+
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
             PhotoAcousticPart.returnThicknessSTL += OnAddAvailableGeometry;
@@ -279,24 +296,32 @@ namespace EDITgui
 
         private void Viewer3D_Loaded(object sender, RoutedEventArgs e)
         {
-                host = new System.Windows.Forms.Integration.WindowsFormsHost();
-                myRenderWindowControl = new RenderWindowControl();
-                myRenderWindowControl.SetBounds(0, 0, 0, 0); // not too big in case it disappears.
-                                                               // Assign the control as the host control's child.
-                host.Child = myRenderWindowControl;
+            host = new System.Windows.Forms.Integration.WindowsFormsHost();
+            myRenderWindowControl = new RenderWindowControl();
 
-                host.Margin = new Thickness(0, 0, 0, 0);
-                rendererGrid.Children.Add(host);
-                renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
-                host.Visibility = Visibility.Hidden;
+            myRenderWindowControl.SetBounds(0, 0, 0, 0); // not too big in case it disappears.
+                                                         // Assign the control as the host control's child.
+            host.Child = myRenderWindowControl;
 
-                renderer.GetActiveCamera().SetPosition(0, 0, 50);
-                renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
-               // 
-                //tempRenderer.Children.Remove(host);
-                //rendererGrid.Children.Add(host);
+            host.Margin = new Thickness(0, 0, 0, 0);
+            rendererGrid.Children.Add(host);
+            renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
+            host.Visibility = Visibility.Hidden;
+
+            renderer.GetActiveCamera().SetPosition(0, 0, 50);
+            renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
+
+            axesActor = vtkAxesActor.New();
+            axes = vtkOrientationMarkerWidget.New();
+            axes.SetOrientationMarker(axesActor);
+            axes.SetInteractor(myRenderWindowControl.RenderWindow.GetInteractor());
+            axes.EnabledOn();
+            axes.InteractiveOff();
+
+            // 
+            //tempRenderer.Children.Remove(host);
+            //rendererGrid.Children.Add(host);
             count++;
-           
         }
 
         private void RendererGrid_Loaded(object sender, RoutedEventArgs e)
@@ -307,6 +332,124 @@ namespace EDITgui
                // Dispatcher.Invoke(new Action(() => { host.Visibility = Visibility.Visible; }), System.Windows.Threading.DispatcherPriority.ContextIdle, null);
             }
            
+        }
+
+        vtkImplicitPlaneRepresentation implPlaneWidget;
+        vtkImplicitPlaneWidget2 planeWidget;
+        double[] d;
+        public void applySlicer()
+        {
+            if (implPlaneWidget != null)
+            {
+                planeWidget.SetInteractor(null);
+            }
+
+            if (imageActor != null)
+            {
+                renderer.RemoveActor(imageActor);
+            }
+
+            implPlaneWidget = vtkImplicitPlaneRepresentation.New();
+
+            implPlaneWidget.SetVisibility(1); //set implPlaneWidget visible
+
+            implPlaneWidget.SetPlaceFactor(1.01);
+            implPlaneWidget.GetPlaneProperty().SetColor(1, 0, 1);
+            implPlaneWidget.OutlineTranslationOff();
+            implPlaneWidget.ScaleEnabledOff();
+
+            d = STLGeometries.Find(x => x.geometryName == Messages.bladderGeometry).actor.GetBounds();
+            d[0] = d[0] - double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            d[1] = d[1] + double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+
+            d[2] = d[2] - double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            d[3] = d[3] + double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            implPlaneWidget.PlaceWidget(DoubleArrayToIntPtr(d));
+
+            implPlaneWidget.SetOrigin(0, 0, 0);
+            implPlaneWidget.SetNormal(0, 0, 1);
+            implPlaneWidget.GetNormalProperty().SetOpacity(0);
+            implPlaneWidget.GetOutlineProperty().SetOpacity(0);
+
+            planeWidget = vtkImplicitPlaneWidget2.New();
+            planeWidget.SetInteractor(myRenderWindowControl.RenderWindow.GetInteractor());
+            planeWidget.SetRepresentation(implPlaneWidget);
+            planeWidget.InteractionEvt += PlaneWidget_InteractionEvt;
+            myRenderWindowControl.RenderWindow.GetInteractor().Initialize();
+            planeWidget.On();
+            // renderer.ResetCamera();
+            myRenderWindowControl.RenderWindow.Render();
+        }
+
+        double[] origin;
+        private void PlaneWidget_InteractionEvt(vtkObject sender, vtkObjectEventArgs e)
+        {
+            if (imageActor != null)
+            {
+                renderer.RemoveActor(imageActor);
+            }
+            implPlaneWidget.VisibilityOn();
+            origin = implPlaneWidget.GetOrigin();
+            context.getSlicer().updateImages(Convert.ToInt32(origin[2] / context.getStudySettings().distaceBetweenFrames));
+        }
+
+        vtkActor imageActor = vtkActor.New();
+        public void overlayImage(string imagePath)
+        {
+            if (imageActor != null)
+            {
+                renderer.RemoveActor(imageActor);
+            }
+
+
+            vtkBMPReader BMPReader = vtkBMPReader.New();
+            BMPReader.SetFileName(imagePath);
+           
+            BMPReader.Update();
+
+            int[] dims = BMPReader.GetOutput().GetDimensions();
+            origin = implPlaneWidget.GetOrigin();
+
+
+            vtkImageChangeInformation changeInformation = vtkImageChangeInformation.New();
+            changeInformation.SetInput(BMPReader.GetOutput());
+         
+
+            changeInformation.SetOriginTranslation(-(dims[0] / 2) * context.getStudySettings().xspace, -(dims[1] / 2) * context.getStudySettings().yspace, -origin[2]);
+
+           
+
+            double[] sc = { context.getStudySettings().xspace, context.getStudySettings().yspace, origin[2] };
+       
+            changeInformation.SetSpacingScale(DoubleArrayToIntPtr(sc));
+            changeInformation.Update();
+
+
+            vtkImageData imageData = vtkImageData.New();
+            imageData = changeInformation.GetOutput();
+            
+            vtkTransform transform = vtkTransform.New();
+            transform.RotateX(180);
+
+            vtkDataSetMapper imageMapper = vtkDataSetMapper.New();
+            imageMapper.SetInput(imageData);
+            
+            imageActor.SetMapper(imageMapper);
+            imageActor.SetUserTransform(transform);
+
+            implPlaneWidget.VisibilityOff();
+
+            renderer.AddActor(imageActor);
+
+            myRenderWindowControl.RenderWindow.Render();
+        }
+
+
+        public IntPtr DoubleArrayToIntPtr(double[] d)
+        {
+            IntPtr p = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(sizeof(double) * d.Length);
+            System.Runtime.InteropServices.Marshal.Copy(d, 0, p, d.Length);
+            return p;
         }
 
 
@@ -355,7 +498,6 @@ namespace EDITgui
                 {
                     context.getSaveActions().doSave();
                 }
-
             }
         }
 
@@ -371,6 +513,12 @@ namespace EDITgui
             {
                 if (g.actor != null) renderer.RemoveActor(g.actor);
             }
+
+            if (imageActor != null)
+            {
+                renderer.RemoveActor(imageActor);
+            }
+
             myRenderWindowControl.RenderWindow.Render();
             volumeMetricsItems.Items.Clear();
             SurfaceAreaMetricsItems.Items.Clear();
@@ -378,6 +526,8 @@ namespace EDITgui
             STLGeometries.Clear();
             context.getUltrasoundPart().bladderGeometryPath = null;
             context.getPhotoAcousticPart().thicknessGeometryPath = null;
+            if(implPlaneWidget!=null)  implPlaneWidget.SetVisibility(0);
+            context.getSlicer().InitializeView();
         }
 
         private void Window_Closed(object sender, EventArgs e)

@@ -14,6 +14,7 @@ namespace EDITgui
         private UltrasoundPart ultrasoundPart;
         private PhotoAcousticPart photoAcousticPart;
         private manage2DUltrasound ultrasoundPoints2D;
+        private Registration registration;
         private manage2DPhotoAcoustic photoAcousticPoints2D;
         private metricsCalculations metrics;
         private coreFunctionality core;
@@ -23,6 +24,7 @@ namespace EDITgui
         private StudyFile studyFile;
         private LoadActions loadActions;
         private SaveActions saveActions;
+        private Slicer3D slicer;
 
         public Context(MainWindow mainWindow, Login user)
         {
@@ -32,10 +34,12 @@ namespace EDITgui
             this.mainWindow = mainWindow;
             this.images = new ImageSequence(this);
             this.ultrasoundPoints2D = new manage2DUltrasound(this);
+            this.registration = new Registration(this);
             this.photoAcousticPoints2D = new manage2DPhotoAcoustic(this);
             this.ultrasoundPart = new UltrasoundPart(this);
             this.photoAcousticPart = new PhotoAcousticPart(this);
             this.metrics = new metricsCalculations(this);
+            this.slicer = new Slicer3D(this);
             this.core = new coreFunctionality(this);
             this.studySettings = new settings(this);
             this.check = new checkBeforeExecute(this);
@@ -75,6 +79,12 @@ namespace EDITgui
             return this.ultrasoundPoints2D;
         }
 
+        public Registration getRegistration()
+        {
+            return this.registration;
+        }
+
+
         public manage2DPhotoAcoustic getPhotoAcousticPoints2D()
         {
             return this.photoAcousticPoints2D;
@@ -83,6 +93,11 @@ namespace EDITgui
         public metricsCalculations getMetrics()
         {
             return this.metrics;
+        }
+
+        public Slicer3D getSlicer()
+        {
+            return this.slicer;
         }
         
         public coreFunctionality getCore()

@@ -101,6 +101,8 @@ namespace EDITgui
 
         public string deoxyTXT = "DeOXY.txt";
 
+        public string registrationTXT = "Registration.txt";
+
         public string layerSTL = "Layer.stl";
         //--------------------------------------OBJECTS 3D MESSAGES-------------------------------------------
         public const string outerWallGeometry = "Outer Wall";
@@ -133,6 +135,8 @@ namespace EDITgui
             return "The current study will overwrite the existing study : '" + path + "'. Do you accept this?. If you want to save it as a new study press 'No'.";
         }
 
+        public string  alreadySpecifiedRegistrationPointForCurrentFrame = "There is an already specified registration point for the current frame. Select another frame to insert the new registration point";
+      
         public string makeUserAwareOfSegmentationGaps(List<int> frames)
         {
             string message = "No segmentation points were found for the frames: [ ";
@@ -182,5 +186,9 @@ namespace EDITgui
 
         //--------------------------------------ERROR IN 3D VIEWER-------------------------------------
         public string noObject3DLoaded = "An minor error occured. Select again the geometry if is not rendered.";
+
+        public string noAvailableGeometry = "There is no available geometry to apply the slicer";
+
+        public string visualizationOfbladderGeomteryisNeeded = "Before applying slicer you have to render the 3D geometry of the bladder";
     }
 }

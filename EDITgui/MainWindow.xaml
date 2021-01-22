@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:EDITgui"
         mc:Ignorable="d"
         Title="EDIT"
-        Height="886.5" 
+        Height="825.7" 
         Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded" Closed="Window_Closed">
 
     <Window.Resources>
@@ -59,23 +59,24 @@
 
 
         </Grid>
-        <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,40,0,0" Visibility="Collapsed">
-            <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="287.25,61.54,252.25,125.5">
+        <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,40,0,0">
+            <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="257.85,28,252.25,28">
                 <Grid x:Name="rendererGrid" Margin="1" Loaded="RendererGrid_Loaded"/>
             </Border>
-            <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="138.001" Margin="45.339,86.206,0,0" VerticalAlignment="Top" Width="117.166" Background="{x:Null}" BorderBrush="{x:Null}" IsTextSearchEnabled="False" Focusable="False"/>
-            <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" Margin="45.339,61.54,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
-            <Rectangle HorizontalAlignment="Left" Height="170.794" Margin="35.334,61.54,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="138.001" Margin="39.934,62.756,0,0" VerticalAlignment="Top" Width="117.166" Background="{x:Null}" BorderBrush="{x:Null}" IsTextSearchEnabled="False" Focusable="False"/>
+            <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" Margin="39.934,38.09,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
+            <Rectangle HorizontalAlignment="Left" Height="170.794" Margin="29.929,38.09,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
             <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,68.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
             <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Right" Height="24.666" Margin="0,68.923,128.496,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
             <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,92.922,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False"/>
             <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Right" Height="24.666" Margin="0,279.923,119.829,0" VerticalAlignment="Top" Width="83.332" Foreground="White"/>
             <ListBox x:Name="SurfaceAreaMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,302.588,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False"/>
             <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,279.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+
         </Grid>
         <Button x:Name="saveStudy" Content="Save Study" HorizontalAlignment="Right" Height="26.001" Margin="0,10,20,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796" Click="SaveStudy_Click"/>
         <Button x:Name="loadStudy" Content="Load Study" HorizontalAlignment="Left" Height="26.001" Margin="50,10,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796" Click="LoadStudy_Click"/>
-      
+
 
 
     </Grid>

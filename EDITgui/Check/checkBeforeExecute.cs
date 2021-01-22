@@ -25,7 +25,8 @@ namespace EDITgui
             recalculate, 
             extract3DThickness,
             extractOXYDeOXY,
-            extract3DTumor
+            extract3DTumor,
+            slicer
         };
 
         public string getMessage(executionType type)
@@ -97,6 +98,17 @@ namespace EDITgui
                     {
                         return context.getMessages().noBadderOrThickness3DModelsForTumor;
                     }
+                    break;
+                case executionType.slicer:
+                    if (!context.getMainWindow().STLGeometries.Any())
+                    {
+                        return context.getMessages().noAvailableGeometry;
+                    }
+                    if (context.getMainWindow().STLGeometries.Find(x => x.geometryName == Messages.bladderGeometry) == null || context.getMainWindow().STLGeometries.Find(x => x.geometryName == Messages.bladderGeometry).actor == null)
+                    {
+                        return context.getMessages().visualizationOfbladderGeomteryisNeeded;
+                    }
+
                     break;
             }
             return null;

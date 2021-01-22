@@ -115,7 +115,7 @@ namespace EDITgui
             {
                 object3D = oblectFileLocation + getProperFileName(FileType.Bladder3D);
                 File.Copy(Oblect3DFile, object3D, true);
-                geometry = new Geometry() { geometryName = "Bladder", Path = object3D, actor = null };
+                geometry = new Geometry() { geometryName = Messages.bladderGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
                 context.getUltrasoundPart().bladderGeometryPath = object3D;
             }
@@ -124,7 +124,7 @@ namespace EDITgui
             {
                 object3D = oblectFileLocation + getProperFileName(FileType.Thickness3D);
                 File.Copy(Oblect3DFile, object3D, true);
-                geometry = new Geometry() { geometryName = "Thickness", Path = object3D, actor = null };
+                geometry = new Geometry() { geometryName = Messages.outerWallGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
                 context.getPhotoAcousticPart().thicknessGeometryPath = object3D;
             }
@@ -133,7 +133,7 @@ namespace EDITgui
             {
                 object3D = oblectFileLocation + getProperFileName(FileType.Layer3D);
                 File.Copy(Oblect3DFile, object3D, true);
-                geometry = new Geometry() { geometryName = "Layer", Path = object3D, actor = null };
+                geometry = new Geometry() { geometryName = Messages.layerGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
             Oblect3DFile = getFolderName(path, FileType.OXY3D, false) + getProperFileName(FileType.OXY3D);
@@ -141,7 +141,7 @@ namespace EDITgui
             {
                 object3D = oblectFileLocation + getProperFileName(FileType.OXY3D);
                 File.Copy(Oblect3DFile, object3D, true);
-                geometry = new Geometry() { geometryName = "OXY", Path = object3D, actor = null };
+                geometry = new Geometry() { geometryName = Messages.oxyGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
             Oblect3DFile = getFolderName(path, FileType.DeOXY3D, false) + getProperFileName(FileType.DeOXY3D);
@@ -149,7 +149,7 @@ namespace EDITgui
             {
                 object3D = oblectFileLocation + getProperFileName(FileType.DeOXY3D);
                 File.Copy(Oblect3DFile, object3D, true);
-                geometry = new Geometry() { geometryName = "DeOXY", Path = object3D, actor = null };
+                geometry = new Geometry() { geometryName = Messages.deoxyGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
 

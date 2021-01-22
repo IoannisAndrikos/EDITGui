@@ -42,17 +42,24 @@ namespace EDITgui
         public delegate void STLSkinHandler(EDITgui.Geometry geometry);
         public static event STLSkinHandler returnSkinSTL = delegate { };
 
+
+
+        private bool registration = false;
+
         public enum ContourSegmentation
         {
             INSERT_USER_POINTS,
             CORRECTION,
             MANUAL,
-            FILL_POINTS
+            FILL_POINTS,
         }
         //--------Frame Marker---------
         FrameMarker startingFrameMarker;
         FrameMarker endingFrameMarker;
         //-----------------------------
+
+        Point registrationPoint;
+        Point zeroPoint = new Point(0, 0);
 
 
         //-----------for slider----------
@@ -60,7 +67,7 @@ namespace EDITgui
         public int slider_value = 0;
         public int fileCount;
         public string ultrasoundDicomFile = null;
-        string imagesDir;
+        public string imagesDir;
         //-------------------------------
 
         //------------user set intial points on images------
@@ -100,6 +107,7 @@ namespace EDITgui
             this.context = context;
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             applicationGrid.Children.Add(context.getUltrasoundPoints2D()); //add tumor annotation option here
+            applicationGrid.Children.Add(context.getRegistration()); //add tumor annotation option here
             chechBox_Logger.IsChecked = true;
             doInsertUserPoints();
         }
@@ -149,6 +157,7 @@ namespace EDITgui
                     slider.Visibility = Visibility.Visible;
                     switch_auto_manual.Visibility = Visibility.Visible;
                     context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
+                    context.getRegistration().Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
                 }
@@ -160,6 +169,7 @@ namespace EDITgui
                     switch_auto_manual.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
                     context.getUltrasoundPoints2D().Visibility = Visibility.Collapsed;
+                    context.getRegistration().Visibility = Visibility.Collapsed;
                 }
                 doRepeatProcess();
                 stopSpinner();
@@ -188,6 +198,7 @@ namespace EDITgui
             slider.Visibility = Visibility.Visible;
             switch_auto_manual.Visibility = Visibility.Visible;
             context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
+            context.getRegistration().Visibility = Visibility.Visible;
             calibration_x = image.Source.Width / canvasUltrasound.Width;
             calibration_y = image.Source.Height / canvasUltrasound.Height;
             doRepeatProcess();
@@ -202,6 +213,10 @@ namespace EDITgui
             context.getPhotoAcousticPoints2D().initializeTumors();
         }
 
+        public void addRegistrationPoint()
+        {
+            this.registration = true;
+        }
 
         private async void Extract_bladder_Click(object sender, RoutedEventArgs e)
         {
@@ -256,6 +271,7 @@ namespace EDITgui
             startingFrame = -1;
             endingFrame = -1;
             doInsertUserPoints();
+            context.getRegistration().initializeRegistrationPoints();
             context.getMainWindow().cleanVTKRender();
             context.getPhotoAcousticPart().doRepeatProcess(); //trigger repeat process of photoAcousticPart
         }
@@ -409,7 +425,7 @@ namespace EDITgui
 
         private void canvasUltrasound_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!contourSeg.Equals(ContourSegmentation.CORRECTION))
+            if (!contourSeg.Equals(ContourSegmentation.CORRECTION) && !registration)
             {
                 Point point = e.GetPosition(image); //position relative to the image
 
@@ -495,6 +511,15 @@ namespace EDITgui
                         display();
                     }
                 }
+            }else if (registration)
+            {
+                Point point = e.GetPosition(image);
+                if (context.getRegistration().setRegistrationPoint(point, slider_value) == 0)
+                {
+                    clear_canvas();
+                    display();
+                }
+                registration = false;
             }
         }
 
@@ -726,6 +751,14 @@ namespace EDITgui
                     canvasUltrasound.Children.Add(endingFrameMarker);
                     Canvas.SetLeft(endingFrameMarker, userPoints[1].X);
                     Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
+                }
+
+                registrationPoint = context.getRegistration().getRegistrationPoints(slider_value);
+                if(registrationPoint != zeroPoint){
+                    RegistrationMarker registrationMarker = new RegistrationMarker();
+                    canvasUltrasound.Children.Add(registrationMarker);
+                    Canvas.SetLeft(registrationMarker, registrationPoint.X);
+                    Canvas.SetTop(registrationMarker, registrationPoint.Y);
                 }
 
             }

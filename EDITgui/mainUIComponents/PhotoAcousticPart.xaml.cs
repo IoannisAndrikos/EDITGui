@@ -79,8 +79,8 @@ namespace EDITgui
         List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
     
         public String thicknessGeometryPath = null;
-        string OXYimagesDir;
-        string deOXYimagesDir;
+        public string OXYimagesDir;
+        public string deOXYimagesDir;
         
         public PhotoAcousticPart()
         {

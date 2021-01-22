@@ -63,6 +63,11 @@ namespace EDITgui
             //save info
             // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
             writeInfoXMLFile(path, collectAllStudySetings(), SaveActions.FileType.settings);
+
+            //save registration points
+            writeRegistrationPointsTXT(path);
+
+
         }
 
 
@@ -153,6 +158,21 @@ namespace EDITgui
         }
 
 
+        public void writeRegistrationPointsTXT(string path)
+        {
+            string filePath = getFolderName(path, SaveActions.FileType.Registration, true) + getProperFileName(FileType.Registration);
+            List<string> registrationPointsTextList = context.getRegistration().getRegistrationPointsTextList();
+            
+            StreamWriter sw = new StreamWriter(filePath);
+            foreach (string registrationPointString in registrationPointsTextList)
+            {
+                sw.WriteLine(registrationPointString.Replace(",", "."));
+            }
+            sw.Close();
+        }
+
+
+
         public void copyLogFilesToFolderOfStudy(string path, string workingDirectory)
         {
             if (!Directory.Exists(workingDirectory)) return;
@@ -209,7 +229,7 @@ namespace EDITgui
             studyInfo.Add(new StudySetting() { infoName = settingType.Logger, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_Logger.IsChecked.Value)).ToString()) });
             studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
             studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });    
             return studyInfo;
         }
 
