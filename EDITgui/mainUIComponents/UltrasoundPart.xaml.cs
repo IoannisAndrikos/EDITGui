@@ -141,7 +141,7 @@ namespace EDITgui
                 if (imagesDir != null)
                 {
                     context.getMetrics().setPixelSpacing(pixelSpacing);
-                    context.getStudySettings().setPixelSpacing(pixelSpacing);
+                    context.getStudySettings().setImageDimsAndPixelSpacing(pixelSpacing, imageSize);
                     fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
                     ultrasoundDicomFile = openFileDialog.FileName;
                     fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
@@ -183,7 +183,7 @@ namespace EDITgui
             this.pixelSpacing = pixelSpacing;
             this.imageSize = imageSize;
             context.getMetrics().setPixelSpacing(this.pixelSpacing);
-            context.getStudySettings().setPixelSpacing(this.pixelSpacing);
+            context.getStudySettings().setImageDimsAndPixelSpacing(this.pixelSpacing, imageSize);
             fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
             fileCount = Directory.GetFiles(imagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + "0.bmp");

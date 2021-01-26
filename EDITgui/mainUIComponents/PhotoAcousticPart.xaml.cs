@@ -926,7 +926,7 @@ namespace EDITgui
         private void doOXYState()
         {
             oxy_deoxy_label.Content = "  " + context.getMessages().oxy;
-            oxy_deoxy_switch.setCustomDotToLeft();
+            oxy_deoxy_switch.setCustomDotToLeftAndBlue();
             currentOxyDeOxyState = OxyDeOxyState.OXY;
             if (OXYDicomFile!=null)
             {
@@ -956,7 +956,7 @@ namespace EDITgui
         private void doDeOXYState()
         {
             oxy_deoxy_label.Content = context.getMessages().deoxy;
-            oxy_deoxy_switch.setCustomDotToRight();
+            oxy_deoxy_switch.setCustomDotToRightAndRed();
             currentOxyDeOxyState = OxyDeOxyState.DEOXY;
             if (DeOXYDicomFile!=null)
             {

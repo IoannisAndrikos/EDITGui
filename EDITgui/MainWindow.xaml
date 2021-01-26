@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="EDIT"
         Height="825.7" 
-        Width="1618.5" Background="#FF1C1F1F" Loaded="Window_Loaded" Closed="Window_Closed">
+        Width="1618.5" Background="#FF1C1F1F" Closed="Window_Closed">
 
     <Window.Resources>
 
@@ -30,8 +30,137 @@
                                     <VisualState x:Name="Disabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF333333"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <ControlTemplate x:Key="MenuItemControlTemplate1" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <Grid x:Name="Grid" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" Content="{TemplateBinding Icon}" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Path x:Name="GlyphPanel" Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z" Fill="{TemplateBinding Foreground}" FlowDirection="LeftToRight" Margin="3" Visibility="Collapsed" VerticalAlignment="Center"/>
+                    <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" Placement="Bottom">
+                        <Border x:Name="SubMenuBorder" BorderBrush="{x:Null}" BorderThickness="1" Background="#FF333333" Padding="2">
+                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <Grid x:Name="Grid1" RenderOptions.ClearTypeHint="Enabled" Margin="0">
+                                    <Canvas x:Name="Canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                        <Rectangle x:Name="OpaqueRect" Fill="{Binding Background, ElementName=SubMenuBorder}" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+                                    </Canvas>
+                                    <Rectangle x:Name="Rectangle" Fill="#FF335B5B" HorizontalAlignment="Left" Margin="25,2,0,2" Width="1"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSuspendingPopupAnimation" Value="True">
+                    <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None"/>
+                </Trigger>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="#FF335B5B"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="#FF335B5B"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="#FF335B5B"/>
+                    <Setter Property="Fill" TargetName="GlyphPanel" Value="#FF335B5B"/>
+                </Trigger>
+                <Trigger Property="CanContentScroll" SourceName="SubMenuScrollViewer" Value="False">
+                    <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=SubMenuScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=SubMenuScrollViewer}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="MenuSubItemControlTemplate" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <Grid Margin="-1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="22" SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="13"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" Content="{TemplateBinding Icon}" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Border x:Name="GlyphPanel" BorderBrush="#FF26A0DA" BorderThickness="1" Background="#3D26A0DA" ClipToBounds="False" HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0" Visibility="Hidden" VerticalAlignment="Center" Width="22">
+                        <Path x:Name="Glyph" Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z" Fill="#FF212121" FlowDirection="LeftToRight" Height="11" Width="10"/>
+                    </Border>
+                    <ContentPresenter x:Name="menuHeaderContainer" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="2" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="menuGestureText" Grid.Column="4" Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="#FF335B5B"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="#FF335B5B"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="#FF707070"/>
+                    <Setter Property="Fill" TargetName="Glyph" Value="#FF707070"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsHighlighted" Value="True"/>
+                        <Condition Property="IsEnabled" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" TargetName="templateRoot" Value="#0A000000"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="#21000000"/>
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="4.25" RadiusX="4.25" Stroke="#FF335B5B" Fill="#FF333333"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,-2,0,0"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True"/>
@@ -48,9 +177,9 @@
 
     </Window.Resources>
     <Grid x:Name="totalGrid" Margin="0">
-        <local:twoStatesButton x:Name="switch_2D_3D" Margin="0,5.836,0,0" VerticalAlignment="Top" Height="30.664" Width="150.001" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown"/>
+        <local:twoStatesButton x:Name="switch_2D_3D" Margin="0,29.181,0,0" VerticalAlignment="Top" Height="30.664" Width="150.001" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown" HorizontalAlignment="Center"/>
 
-        <Grid x:Name="components2D" Background="#FF1C1F1F" Margin="0,40,0,0" HorizontalAlignment="Center">
+        <Grid x:Name="components2D" Background="#FF1C1F1F" Margin="0,65,0,0" HorizontalAlignment="Center">
             <!-- -->
 
 
@@ -59,24 +188,47 @@
 
 
         </Grid>
-        <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,40,0,0">
-            <Border x:Name="rendererBorder" BorderBrush="#FF355B5C" BorderThickness="1" Margin="257.85,28,252.25,28">
-                <Grid x:Name="rendererGrid" Margin="1" Loaded="RendererGrid_Loaded"/>
-            </Border>
+        <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,65,0,0">
+
+
+
             <ListBox x:Name="geometryItems" HorizontalAlignment="Left" Height="138.001" Margin="39.934,62.756,0,0" VerticalAlignment="Top" Width="117.166" Background="{x:Null}" BorderBrush="{x:Null}" IsTextSearchEnabled="False" Focusable="False"/>
             <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" Margin="39.934,38.09,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
             <Rectangle HorizontalAlignment="Left" Height="170.794" Margin="29.929,38.09,0,0" VerticalAlignment="Top" Width="137.334" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
-            <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,68.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
-            <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Right" Height="24.666" Margin="0,68.923,128.496,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
-            <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,92.922,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False"/>
-            <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Right" Height="24.666" Margin="0,279.923,119.829,0" VerticalAlignment="Top" Width="83.332" Foreground="White"/>
-            <ListBox x:Name="SurfaceAreaMetricsItems" HorizontalAlignment="Right" Height="96" Margin="0,302.588,43.161,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False"/>
-            <Rectangle HorizontalAlignment="Right" Height="131" Margin="0,279.256,29.327,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Rectangle HorizontalAlignment="Left" Height="131" Margin="39.934,241.656,0,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Left" Height="24.666" Margin="39.934,242.323,0,0" VerticalAlignment="Top" Width="75.999" Foreground="White"/>
+            <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Left" Height="96" Margin="39.934,266.322,0,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False"/>
+            <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Left" Height="24.666" Margin="39.934,415.923,0,0" VerticalAlignment="Top" Width="83.332" Foreground="White"/>
+            <ListBox x:Name="SurfaceAreaMetricsItems" HorizontalAlignment="Left" Height="96" Margin="39.934,438.588,0,0" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False"/>
+            <Rectangle HorizontalAlignment="Left" Height="131" Margin="39.934,415.256,0,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Rectangle HorizontalAlignment="Left" Height="131" Margin="39.934,415.256,0,0" VerticalAlignment="Top" Width="187" RadiusY="11.5" RadiusX="11.5" Stroke="#FF335B5B"/>
+            <Border x:Name="rendererBorder" BorderBrush="#FF335B5B" BorderThickness="1" Margin="302.65,10,10,10" SizeChanged="RendererBorder_SizeChanged">
+                <StackPanel x:Name="stackPanel" Margin="0">
+                    <Grid x:Name="rendererGrid" Margin="0" Loaded="RendererGrid_Loaded" Height="473"/>
+                    <Separator Margin="0" Foreground="White" Background="#FF335B5B"/>
+                </StackPanel>
+            </Border>
+
+
 
         </Grid>
-        <Button x:Name="saveStudy" Content="Save Study" HorizontalAlignment="Right" Height="26.001" Margin="0,10,20,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796" Click="SaveStudy_Click"/>
-        <Button x:Name="loadStudy" Content="Load Study" HorizontalAlignment="Left" Height="26.001" Margin="50,10,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="102.433" RenderTransformOrigin="0.174,0.796" Click="LoadStudy_Click"/>
-
+        <DockPanel VerticalAlignment="Top" Height="25">
+            <Menu DockPanel.Dock="Top" Background="#FF333333" Foreground="White">
+                <MenuItem Header="_File" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
+                    <MenuItem Header="_Νew Study" Template="{DynamicResource MenuSubItemControlTemplate}"/>
+                    <MenuItem Header="_Open Study" Template="{DynamicResource MenuSubItemControlTemplate}" Click="LoadStudy_Click" />
+                    <MenuItem Header="_Save Study As" Template="{DynamicResource MenuSubItemControlTemplate}" Click="SaveStudy_Click" />
+                    <MenuItem Header="_Save Study" Template="{DynamicResource MenuSubItemControlTemplate}" />
+                    <MenuItem Header="_Exit" Template="{DynamicResource MenuSubItemControlTemplate}" />
+                </MenuItem>
+                <MenuItem Header="_Tools" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
+                    <MenuItem Header="_Settings" Template="{DynamicResource MenuSubItemControlTemplate}" Click="Settings_Click" />
+                </MenuItem>
+                <MenuItem Header="_View" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
+                    <MenuItem Header="_Visualization 2D" Template="{DynamicResource MenuSubItemControlTemplate}"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
 
 
     </Grid>

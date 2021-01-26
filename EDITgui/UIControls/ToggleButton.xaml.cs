@@ -77,12 +77,25 @@ namespace EDITgui
 
         public void setCustomDotToRight()
         {
-            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF0A25D1"));
             Dot.Margin = RightSide;
             Toggled = true;
         }
 
         public void setCustomDotToLeft()
+        {
+            Dot.Margin = LeftSide;
+            Toggled = false;
+        }
+
+
+        public void setCustomDotToRightAndRed()
+        {
+            Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF0A25D1"));
+            Dot.Margin = RightSide;
+            Toggled = true;
+        }
+
+        public void setCustomDotToLeftAndBlue()
         {
             Dot.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFCB2525"));
             Dot.Margin = LeftSide;

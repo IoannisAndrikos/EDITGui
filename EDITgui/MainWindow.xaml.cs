@@ -83,23 +83,11 @@ namespace EDITgui
             context.getPhotoAcousticPart().Margin = new Thickness(777, 0, 0, 0);
             context.getPhotoAcousticPart().Width = 738;
 
-            context.getStudySettings().Margin = new Thickness(10, 5, 0, 0);
-            context.getStudySettings().HorizontalAlignment = HorizontalAlignment.Left;
-            context.getStudySettings().VerticalAlignment = VerticalAlignment.Top;
-            context.getStudySettings().Height = 217;
-            context.getStudySettings().Width = 199;
-
             context.getUltrasoundPoints2D().Margin = new Thickness(5, 97.6, 0, 0);
             context.getUltrasoundPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
             context.getUltrasoundPoints2D().VerticalAlignment = VerticalAlignment.Top;
             context.getUltrasoundPoints2D().Height = 454.4;
 
-
-            context.getSlicer().Margin = new Thickness(28.135, 267.588, 0, 0);
-            context.getSlicer().HorizontalAlignment = HorizontalAlignment.Left;
-            context.getSlicer().VerticalAlignment = VerticalAlignment.Top;
-            context.getSlicer().Width = 201.87;
-            context.getSlicer().Height = 445.037;
 
             context.getRegistration().Margin = new Thickness(585, 420.279, 0, 0);
             context.getRegistration().HorizontalAlignment = HorizontalAlignment.Left;
@@ -114,10 +102,13 @@ namespace EDITgui
 
             this.components2D.Children.Add(context.getUltrasoundPart());
             this.components2D.Children.Add(context.getPhotoAcousticPart());
-      
-            this.totalGrid.Children.Add(context.getStudySettings());
-            this.Viewer3D.Children.Add(context.getSlicer());
-            
+
+            context.getSlicer().Margin = new Thickness(1,0,0,0);
+            context.getSlicer().Width = double.NaN;
+            context.getSlicer().HorizontalAlignment = HorizontalAlignment.Stretch;
+            context.getSlicer().VerticalAlignment = VerticalAlignment.Stretch;
+            this.stackPanel.Children.Add(context.getSlicer());
+
 
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
@@ -169,11 +160,7 @@ namespace EDITgui
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-           
-
-        }
+       
 
         
 
@@ -304,6 +291,8 @@ namespace EDITgui
             host.Child = myRenderWindowControl;
 
             host.Margin = new Thickness(0, 0, 0, 0);
+            host.HorizontalAlignment = HorizontalAlignment.Stretch;
+            host.VerticalAlignment = VerticalAlignment.Stretch;
             rendererGrid.Children.Add(host);
             renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
             host.Visibility = Visibility.Hidden;
@@ -354,7 +343,9 @@ namespace EDITgui
             implPlaneWidget.SetVisibility(1); //set implPlaneWidget visible
 
             implPlaneWidget.SetPlaceFactor(1.01);
-            implPlaneWidget.GetPlaneProperty().SetColor(1, 0, 1);
+            //implPlaneWidget.GetPlaneProperty().SetColor(1, 0, 1);
+            implPlaneWidget.GetPlaneProperty().SetColor(.30, .91, .91);
+           // implPlaneWidget.GetPlaneProperty().SetAmbientColor(.20, .91, .91);
             implPlaneWidget.OutlineTranslationOff();
             implPlaneWidget.ScaleEnabledOff();
 
@@ -370,6 +361,7 @@ namespace EDITgui
             implPlaneWidget.SetNormal(0, 0, 1);
             implPlaneWidget.GetNormalProperty().SetOpacity(0);
             implPlaneWidget.GetOutlineProperty().SetOpacity(0);
+            implPlaneWidget.GetPlaneProperty().SetOpacity(0.5);
 
             planeWidget = vtkImplicitPlaneWidget2.New();
             planeWidget.SetInteractor(myRenderWindowControl.RenderWindow.GetInteractor());
@@ -391,6 +383,7 @@ namespace EDITgui
             implPlaneWidget.VisibilityOn();
             origin = implPlaneWidget.GetOrigin();
             context.getSlicer().updateImages(Convert.ToInt32(origin[2] / context.getStudySettings().distaceBetweenFrames));
+            context.getSlicer().setAllSlicerImageItemsNonSelected();
         }
 
         vtkActor imageActor = vtkActor.New();
@@ -401,7 +394,6 @@ namespace EDITgui
                 renderer.RemoveActor(imageActor);
             }
 
-
             vtkBMPReader BMPReader = vtkBMPReader.New();
             BMPReader.SetFileName(imagePath);
            
@@ -410,30 +402,23 @@ namespace EDITgui
             int[] dims = BMPReader.GetOutput().GetDimensions();
             origin = implPlaneWidget.GetOrigin();
 
-
             vtkImageChangeInformation changeInformation = vtkImageChangeInformation.New();
             changeInformation.SetInput(BMPReader.GetOutput());
-         
-
             changeInformation.SetOriginTranslation(-(dims[0] / 2) * context.getStudySettings().xspace, -(dims[1] / 2) * context.getStudySettings().yspace, -origin[2]);
-
-           
-
             double[] sc = { context.getStudySettings().xspace, context.getStudySettings().yspace, origin[2] };
        
             changeInformation.SetSpacingScale(DoubleArrayToIntPtr(sc));
             changeInformation.Update();
-
 
             vtkImageData imageData = vtkImageData.New();
             imageData = changeInformation.GetOutput();
             
             vtkTransform transform = vtkTransform.New();
             transform.RotateX(180);
-
             vtkDataSetMapper imageMapper = vtkDataSetMapper.New();
             imageMapper.SetInput(imageData);
-            
+
+            imageActor.VisibilityOn();
             imageActor.SetMapper(imageMapper);
             imageActor.SetUserTransform(transform);
 
@@ -444,6 +429,48 @@ namespace EDITgui
             myRenderWindowControl.RenderWindow.Render();
         }
 
+        public void hileImageDataActorAndVisualizeSlicer()
+        {
+            if (imageActor != null)
+            {
+                renderer.RemoveActor(imageActor);
+            }
+            implPlaneWidget.VisibilityOn();
+            myRenderWindowControl.RenderWindow.Render();
+        }
+
+        public void hileBothImageDataActorAndSlicer()
+        {
+            if (imageActor != null)
+            {
+                imageActor.VisibilityOff();
+            }
+            if(implPlaneWidget != null)
+            {
+                implPlaneWidget.GetPlaneProperty().SetOpacity(0);
+                implPlaneWidget.VisibilityOff();
+
+            }
+                myRenderWindowControl.RenderWindow.Render();
+        }
+
+
+        public void visualizeBothImageDataActorAndSlicer()
+        {
+            if (imageActor != null)
+            {
+                imageActor.VisibilityOn();
+            }
+            if (implPlaneWidget != null)
+            {
+                implPlaneWidget.GetPlaneProperty().SetOpacity(0.5);
+                implPlaneWidget.VisibilityOn();
+
+            }
+            myRenderWindowControl.RenderWindow.Render();
+        }
+
+
 
         public IntPtr DoubleArrayToIntPtr(double[] d)
         {
@@ -451,7 +478,6 @@ namespace EDITgui
             System.Runtime.InteropServices.Marshal.Copy(d, 0, p, d.Length);
             return p;
         }
-
 
 
         private vtkPoints txtPointsToPolyData(string filename)
@@ -527,7 +553,7 @@ namespace EDITgui
             context.getUltrasoundPart().bladderGeometryPath = null;
             context.getPhotoAcousticPart().thicknessGeometryPath = null;
             if(implPlaneWidget!=null)  implPlaneWidget.SetVisibility(0);
-            context.getSlicer().InitializeView();
+           // context.getSlicer().InitializeView();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -559,6 +585,19 @@ namespace EDITgui
                     components2D.Visibility = Visibility.Visible;
                     break;
             }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            context.getStudySettings().CreateSettingsWindow();
+        }
+
+        private void RendererBorder_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Console.WriteLine(this.rendererBorder.Height);
+
+            this.rendererGrid.Height = 2 * this.rendererBorder.ActualHeight / 3;
+            context.getSlicer().Height =  this.rendererBorder.ActualHeight / 3;
         }
     }
 

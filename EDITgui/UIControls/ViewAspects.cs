@@ -20,6 +20,8 @@ namespace EDITgui
         public static SolidColorBrush redMarker = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFF0000"));
 
 
+        public static SolidColorBrush selectSlicerImageGreen = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF4FA6A6"));
+
         public static T GetCopy<T>(this T element) where T : System.Windows.UIElement
         {
             using (var ms = new System.IO.MemoryStream())

@@ -18,7 +18,7 @@ namespace EDITgui
         private manage2DPhotoAcoustic photoAcousticPoints2D;
         private metricsCalculations metrics;
         private coreFunctionality core;
-        private settings studySettings;
+        private Settings studySettings;
         private Messages messages;
         private checkBeforeExecute check;
         private StudyFile studyFile;
@@ -41,7 +41,7 @@ namespace EDITgui
             this.metrics = new metricsCalculations(this);
             this.slicer = new Slicer3D(this);
             this.core = new coreFunctionality(this);
-            this.studySettings = new settings(this);
+            this.studySettings = new Settings(this);
             this.check = new checkBeforeExecute(this);
             this.loadActions = new LoadActions(this);
             this.saveActions = new SaveActions(this);
@@ -105,7 +105,7 @@ namespace EDITgui
             return this.core;
         }
 
-        public settings getStudySettings()
+        public Settings getStudySettings()
         {
             return this.studySettings;
         }

@@ -143,8 +143,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Check\checkBeforeExecute.cs" />
+    <Compile Include="Settings\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="mainUIComponents\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Slicer\SlicerImageItem.xaml.cs">
+      <DependentUpon>SlicerImageItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIControls\RegistrationMarker.xaml.cs">
       <DependentUpon>RegistrationMarker.xaml</DependentUpon>
@@ -168,9 +175,6 @@
     </Compile>
     <Compile Include="mainUIComponents\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="mainUIComponents\settings.xaml.cs">
-      <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="mainUIComponents\manage2DUltrasound.xaml.cs">
       <DependentUpon>manage2DUltrasound.xaml</DependentUpon>
@@ -197,10 +201,18 @@
     <Compile Include="mainUIComponents\UltrasoundPart.xaml.cs">
       <DependentUpon>UltrasoundPart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Slicer3D.xaml.cs">
+    <Compile Include="Slicer\Slicer3D.xaml.cs">
       <DependentUpon>Slicer3D.xaml</DependentUpon>
     </Compile>
+    <Page Include="Settings\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="mainUIComponents\Registration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Slicer\SlicerImageItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -229,10 +241,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="mainUIComponents\Login.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="mainUIComponents\settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -282,7 +290,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Slicer3D.xaml">
+    <Page Include="Slicer\Slicer3D.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
