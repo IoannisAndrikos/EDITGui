@@ -208,17 +208,18 @@ namespace EDITgui
             }
         }
 
+        public void updateCanvas()
+        {
+            context.getPhotoAcousticPart().doCorrection();
+            context.getPhotoAcousticPart().updateCanvas();
+        }
+
         public void doHasItems()
         {
             Thickness addButtonMargin = addButton.Margin;
             addButtonMargin.Left = leftMarginHasItems;
             addButton.Margin = addButtonMargin;
-        }
-
-        public void updateCanvas()
-        {
-            context.getPhotoAcousticPart().doCorrection();
-            context.getPhotoAcousticPart().updateCanvas();
+            openButton.Visibility = Visibility.Visible;
         }
 
         public void doHasNoItems()
@@ -227,6 +228,7 @@ namespace EDITgui
             addButtonMargin.Left = leftMarginHasNoItems;
             addButton.Margin = addButtonMargin;
             objectsPanel.Visibility = Visibility.Collapsed;
+            openButton.Visibility = Visibility.Collapsed;
             openButton.Content = "\u2B9D";
         }
 

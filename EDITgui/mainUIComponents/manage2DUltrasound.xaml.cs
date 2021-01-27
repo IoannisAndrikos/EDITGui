@@ -213,6 +213,7 @@ namespace EDITgui
             Thickness addButtonMargin = addButton.Margin;
             addButtonMargin.Left = leftMarginHasItems;
             addButton.Margin = addButtonMargin;
+            openButton.Visibility = Visibility.Visible;
         }
 
         public void doHasNoItems()
@@ -221,6 +222,7 @@ namespace EDITgui
             addButtonMargin.Left = leftMarginHasNoItems;
             addButton.Margin = addButtonMargin;
             objectsPanel.Visibility = Visibility.Collapsed;
+            openButton.Visibility = Visibility.Collapsed;
             openButton.Content = "\u2B9D";
         }
 

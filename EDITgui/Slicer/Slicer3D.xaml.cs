@@ -27,6 +27,8 @@ namespace EDITgui
         double width;
         double height;
 
+       public bool imageIsOverlayed = false;
+
        public SlicerImageItem ultrasoundItem;
        public  SlicerImageItem OXYItem;
        public SlicerImageItem DeOXYItem;
@@ -94,8 +96,11 @@ namespace EDITgui
 
             HideSlicer.Visibility = Visibility.Visible;
             imagePanel.Visibility = Visibility.Visible;
+            visualizeSlicer.Visibility = Visibility.Collapsed;
 
             updateImages(0);
+
+            imageIsOverlayed = false;
             context.getMainWindow().applySlicer();
         }
 
@@ -106,7 +111,7 @@ namespace EDITgui
             imagePanel.Visibility = Visibility.Collapsed;
             visualizeSlicer.Visibility = Visibility.Visible;
 
-            context.getMainWindow().hileBothImageDataActorAndSlicer();
+            context.getMainWindow().hideBothImageDataActorAndSlicer();
 
         }
 
@@ -183,9 +188,11 @@ namespace EDITgui
             {
                 item.setSelected();
                 context.getMainWindow().overlayImage(item.imagesPath + Path.DirectorySeparatorChar + frameIndex.ToString() + ".bmp");
-            }else if (commingItemIsSelected)
+                imageIsOverlayed = true;
+            } else if (commingItemIsSelected)
             {
-                context.getMainWindow().hileImageDataActorAndVisualizeSlicer();
+                context.getMainWindow().hideImageDataActorAndVisualizeSlicer();
+                imageIsOverlayed = false;
             }
         }
 

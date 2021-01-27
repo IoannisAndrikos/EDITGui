@@ -59,14 +59,14 @@ namespace EDITgui
             InitializeComponent();
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
-            user.Visibility = Visibility.Collapsed; //-------------
+            //user.Visibility = Visibility.Collapsed; //-------------
             this.totalGrid.Children.Add(user);
         }
 
 
         public void doAfterUserAuthentication()
         {
-            //user.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed;
             currentProcess = process.AUTO;
 
             context = new Context(this, user);
@@ -355,6 +355,9 @@ namespace EDITgui
 
             d[2] = d[2] - double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
             d[3] = d[3] + double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+
+         
+
             implPlaneWidget.PlaceWidget(DoubleArrayToIntPtr(d));
 
             implPlaneWidget.SetOrigin(0, 0, 0);
@@ -429,7 +432,7 @@ namespace EDITgui
             myRenderWindowControl.RenderWindow.Render();
         }
 
-        public void hileImageDataActorAndVisualizeSlicer()
+        public void hideImageDataActorAndVisualizeSlicer()
         {
             if (imageActor != null)
             {
@@ -439,7 +442,7 @@ namespace EDITgui
             myRenderWindowControl.RenderWindow.Render();
         }
 
-        public void hileBothImageDataActorAndSlicer()
+        public void hideBothImageDataActorAndSlicer()
         {
             if (imageActor != null)
             {
@@ -464,7 +467,8 @@ namespace EDITgui
             if (implPlaneWidget != null)
             {
                 implPlaneWidget.GetPlaneProperty().SetOpacity(0.5);
-                implPlaneWidget.VisibilityOn();
+
+                if(!context.getSlicer().imageIsOverlayed) implPlaneWidget.VisibilityOn();
 
             }
             myRenderWindowControl.RenderWindow.Render();
@@ -592,12 +596,12 @@ namespace EDITgui
             context.getStudySettings().CreateSettingsWindow();
         }
 
-        private void RendererBorder_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void RendererPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Console.WriteLine(this.rendererBorder.Height);
+            Console.WriteLine(this.rendererPanel.Height);
 
-            this.rendererGrid.Height = 2 * this.rendererBorder.ActualHeight / 3;
-            context.getSlicer().Height =  this.rendererBorder.ActualHeight / 3;
+            this.rendererGrid.Height = 2 * this.rendererPanel.ActualHeight / 3;
+            context.getSlicer().Height =  this.rendererPanel.ActualHeight / 3;
         }
     }
 

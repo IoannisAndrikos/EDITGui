@@ -83,7 +83,7 @@
                 <StackPanel x:Name="checkboxItems" Margin="0"/>
             </Grid>
         </Border>
-        <Button x:Name="openButton" Content="⮝" HorizontalAlignment="Left" Height="22.134" Margin="5,0,0,5" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="20" Click="OpenButton_Click_1"/>
+        <Button x:Name="openButton" Content="⮝" HorizontalAlignment="Left" Height="22.134" Margin="5,0,0,5" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="20" Click="OpenButton_Click_1" Visibility="Collapsed"/>
         <Button x:Name="addButton" Content="&#x271A;" HorizontalAlignment="Left" Height="22.134" Margin="5,0,0,5" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="20" Click="AddButton_Click"/>
 
     </Grid>
