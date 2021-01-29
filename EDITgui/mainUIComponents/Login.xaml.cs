@@ -37,8 +37,8 @@ namespace EDITgui
             InitializeComponent();
             this.mainWindow = mainWindow;
             this.messages = new Messages();
-           // isAuthenticated = true; //-----------------
-           // mainWindow.doAfterUserAuthentication(); //-------------
+            //isAuthenticated = true; //-----------------
+            //mainWindow.doAfterUserAuthentication(); //-------------
         }
 
         string username;

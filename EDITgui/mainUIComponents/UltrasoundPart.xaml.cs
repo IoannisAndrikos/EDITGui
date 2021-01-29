@@ -97,7 +97,6 @@ namespace EDITgui
         {
             InitializeComponent();
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
-            chechBox_Logger.IsChecked = true;
             contourSeg = ContourSegmentation.INSERT_USER_POINTS;
         }
 
@@ -108,7 +107,6 @@ namespace EDITgui
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             applicationGrid.Children.Add(context.getUltrasoundPoints2D()); //add tumor annotation option here
             applicationGrid.Children.Add(context.getRegistration()); //add tumor annotation option here
-            chechBox_Logger.IsChecked = true;
             doInsertUserPoints();
         }
 
@@ -131,10 +129,10 @@ namespace EDITgui
                 clear_canvas();
                 context.getCore().repeatSegmentation();
                 ultrasoundDicomFile = null;
-                bool enablelogging = chechBox_Logger.IsChecked.Value;
+               
                 await Task.Run(() => {
                     string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.UltrasoundDicomFile);
-                    imagesDir = context.getCore().exportImages(dicomPath, enablelogging);
+                    imagesDir = context.getCore().exportImages(dicomPath);
                     pixelSpacing = context.getCore().pixelSpacing;
                     imageSize = context.getCore().imageSize;
                 });
@@ -795,28 +793,21 @@ namespace EDITgui
 
             Thickness ImageRectangleMargin = image_Rectangle.Margin;
             Thickness ImageBorderMargin = imageborder.Margin;
-            Thickness StudyLabelMargin = ultrasound_studyname_label.Margin;
-            Thickness ConfigMargin = segmentation_config.Margin;
             Thickness waitMargin = Wait.Margin;
-            Thickness switchAutoManual = switch_auto_manual.Margin;
             Thickness tumorsPanelMargin = context.getUltrasoundPoints2D().Margin;
 
             ImageRectangleMargin.Left = value;
             ImageBorderMargin.Left = value + 1;
-            StudyLabelMargin.Left = value;
-            ConfigMargin.Left = value + 1;
             waitMargin.Left = 736 - width / 2 - Wait.Width / 2;
-            switchAutoManual.Left = value + 7;
             tumorsPanelMargin.Left = value + 10;
 
             image_Rectangle.Margin = ImageRectangleMargin;
             imageborder.Margin = ImageBorderMargin;
-            ultrasound_studyname_label.Margin = StudyLabelMargin;
-            segmentation_config.Margin = ConfigMargin;
             Wait.Margin = waitMargin;
-            switch_auto_manual.Margin = switchAutoManual;
-           context.getUltrasoundPoints2D().Margin = tumorsPanelMargin;
+            context.getUltrasoundPoints2D().Margin = tumorsPanelMargin;
 
+            frame_actions_infos.Width = width;
+            ultrasound_Buttons.Width = width;
 
             image_Rectangle.Width = width + 2;
             imageborder.Width = width;
@@ -847,12 +838,6 @@ namespace EDITgui
         {
             context.getCore().fillHoles = closedSurface.IsChecked.Value;
         }
-
-        private void ChechBox_Logger_Click(object sender, RoutedEventArgs e)
-        {
-            context.getCore().setLoggingOnOff(chechBox_Logger.IsChecked.Value);
-        }
-
 
         public void startSpinner()
         {

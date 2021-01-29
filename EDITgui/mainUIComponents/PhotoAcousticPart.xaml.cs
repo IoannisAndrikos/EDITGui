@@ -814,20 +814,13 @@ namespace EDITgui
         private void fitUIAccordingToDicomImageSize(double height, double width)
         {
             Thickness waitMargin = Wait.Margin;
-            Thickness frameNumMargin = frame_num_label.Margin;
-            Thickness MetricsLabelMargin = metrics_label.Margin;
-            Thickness OXYButtonsMargin = OXY_Buttons.Margin;
-
-            frameNumMargin.Left = 665 - Math.Abs(736 - width);
-            MetricsLabelMargin.Left = 580 - Math.Abs(736 - width);
-            OXYButtonsMargin.Left = 339 - Math.Abs(736 - width);
             waitMargin.Left = width / 2 - Wait.Width / 2;//344.426 - Math.Abs(736 - width);
 
-            frame_num_label.Margin = frameNumMargin;
-            metrics_label.Margin = MetricsLabelMargin;
-            OXY_Buttons.Margin = OXYButtonsMargin;
+          
             Wait.Margin = waitMargin;
 
+            OXY_Buttons.Width = width;
+            frame_actions_infos.Width = width;
 
             image_Rectangle.Width = width + 2;
             imageborder.Width = width;

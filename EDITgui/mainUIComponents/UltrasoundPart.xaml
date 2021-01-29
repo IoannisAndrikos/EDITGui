@@ -63,7 +63,7 @@
                                     <VisualState x:Name="Disabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <Rectangle x:Name="rectangle" RadiusY="6" RadiusX="6" Stroke="#FF335B5B" Fill="#FF343433"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,0,0,2"/>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -333,41 +333,12 @@
         </Style>
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp">
-
-
-
-        <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="668,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasUltrasound" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasUltrasound_MouseDown" MouseLeftButtonDown="canvasUltrasound_MouseLeftButtonDown" MouseLeftButtonUp="canvasUltrasound_MouseLeftButtonUp" MouseMove="canvasUltrasound_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasUltrasound_MouseWheel" MouseRightButtonDown="canvasUltrasound_MouseRightButtonDown" MouseRightButtonUp="canvasUltrasound_MouseRightButtonUp">
                 <Image x:Name="image" Height="512" Margin="0,0,0,0" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="0" Canvas.Top="0"/>
             </Canvas>
         </Border>
-        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="601.89,39,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
-        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="316.667">
-            <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="93.49,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
-            <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="93.49,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
-            <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="93.49,60.075,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-            <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="93.49,84.903,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-            <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="93.49,109.403,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="40"/>
-            <Label x:Name="label_Repeats" Content="Repeats:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <Label x:Name="label_Smoothing" Content="Smoothing:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,55.408,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,81.326,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="0.99,106.07,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-            <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="27.333" Margin="162.156,10,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
-            <CheckBox x:Name="chechBox_Logger" Content="Logger" HorizontalAlignment="Left" Height="27.333" Margin="5.157,145.57,0,0" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" Click="ChechBox_Logger_Click" FontSize="11"/>
-            <CheckBox x:Name="closedSurface" Content="Closed Surface" HorizontalAlignment="Left" Height="27.333" Margin="93.49,145.57,0,0" VerticalAlignment="Top" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click" FontSize="11"/>
-            <CheckBox x:Name="chechBox_ArtifactCorrection" Content="Probe Artifact Correction" HorizontalAlignment="Left" Height="27.333" Margin="162.156,35.167,0,0" VerticalAlignment="Top" Width="144.511" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
-        </Grid>
-        <Grid x:Name="Ultrasound_Buttons" HorizontalAlignment="Left" Height="202.5" Margin="443,568,0,0" VerticalAlignment="Top" Width="295">
-            <Button x:Name="loadDicom" Content="Load Ultrasound" HorizontalAlignment="Left" Height="26.001" Margin="12.666,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="LoadDicom_Click"/>
-            <Button x:Name="extract_bladder" Content="Bladder 2D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_bladder_Click"/>
-            <Button x:Name="Extract_STL" Content="Bladder 3D" HorizontalAlignment="Left" Height="26.001" Margin="12.666,78.164,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Extract_STL_Click"/>
-            <Button x:Name="Export_Skin" Content="Layer 3D" HorizontalAlignment="Left" Height="26.002" Margin="12.666,109.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Export_Skin_Click"/>
-            <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Left" Height="26.001" Margin="164.147,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="127.833" Click="Repeat_process_Click"/>
-        </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.523,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
             <Grid.RenderTransform>
@@ -383,7 +354,46 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
         <Slider x:Name="ultrasound_slider" HorizontalAlignment="Left" Height="514" Margin="742,39,0,0" VerticalAlignment="Top" Width="29.167" Orientation="Vertical" Initialized="Ultrasound_slider_Initialized" ValueChanged="Ultrasound_slider_ValueChanged" Style="{DynamicResource SliderStyle1}" Visibility="Hidden"/>
-        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="25.828" Width="84.086" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
+        <Grid  x:Name="ultrasound_Buttons" HorizontalAlignment="Right" Height="176.433" Margin="0,560,38.334,0" VerticalAlignment="Top" Width="738">
+            <StackPanel Margin="0,0,15,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Margin="0" Width="100">
+                    <Button x:Name="loadDicom" Content="Load Ultrasound" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="LoadDicom_Click" Margin="0,5,0,0"/>
+                    <Button x:Name="extract_bladder" Content="Bladder 2D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="Extract_bladder_Click" Margin="0,5,0,0"/>
+                    <Button x:Name="Extract_STL" Content="Bladder 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="Extract_STL_Click" Margin="0,5,0,0"/>
+                    <Button x:Name="Export_Skin" Content="Layer 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="Export_Skin_Click" Margin="0,5,0,0"/>
+                </StackPanel>
+                <StackPanel Margin="10,0,0,0" Width="100.48">
+                    <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="Repeat_process_Click" Margin="0,5,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="options" Orientation="Horizontal" HorizontalAlignment="Left" Width="272.668">
+                <StackPanel x:Name="options2D" Width="154.001">
+                    <Grid Height="130.79" Width="152.667" HorizontalAlignment="Left">
+                        <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="99.832,3.683,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
+                        <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="99.832,28.85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
+                        <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="99.832,53.758,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
+                        <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="99.832,78.586,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
+                        <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="99.832,103.086,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="40"/>
+                        <Label x:Name="label_Repeats" Content="Repeats:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,-0.24,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                        <Label x:Name="label_Smoothing" Content="Smoothing:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,23.683,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                        <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,49.091,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                        <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,75.009,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                        <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,99.753,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                    </Grid>
+                    <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="19.866" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11" Margin="11,0,0,0"/>
+                    <CheckBox x:Name="chechBox_ArtifactCorrection" Content="Probe Artifact Correction" HorizontalAlignment="Left" Height="20.933" VerticalAlignment="Top" Width="144.511" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11" Margin="11,0,-1.51,0"/>
+                </StackPanel>
+                <StackPanel x:Name="options3D" Width="120">
+                    <CheckBox x:Name="closedSurface" Content="Closed Surface" Height="16.666" Width="111.314" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" IsChecked="True" Click="ClosedSurface_Click" FontSize="11" Margin="5,12,0,0" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="frame_actions_infos" HorizontalAlignment="Right" Height="93.476" Margin="0,0,38.334,0" VerticalAlignment="Top" Width="738">
+            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="25.828" Width="84.086" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
+            <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="135.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
+            <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
+            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
+        </Grid>
 
     </Grid>
 </UserControl>

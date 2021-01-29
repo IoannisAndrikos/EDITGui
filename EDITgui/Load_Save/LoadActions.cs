@@ -52,7 +52,7 @@ namespace EDITgui
                 if (File.Exists(ultrasoundDicomFile))
                 {
                     ultrasoundDicomFile = copyFileToWorkspace(getWorkspaceDicomPath(), ultrasoundDicomFile, FileType.UltrasoundDicomFile);
-                    UltrasoundimagesDir = context.getCore().exportImages(ultrasoundDicomFile, false);
+                    UltrasoundimagesDir = context.getCore().exportImages(ultrasoundDicomFile);
                     pixelSpacing = context.getCore().pixelSpacing;
                     imageSize = context.getCore().imageSize;
                 }
@@ -205,7 +205,6 @@ namespace EDITgui
                 context.getUltrasoundPart().Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
                 context.getUltrasoundPart().LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
                 context.getUltrasoundPart().chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
-                context.getUltrasoundPart().chechBox_Logger.IsChecked = ToBool((int)settings[settingType.Logger.ToString()]);
                 context.getUltrasoundPart().closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
                 context.getCore().fillHoles = context.getUltrasoundPart().closedSurface.IsChecked.Value;
                 context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));

@@ -57,6 +57,7 @@ namespace EDITgui
         public MainWindow()
         {
             InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
             //user.Visibility = Visibility.Collapsed; //-------------
@@ -135,6 +136,7 @@ namespace EDITgui
             else
             {
                 CheckBox ch = new CheckBox();
+                ch.Style = (Style)FindResource("CheckBoxStyle1");
                 ch.Foreground = Brushes.White;
                 if(extension == ".stl")
                 {
@@ -150,10 +152,10 @@ namespace EDITgui
                 }
                 
                 geometry.checkbox = ch;
-               
                 ch.Content = geometry.geometryName;
+                ch.Margin = new Thickness(0, 8, 0, 0);
                 STLGeometries.Add(geometry);
-                this.geometryItems.Items.Add(ch);
+                this.geometryItems.Children.Add(ch);
               
                 ch.Checked += new RoutedEventHandler(OnGeometryComboboxChecked);
                 ch.Unchecked += new RoutedEventHandler(OnGeometryComboboxUnchecked);
@@ -511,7 +513,30 @@ namespace EDITgui
         }
 
 
-        private void SaveStudy_Click(object sender, RoutedEventArgs e)
+        private void SaveStudyAs_Click(object sender, RoutedEventArgs e)
+        {
+            context.getSaveActions().doSave();
+
+            //if (loadedStudyPath == null)
+            //{
+               
+            //}
+            //else
+            //{
+            //    MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+            //    if (result == MessageBoxResult.Yes)
+            //    {
+            //       context.getSaveActions().saveAvailableData(loadedStudyPath);
+            //    }
+            //    else if (result == MessageBoxResult.No)
+            //    {
+            //        context.getSaveActions().doSave();
+            //    }
+            //}
+        }
+
+
+        private void OverwriteStudy_Click(object sender, RoutedEventArgs e)
         {
             if (loadedStudyPath == null)
             {
@@ -519,16 +544,9 @@ namespace EDITgui
             }
             else
             {
-                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
-                if (result == MessageBoxResult.Yes)
-                {
-                   context.getSaveActions().saveAvailableData(loadedStudyPath);
-                }
-                else if (result == MessageBoxResult.No)
-                {
-                    context.getSaveActions().doSave();
-                }
+                context.getSaveActions().saveAvailableData(loadedStudyPath);
             }
+
         }
 
 
@@ -549,15 +567,20 @@ namespace EDITgui
                 renderer.RemoveActor(imageActor);
             }
 
-            myRenderWindowControl.RenderWindow.Render();
+           
             volumeMetricsItems.Items.Clear();
             SurfaceAreaMetricsItems.Items.Clear();
-            geometryItems.Items.Clear();
+            geometryItems.Children.Clear();
             STLGeometries.Clear();
             context.getUltrasoundPart().bladderGeometryPath = null;
             context.getPhotoAcousticPart().thicknessGeometryPath = null;
-            if(implPlaneWidget!=null)  implPlaneWidget.SetVisibility(0);
-           // context.getSlicer().InitializeView();
+            if (planeWidget != null)
+            {
+                planeWidget.SetInteractor(null);
+            }
+            context.getSlicer(). clearSlicer();
+
+            myRenderWindowControl.RenderWindow.Render();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -598,10 +621,23 @@ namespace EDITgui
 
         private void RendererPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Console.WriteLine(this.rendererPanel.Height);
+            this.rendererGrid.Width = this.rendererPanel.ActualWidth - this.geomtriesAndMetricsPanel.ActualWidth -3;
+            this.objectsViewer.Height = 2 * this.rendererPanel.ActualHeight / 3;
+            if (context != null)
+            {
+                context.getSlicer().Height = this.rendererPanel.ActualHeight / 3;
+            }
+           
+        }
 
-            this.rendererGrid.Height = 2 * this.rendererPanel.ActualHeight / 3;
-            context.getSlicer().Height =  this.rendererPanel.ActualHeight / 3;
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            if(context.getCore() != null) context.getCore().setLoggingOnOff(true);
+        }
+
+        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (context.getCore() != null) context.getCore().setLoggingOnOff(false);
         }
     }
 

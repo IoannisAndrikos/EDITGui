@@ -57,7 +57,7 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public string exportImages(string dcmfile, bool enablelogging)
+        public string exportImages(string dcmfile)
         {
             try
             {

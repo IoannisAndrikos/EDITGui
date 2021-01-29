@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EDITgui"
         mc:Ignorable="d"
-        Title="Settings" Height="257.162" Width="289.067" Background="#FF1C1F1F" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" Closing="Window_Closing">
+        Title="Settings" Height="261.233" Width="289.067" Background="#FF1C1F1F" Margin="0" Closing="Window_Closing">
     <Window.Resources>
         <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
             <Setter Property="Template">
@@ -43,17 +43,29 @@
         </Style>
     </Window.Resources>
     <Grid Background="#FF1C1F1F">
-        <Label x:Name="label_auto_manual" Content="Auto" HorizontalAlignment="Left" Height="20" Margin="130.148,17.47,0,0" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Top" Width="74.585" Foreground="White"/>
-        <local:ToggleButton x:Name="Auto_manual" HorizontalAlignment="Left" Margin="81.149,13.466,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Auto_manual_MouseLeftButtonDown" Height="26.665" Width="46"/>
-        <TextBox x:Name="textbox_distanceBetweenFrames" HorizontalAlignment="Left" Height="20.167" Margin="181.817,53.633,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="53.059" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.203"/>
-        <Label x:Name="label_DistanceBetweenFrames" Content="frame distance (mm):" HorizontalAlignment="Left" Height="34.5" Margin="43.805,48.466,0,0" VerticalAlignment="Top" Width="120.404" Foreground="White"/>
-        <Label x:Name="label_pixelsSpacingX" Content="x-axis pixel size (cm):" HorizontalAlignment="Left" Height="34.5" Margin="43.805,82.966,0,0" VerticalAlignment="Top" Width="120.404" Foreground="White"/>
-        <Label x:Name="label_pixelsSpacingY" Content="y-axis pixel size (cm):" HorizontalAlignment="Left" Height="34.5" Margin="43.805,118.03,0,0" VerticalAlignment="Top" Width="120.404" Foreground="White"/>
-        <TextBox x:Name="textbox_pixelSpacingX" HorizontalAlignment="Left" Height="20.167" Margin="181.882,86.966,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0"/>
-        <TextBox x:Name="textbox_pixelSpacingY" HorizontalAlignment="Left" Height="20.167" Margin="181.882,122.566,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0"/>
-        <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="0,173.962,10,10" HorizontalAlignment="Right" Height="26" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="77" Style="{DynamicResource ButtonStyle1}" Click="Button_OK_Click" VerticalAlignment="Bottom">
-            <Label x:Name="Label_Ok" Padding="0" Margin="0" Foreground="White" Content="_OK"/>
-        </Button>
+        <StackPanel Width="281" Height="226">
+            <StackPanel x:Name="stack1" Margin="0" Orientation="Horizontal" Height="40">
+                <local:ToggleButton x:Name="Auto_manual" HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="Auto_manual_MouseLeftButtonDown" Height="26.665" Width="46" Margin="90,0,0,0"/>
+                <Label x:Name="label_auto_manual" Content="Auto" HorizontalAlignment="Center" Height="20" Style="{DynamicResource SimpleLabel}" VerticalAlignment="Center" Width="74.585" Foreground="White" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="stack2" Margin="0" Orientation="Horizontal" Height="40">
+                <Label x:Name="label_DistanceBetweenFrames" Content="frame distance (mm):" Width="120.404" Foreground="White" Margin="30,0,0,0"/>
+                <TextBox x:Name="textbox_distanceBetweenFrames" Height="20.167" TextWrapping="Wrap" Width="53.059" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.203" Margin="20,-12,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="stack3" Margin="0" Orientation="Horizontal" Height="40">
+                <Label x:Name="label_pixelsSpacingX" Content="x-axis pixel size (cm):" Width="120.404" Foreground="White" Margin="30,0,0,0"/>
+                <TextBox x:Name="textbox_pixelSpacingX" Height="20.167" TextWrapping="Wrap" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0" Margin="20,-12,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="stack4" Margin="0" Orientation="Horizontal" Height="40">
+                <Label x:Name="label_pixelsSpacingY" Content="y-axis pixel size (cm):" Width="120.404" Foreground="White" Margin="30,0,0,0"/>
+                <TextBox x:Name="textbox_pixelSpacingY" Height="20.167" TextWrapping="Wrap" Width="52.994" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0" Margin="20,-12,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="OkStack" Margin="0" Orientation="Horizontal" Height="40">
+                <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="180,0,0,0" HorizontalAlignment="Right" Height="26" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="77" Style="{DynamicResource ButtonStyle1}" Click="Button_OK_Click" VerticalAlignment="Bottom">
+                    <Label x:Name="Label_Ok" Padding="0" Margin="0" Foreground="White" Content="_OK"/>
+                </Button>
+            </StackPanel>
+        </StackPanel>
 
     </Grid>
 </Window>

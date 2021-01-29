@@ -226,7 +226,6 @@ namespace EDITgui
             studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(context.getUltrasoundPart().Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
             studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(context.getUltrasoundPart().LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
             studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_FIltering.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Logger, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_Logger.IsChecked.Value)).ToString()) });
             studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
             studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
             studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });    

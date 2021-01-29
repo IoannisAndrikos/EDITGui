@@ -33,6 +33,7 @@ namespace EDITgui
         public SettingsWindow(Settings settings)
         {
             InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             this.settings = settings;
             this.Visibility = Visibility.Visible;
         }

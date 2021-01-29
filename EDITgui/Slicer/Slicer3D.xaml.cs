@@ -37,14 +37,13 @@ namespace EDITgui
         int endingFrame;
         int frameIndex;
 
-        string ultrasoundImagesDir = null;
-        string OXYImagesDir = null;
-        string DeOXYmagesDir = null;
+        string ultrasoundImagesDir;
+        string OXYImagesDir;
+        string DeOXYmagesDir;
 
         public Slicer3D()
         {
             InitializeComponent();
-       
         }
 
         public Slicer3D(Context context)
@@ -53,6 +52,22 @@ namespace EDITgui
             this.context = context;
         }
 
+        public void clearSlicer()
+        {
+            this.ultrasoundImagesDir = null;
+            this.OXYImagesDir = null;
+            this.DeOXYmagesDir = null;
+
+            this.ultrasoundItem = null;
+            this.ultrasoundItem = null;
+            this.ultrasoundItem = null;
+            this.imageIsOverlayed = false;
+            imagePanel.Children.Clear();
+
+            HideSlicer.Visibility = Visibility.Collapsed;
+            imagePanel.Visibility = Visibility.Visible;
+            visualizeSlicer.Visibility = Visibility.Collapsed;
+        }
 
         public void setUltrasoundImagesDir(string dir)
         {

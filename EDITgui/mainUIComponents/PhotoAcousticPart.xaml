@@ -63,8 +63,8 @@
                                     <VisualState x:Name="Disabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
+                            <Rectangle x:Name="rectangle" RadiusY="6" RadiusX="6" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True"/>
@@ -87,43 +87,6 @@
                 Duration="0:0:2"
                 RepeatBehavior="Forever" />
         </Storyboard>
-        <Style x:Key="RadioButtonStyle2" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid Margin="0,10.167,0,0.334" HorizontalAlignment="Center" VerticalAlignment="Center" Height="28.999">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver"/>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.OpacityMask)" Storyboard.TargetName="rectangle">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Null}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
-                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" Fill="#FF333433" RadiusY="14.71" RadiusX="14.71" Stroke="#FF335B5B" Margin="6.083,5.147,85.231,3.852" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="28.249,6.193,25.331,8.02" Width="57.734" Height="14.786"/>
-                            <Rectangle Fill="{x:Null}" HorizontalAlignment="Left" Height="26.25" Margin="2.645,2.084,0,0" RadiusY="13.208" RadiusX="13.208" Stroke="#FF335B5B" VerticalAlignment="Top" Width="101.166"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True"/>
-                            <Trigger Property="IsDefaulted" Value="True"/>
-                            <Trigger Property="IsMouseOver" Value="True"/>
-                            <Trigger Property="IsPressed" Value="True"/>
-                            <Trigger Property="IsEnabled" Value="False"/>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -143,7 +106,7 @@
                                     <VisualState x:Name="Disabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <Rectangle x:Name="rectangle" RadiusY="6" RadiusX="6" Stroke="#FF335B5B" Fill="#FF343433"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,0,0,2"/>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -160,42 +123,12 @@
         </Style>
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp" Margin="0">
-
-        <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden"/>
-
-
-
-
-        <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-        <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Left" Height="25" Margin="665,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
         <Border x:Name="imageborder" BorderBrush="#FF335B5B" BorderThickness="0" HorizontalAlignment="Left" ClipToBounds="True" Height="512" Margin="1,40,0,0" VerticalAlignment="Top" Width="736">
             <Canvas x:Name="canvasPhotoAcoustic" Height="512" Margin="0,0,0,0" Width="736" MouseDown="canvasPhotoAcoustic_MouseDown" MouseLeftButtonDown="canvasPhotoAcoustic_MouseLeftButtonDown" MouseLeftButtonUp="canvasPhotoAcoustic_MouseLeftButtonUp" MouseMove="canvasPhotoAcoustic_MouseMove" HorizontalAlignment="Left" VerticalAlignment="Top" MouseWheel="canvasPhotoAcoustic_MouseWheel" MouseRightButtonDown="canvasPhotoAcoustic_MouseRightButtonDown" MouseRightButtonUp="canvasPhotoAcoustic_MouseRightButtonUp">
                 <Image x:Name="image" Height="512" Width="736" MinWidth="736" MinHeight="512" OpacityMask="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Canvas>
         </Border>
-        <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="580,41,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="157.11" Height="54.413" Background="{x:Null}"/>
-        <Grid x:Name="OXY_Buttons" HorizontalAlignment="Left" Height="202" Margin="339,568,0,0" VerticalAlignment="Top" Width="398">
-            <Button x:Name="loadΟΧΥDicom" Content="Load OXY" HorizontalAlignment="Left" Height="26.001" Margin="108.999,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadΟΧΥDicom_Click"/>
-            <Button x:Name="extract_thickness" Content="Outer Wall 2D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_thikness_Click"/>
-            <Button x:Name="Extract_STL" Content="Outer Wall 3D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,78.165,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_STL_Click"/>
-            <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Left" Height="26.001" Margin="255.167,47.163,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Recalculate_Click"/>
-            <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Left" Height="26.001" Margin="255.5,16.162,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="LoadDeOXYDicom_Click"/>
-            <local:ToggleButton x:Name="oxy_deoxy_switch" HorizontalAlignment="Left" Margin="16.563,25.879,0,0" VerticalAlignment="Top" Height="30.666" Width="49.752" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="Oxy_deoxy_switch_MouseLeftButtonDown">
-                <local:ToggleButton.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform AngleX="0.535"/>
-                        <RotateTransform/>
-                        <TranslateTransform X="0.157"/>
-                    </TransformGroup>
-                </local:ToggleButton.RenderTransform>
-            </local:ToggleButton>
-            <Label x:Name="oxy_deoxy_label" Content="  OXY" HorizontalAlignment="Left" Height="26" Margin="19.831,1.334,0,0" VerticalAlignment="Top" Width="49.164" Foreground="White"/>
-            <Button x:Name="Extract_DeOXY" Content=" OXY DeOXY 3D" HorizontalAlignment="Left" Height="26.001" Margin="108.999,109.166,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="132.833" Click="Extract_OXYDeOXY_Click"/>
-            <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Left" Height="26.001" Margin="255.167,78.164,0,0" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="127.833" Click="Extract_Tumor_Click"/>
-            <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Left" Height="26.001" Margin="255.167,109.5,0,0" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="127.833" Click="Extract_Tumor_3D_Click"/>
-        </Grid>
 
         <Grid x:Name="Wait" HorizontalAlignment="Left" Height="50.977" Margin="344.426,270.688,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.493,0.499" Visibility="Hidden">
             <Grid.RenderTransform>
@@ -210,14 +143,49 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="35.312,35.308,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
-        <Grid x:Name="segmentation_config" HorizontalAlignment="Left" Height="201.5" Margin="1,568,0,0" VerticalAlignment="Top" Width="266">
-            <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3"/>
-            <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
-            <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
-            <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
-            <CheckBox x:Name="big_tumor" Content="Major tumor existence" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="154.825" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
+        <Grid x:Name="OXY_Buttons" Height="132" Margin="0,560,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="738">
+            <Grid x:Name="segmentation_config" Width="184" HorizontalAlignment="Left" Margin="0">
+                <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3"/>
+                <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
+                <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+                <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+                <CheckBox x:Name="big_tumor" Content="Major tumor existence" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="154.825" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
+            </Grid>
+            <StackPanel Margin="0,0,15,0" Orientation="Horizontal" HorizontalAlignment="Right" Width="330.667">
+                <Grid Width="114.334">
+                    <local:ToggleButton x:Name="oxy_deoxy_switch" Margin="0" Height="30.666" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="Oxy_deoxy_switch_MouseLeftButtonDown" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <local:ToggleButton.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform AngleX="0.535"/>
+                                <RotateTransform/>
+                                <TranslateTransform X="0.157"/>
+                            </TransformGroup>
+                        </local:ToggleButton.RenderTransform>
+                    </local:ToggleButton>
+                    <Label x:Name="oxy_deoxy_label" Content="  OXY" Height="26" Margin="-5,-45,0,0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+                <StackPanel Margin="0" Width="100">
+                    <Button x:Name="loadΟΧΥDicom" Content="Load OXY" Height="26" Style="{DynamicResource ButtonStyle1}" Width="100" Click="LoadΟΧΥDicom_Click" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="extract_thickness" Content="Outer Wall 2D" Height="26" Style="{DynamicResource ButtonStyle1}" Width="100" Click="Extract_thikness_Click" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="Extract_STL" Content="Outer Wall 3D" Height="26.001" Style="{DynamicResource ButtonStyle1}" Width="100" Click="Extract_STL_Click" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="Extract_DeOXY" Content=" OXY DeOXY 3D" Height="26.001" Style="{DynamicResource ButtonStyle1}" Width="100" Click="Extract_OXYDeOXY_Click" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Margin="15,0,0,0" Width="100">
+                    <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Center" Height="26" Margin="0,5,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="LoadDeOXYDicom_Click" FontSize="11"/>
+                    <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Recalculate_Click" FontSize="11" Margin="0,5,0,0"/>
+                    <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_Click" FontSize="11" Margin="0,5,0,0"/>
+                    <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_3D_Click" FontSize="11" Margin="0,5,0,0"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
-        <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
+        <Grid x:Name="frame_actions_infos" Height="95.413" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="737.667">
+            <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
+            <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden"/>
+            <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
+            <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="157.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
+            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
+        </Grid>
 
 
 
