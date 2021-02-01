@@ -108,6 +108,12 @@ namespace EDITgui
 
         public int setRegistrationPoint(Point point, int frame)
         {
+
+            point.X = (point.X - (context.getStudySettings().xdim / 2)) * context.getStudySettings().xspace;
+            point.Y = (point.Y - (context.getStudySettings().ydim / 2)) * context.getStudySettings().yspace;
+
+            frame = frame - context.getUltrasoundPart().startingFrame;
+
             switch (this.currentState)
             {
                 case setState.R1:

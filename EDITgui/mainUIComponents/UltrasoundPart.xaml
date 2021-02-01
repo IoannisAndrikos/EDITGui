@@ -367,18 +367,18 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="options" Orientation="Horizontal" HorizontalAlignment="Left" Width="272.668">
-                <StackPanel x:Name="options2D" Width="154.001">
+                <StackPanel x:Name="options2D" Width="155.601">
                     <Grid Height="130.79" Width="152.667" HorizontalAlignment="Left">
-                        <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="99.832,3.683,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
-                        <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="99.832,28.85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
-                        <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="99.832,53.758,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-                        <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="99.832,78.586,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-                        <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="99.832,103.086,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="40"/>
-                        <Label x:Name="label_Repeats" Content="Repeats:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,-0.24,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-                        <Label x:Name="label_Smoothing" Content="Smoothing:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,23.683,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-                        <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,49.091,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-                        <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,75.009,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
-                        <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,99.753,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White"/>
+                        <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="79.499,3.27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
+                        <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="79.499,28.437,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
+                        <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="79.499,53.345,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
+                        <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="79.499,78.173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
+                        <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="79.499,102.673,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="40"/>
+                        <Label x:Name="label_Repeats" Content="Repeats:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,-0.24,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
+                        <Label x:Name="label_Smoothing" Content="Smoothing:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,23.683,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
+                        <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,49.091,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
+                        <Label x:Name="label_lamda2" Content="Lamda2:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,75.009,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
+                        <Label x:Name="label_levelsize" Content="Level Size:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,99.753,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
                     </Grid>
                     <CheckBox x:Name="chechBox_FIltering" Content="Filtering" HorizontalAlignment="Left" Height="19.866" VerticalAlignment="Top" Width="68" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11" Margin="11,0,0,0"/>
                     <CheckBox x:Name="chechBox_ArtifactCorrection" Content="Probe Artifact Correction" HorizontalAlignment="Left" Height="20.933" VerticalAlignment="Top" Width="144.511" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11" Margin="11,0,-1.51,0"/>
@@ -391,8 +391,8 @@
         <Grid x:Name="frame_actions_infos" HorizontalAlignment="Right" Height="93.476" Margin="0,0,38.334,0" VerticalAlignment="Top" Width="738">
             <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="25.828" Width="84.086" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
             <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="135.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
-            <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
+            <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" FontSize="11"/>
+            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White" FontSize="11"/>
         </Grid>
 
     </Grid>

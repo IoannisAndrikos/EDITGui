@@ -144,11 +144,11 @@
             <Rectangle Fill="#FF335B5B" HorizontalAlignment="Left" Height="7.17" Margin="41.032,21.408,0,0" VerticalAlignment="Top" Width="7.167" RadiusY="6.4" RadiusX="6.4"/>
         </Grid>
         <Grid x:Name="OXY_Buttons" Height="132" Margin="0,560,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="738">
-            <Grid x:Name="segmentation_config" Width="184" HorizontalAlignment="Left" Margin="0">
-                <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3"/>
-                <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="121.157,35.167,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
-                <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
-                <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White"/>
+            <Grid x:Name="segmentation_config" Width="162" HorizontalAlignment="Left" Margin="0">
+                <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,8.753,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3"/>
+                <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,33.92,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
+                <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White" FontSize="11"/>
+                <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White" FontSize="11"/>
                 <CheckBox x:Name="big_tumor" Content="Major tumor existence" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="154.825" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
             </Grid>
             <StackPanel Margin="0,0,15,0" Orientation="Horizontal" HorizontalAlignment="Right" Width="330.667">
@@ -180,11 +180,11 @@
             </StackPanel>
         </Grid>
         <Grid x:Name="frame_actions_infos" Height="95.413" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="737.667">
-            <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White"/>
-            <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden"/>
+            <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" FontSize="11"/>
+            <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden" FontSize="11"/>
             <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
             <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="157.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
-            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White"/>
+            <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White" FontSize="11"/>
         </Grid>
 
 

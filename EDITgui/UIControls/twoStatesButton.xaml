@@ -8,15 +8,15 @@
     <Grid>
         <Grid x:Name="left" Margin="0,0,75,0" MouseLeftButtonDown="Left_MouseLeftButtonDown">
             <Grid x:Name="D2" Height="30" Width="75" MouseLeftButtonDown="D2_MouseLeftButtonDown"/>
-            <Rectangle x:Name="rec2DFront" Height="30" RadiusY="13" RadiusX="13" Width="75" Fill="#FF335B5B" MouseLeftButtonDown="Rec2DFront_MouseLeftButtonDown"/>
+            <Rectangle x:Name="rec2DFront" Height="30" RadiusY="6" RadiusX="6" Width="75" Fill="#FF335B5B" MouseLeftButtonDown="Rec2DFront_MouseLeftButtonDown"/>
             <Rectangle x:Name="rec2DBack" Height="30" Width="56" Fill="#FF335B5B" Margin="19,0,0,0" MouseLeftButtonDown="Rec2DBack_MouseLeftButtonDown"/>
             <Label Content="2D" Margin="0" Style="{DynamicResource SimpleLabel}" Width="16.668" Foreground="White" FontWeight="Bold" RenderTransformOrigin="0.47,0.479" Height="17.627" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
         </Grid>
         <Grid x:Name="D3" Margin="75,0,0,0" MouseLeftButtonDown="D3_MouseLeftButtonDown">
-            <Rectangle x:Name="rec3DFront" Height="30" RadiusY="13" RadiusX="13" Width="75" Fill="#FF333333" MouseLeftButtonDown="Rec3DFront_MouseLeftButtonDown"/>
+            <Rectangle x:Name="rec3DFront" Height="30" RadiusY="6" RadiusX="6" Width="75" Fill="#FF333333" MouseLeftButtonDown="Rec3DFront_MouseLeftButtonDown"/>
             <Rectangle x:Name="rec3DBack" Height="30" Width="56" Fill="#FF333333" Margin="0,0,19,0" MouseLeftButtonDown="Rec3DBack_MouseLeftButtonDown"/>
             <Label Content="3D" Margin="0" Style="{DynamicResource SimpleLabel}" Width="16.668" Foreground="White" FontWeight="Bold" RenderTransformOrigin="0.47,0.479" Height="17.627" MouseLeftButtonDown="Label_MouseLeftButtonDown_1"/>
         </Grid>
-        <Rectangle Margin="0" RadiusY="13" RadiusX="13" Stroke="#FF335B5B"/>
+        <Rectangle Margin="0" RadiusY="6" RadiusX="6" Stroke="#FF335B5B"/>
     </Grid>
 </UserControl>
