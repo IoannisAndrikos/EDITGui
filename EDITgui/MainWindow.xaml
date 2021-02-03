@@ -289,7 +289,6 @@
     </Window.Resources>
     <Grid x:Name="totalGrid" Margin="0">
         <local:twoStatesButton x:Name="switch_2D_3D" Margin="0,29.181,0,0" VerticalAlignment="Top" Height="30.664" Width="150.001" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown" HorizontalAlignment="Center"/>
-
         <Grid x:Name="components2D" Background="#FF1C1F1F" Margin="0,65,0,0" HorizontalAlignment="Center">
             <!-- -->
 
@@ -348,13 +347,16 @@
                 <MenuItem Header="_Tools" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
                     <MenuItem Header="_Settings" Template="{DynamicResource MenuSubItemControlTemplate}" Click="Settings_Click" />
                     <MenuItem Header="_Logger" IsCheckable="True" Template="{DynamicResource MenuSubItemControlTemplate}" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked" />
-      
+
                 </MenuItem>
                 <MenuItem Header="_View" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
                     <MenuItem Header="_Visualization 2D" Template="{DynamicResource MenuSubItemControlTemplate}"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
+        <Grid x:Name="ComparatorGrid" Margin="0,65,0,0" Visibility="Collapsed">
+            <Border x:Name="comparatorBorders" BorderBrush="#FF335B5B" BorderThickness="1" Margin="10"/>
+        </Grid>
 
 
     </Grid>

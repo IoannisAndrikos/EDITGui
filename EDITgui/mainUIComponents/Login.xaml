@@ -26,7 +26,7 @@
                                     <VisualState x:Name="Disabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="9.5" RadiusX="9.5" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <Rectangle x:Name="rectangle" RadiusY="6" RadiusX="6" Stroke="#FF335B5B" Fill="#FF343433"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="21.268,4.354,21.268,5.686"/>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -243,7 +243,7 @@
                 <TextBox x:Name="reveal_password" Height="25" Background="#FF333333" BorderBrush="#FF335B5B" FontSize="16" SelectionBrush="#FF335B5B" SelectionTextBrush="#FF335B5B" Foreground="White" Margin="0,131.399,0,79.401" Width="230" HorizontalAlignment="Center" Visibility="Collapsed" Style="{DynamicResource TextBoxStyle1}"/>
                 <CheckBox x:Name="checkBox_showPassword" Content="Show Password" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="1.4,164.399,138.4,57.568" Click="CheckBox_showPassword_Click" FontSize="10" Width="93" Style="{DynamicResource CheckBoxStyle1}"/>
 
-                <Button x:Name="submitButton" Content="Submit" Height="26" Style="{DynamicResource ButtonStyle1}" Width="132.833" Click="SubmitButton_Click" Margin="0,202.8,0,10" HorizontalAlignment="Center"/>
+                <Button x:Name="submitButton" Content="Submit" Height="26" Style="{DynamicResource ButtonStyle1}" Width="100" Click="SubmitButton_Click" Margin="0,202.8,0,10" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
     </Grid>

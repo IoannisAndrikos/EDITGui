@@ -183,7 +183,7 @@
             <Label x:Name="OXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" FontSize="11"/>
             <Label x:Name="DeOXY_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" Visibility="Hidden" FontSize="11"/>
             <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="26.001" Width="84.833" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
-            <Label x:Name="metrics_label" Content="" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="157.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
+            <Label x:Name="metrics_label" Content="" HorizontalContentAlignment="Right" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="157.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
             <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White" FontSize="11"/>
         </Grid>
 

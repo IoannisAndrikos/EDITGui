@@ -187,8 +187,10 @@ namespace EDITgui
         //--------------------------------------ERROR IN 3D VIEWER-------------------------------------
         public string noObject3DLoaded = "An minor error occured. Select again the geometry if is not rendered.";
 
-        public string noAvailableGeometry = "There is no available geometry to apply the slicer";
+        public string noAvailableGeometry = "There is no available geometry to apply the slicer.";
 
-        public string visualizationOfbladderGeomteryisNeeded = "Before applying slicer you have to render the 3D geometry of the bladder";
+        public string visualizationOfbladderGeomteryisNeeded = "Before applying slicer you have to render the 3D geometry of the bladder.";
+
+        public string noCorrectStudyFolder = "The selected folder does not contain any study 3D geometries.";
     }
 }

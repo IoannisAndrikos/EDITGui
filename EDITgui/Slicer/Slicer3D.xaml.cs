@@ -50,9 +50,10 @@ namespace EDITgui
         {
             InitializeComponent();
             this.context = context;
+            initalizeSlicer();
         }
 
-        public void clearSlicer()
+        public void initalizeSlicer()
         {
             this.ultrasoundImagesDir = null;
             this.OXYImagesDir = null;
@@ -65,8 +66,13 @@ namespace EDITgui
             imagePanel.Children.Clear();
 
             HideSlicer.Visibility = Visibility.Collapsed;
-            imagePanel.Visibility = Visibility.Visible;
+            dataPanel.Visibility = Visibility.Collapsed;
             visualizeSlicer.Visibility = Visibility.Collapsed;
+
+            ultrasound_metrics_label.Visibility = Visibility.Collapsed;
+            bladder_label.Visibility = Visibility.Collapsed;
+            photoaccoutic_metrics_label.Visibility = Visibility.Collapsed;
+            thickness_label.Visibility = Visibility.Collapsed;
         }
 
         public void setUltrasoundImagesDir(string dir)
@@ -105,16 +111,34 @@ namespace EDITgui
             if (context.getUltrasoundPart().imagesDir != null)
             {
                 addUltrasound();
+                ultrasound_metrics_label.Visibility = Visibility.Visible;
+                bladder_label.Visibility = Visibility.Visible;
             }
-            if (context.getPhotoAcousticPart().OXYimagesDir != null) addOXY();
+            else
+            {
+                ultrasound_metrics_label.Visibility = Visibility.Collapsed;
+                bladder_label.Visibility = Visibility.Collapsed;
+            }
+
+            if (context.getPhotoAcousticPart().OXYimagesDir != null)
+            {
+                addOXY();
+                photoaccoutic_metrics_label.Visibility = Visibility.Visible;
+                thickness_label.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                photoaccoutic_metrics_label.Visibility = Visibility.Collapsed;
+                thickness_label.Visibility = Visibility.Collapsed;
+            }
+               
+           
             if (context.getPhotoAcousticPart().deOXYimagesDir != null) addDeOXY();
 
             HideSlicer.Visibility = Visibility.Visible;
-            imagePanel.Visibility = Visibility.Visible;
+            dataPanel.Visibility = Visibility.Visible;
             visualizeSlicer.Visibility = Visibility.Collapsed;
-
             updateImages(0);
-
             imageIsOverlayed = false;
             context.getMainWindow().applySlicer();
         }
@@ -123,7 +147,7 @@ namespace EDITgui
         private void HideSlicer_Click(object sender, RoutedEventArgs e)
         {
             HideSlicer.Visibility = Visibility.Collapsed;
-            imagePanel.Visibility = Visibility.Collapsed;
+            dataPanel.Visibility = Visibility.Collapsed;
             visualizeSlicer.Visibility = Visibility.Visible;
 
             context.getMainWindow().hideBothImageDataActorAndSlicer();
@@ -134,7 +158,7 @@ namespace EDITgui
         {
             HideSlicer.Visibility = Visibility.Visible;
             visualizeSlicer.Visibility = Visibility.Collapsed;
-            imagePanel.Visibility = Visibility.Visible;
+            dataPanel.Visibility = Visibility.Visible;
 
             context.getMainWindow().visualizeBothImageDataActorAndSlicer();
 
@@ -188,10 +212,52 @@ namespace EDITgui
             if (ultrasoundItem != null)
             {
                 ultrasoundItem.setImage(frameIndex);
+                updateFrameLabel();
+                updateMetricsLabel();
             }
                 if (OXYItem != null) OXYItem.setImage(frameIndex);
             if (DeOXYItem != null) DeOXYItem.setImage(frameIndex);
         }
+
+        private void updateFrameLabel()
+        {
+            frame_num_label.Content =  context.getMessages().frame +": " + this.frameIndex.ToString();
+        }
+
+        FrameMetrics metrics;
+        private void updateMetricsLabel()
+        {
+            metrics = context.getImages().getBladderMetrics(this.frameIndex);
+
+            if(metrics.area > 0)
+            {
+                ultrasound_metrics_label.Content = context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                        context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+            }
+            else
+            {
+                ultrasound_metrics_label.Content = context.getMessages().perimeter + " = " + "-" +  Environment.NewLine +
+                                                       context.getMessages().area + " = " + "-";
+            }
+        
+
+
+            metrics = context.getImages().getThicknessMetrics(this.frameIndex);
+            if (metrics.area > 0)
+            {
+                photoaccoutic_metrics_label.Content = context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
+                                                      context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2 + Environment.NewLine +
+                                                      context.getMessages().meanThickness + " = " + Math.Round(metrics.meanThickness, 2) + " " + context.getMessages().mm;
+            }
+            else
+            {
+                photoaccoutic_metrics_label.Content = context.getMessages().perimeter + " = " + "-" + " " + Environment.NewLine +
+                                                     context.getMessages().area + " = " + "-" + " " + Environment.NewLine +
+                                                     context.getMessages().meanThickness + " = " + "-" + " ";
+            }
+
+        }
+
 
         public void itemWasPressed(SlicerImageItem item)
         {
@@ -217,7 +283,6 @@ namespace EDITgui
             if (OXYItem != null) OXYItem.setNonSelected();
             if (DeOXYItem != null) DeOXYItem.setNonSelected();
         }
-
 
         //public Slicer3D(Context context)
         //{

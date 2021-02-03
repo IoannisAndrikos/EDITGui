@@ -53,16 +53,38 @@ namespace EDITgui
 
         public static int count = 0;
 
-
+        Comparator3D comparator;
         public MainWindow()
         {
             InitializeComponent();
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+
+
+
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
             //user.Visibility = Visibility.Collapsed; //-------------
             this.totalGrid.Children.Add(user);
+
+
+            //context = new Context(this, user);
+            //comparator = new Comparator3D(context);
+            //AddComparatorView();
+
         }
+
+        //-------------------PILOT--------------------
+        private void AddComparatorView()
+        {
+            comparator.Height = double.NaN;
+            comparator.Width = double.NaN;
+            comparator.Margin = new Thickness(0, 0, 0, 0);
+            comparator.HorizontalAlignment = HorizontalAlignment.Stretch;
+            comparator.VerticalAlignment = VerticalAlignment.Stretch;
+
+            comparatorBorders.Child = comparator;
+        }
+        //----------------------------------------
 
 
         public void doAfterUserAuthentication()
@@ -148,7 +170,6 @@ namespace EDITgui
                     geometry.surfaceAreaLabel = surfaceAreaLabel;
                     this.volumeMetricsItems.Items.Add(volumeLabel);
                     this.SurfaceAreaMetricsItems.Items.Add(surfaceAreaLabel);
-
                 }
                 
                 geometry.checkbox = ch;
@@ -470,7 +491,10 @@ namespace EDITgui
             {
                 implPlaneWidget.GetPlaneProperty().SetOpacity(0.5);
 
-                if(!context.getSlicer().imageIsOverlayed) implPlaneWidget.VisibilityOn();
+                if (!context.getSlicer().imageIsOverlayed)
+                {
+                    implPlaneWidget.VisibilityOn();
+                }
 
             }
             myRenderWindowControl.RenderWindow.Render();
@@ -578,14 +602,14 @@ namespace EDITgui
             {
                 planeWidget.SetInteractor(null);
             }
-            context.getSlicer(). clearSlicer();
+            context.getSlicer(). initalizeSlicer();
 
             myRenderWindowControl.RenderWindow.Render();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (this.user.isAuthenticated)
+            if (this.user!=null && this.user.isAuthenticated)
             {
                 //close logging process
                 context.getCore().setLoggingOnOff(false);
@@ -619,15 +643,21 @@ namespace EDITgui
             context.getStudySettings().CreateSettingsWindow();
         }
 
+
+        double rendererGridWidth;
         private void RendererPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.rendererGrid.Width = this.rendererPanel.ActualWidth - this.geomtriesAndMetricsPanel.ActualWidth -3;
-            this.objectsViewer.Height = 2 * this.rendererPanel.ActualHeight / 3;
-            if (context != null)
+            rendererGridWidth = this.rendererPanel.ActualWidth - this.geomtriesAndMetricsPanel.ActualWidth - 3;
+            if (rendererGridWidth >= 0) this.rendererGrid.Width = rendererGridWidth;
+
+            if (this.rendererPanel.ActualHeight>=0)
             {
-                context.getSlicer().Height = this.rendererPanel.ActualHeight / 3;
+                this.objectsViewer.Height = 2 * this.rendererPanel.ActualHeight / 3;
+                if (context != null)
+                {
+                    context.getSlicer().Height = this.rendererPanel.ActualHeight / 3;
+                }
             }
-           
         }
 
         private void MenuItem_Checked(object sender, RoutedEventArgs e)

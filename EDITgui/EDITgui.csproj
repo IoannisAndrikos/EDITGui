@@ -143,7 +143,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Check\checkBeforeExecute.cs" />
-    <Compile Include="ManageRendering.cs" />
+    <Compile Include="Comparator3D\Comparator3D.xaml.cs">
+      <DependentUpon>Comparator3D.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Comparator3D\GeometryItemsDropdown.xaml.cs">
+      <DependentUpon>GeometryItemsDropdown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -205,6 +210,14 @@
     <Compile Include="Slicer\Slicer3D.xaml.cs">
       <DependentUpon>Slicer3D.xaml</DependentUpon>
     </Compile>
+    <Page Include="Comparator3D\Comparator3D.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Comparator3D\GeometryItemsDropdown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Settings\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

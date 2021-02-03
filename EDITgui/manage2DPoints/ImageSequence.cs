@@ -75,9 +75,19 @@ namespace EDITgui
             return new FrameMetrics() { area = frames[getSliderValue()].Bladder.area, perimeter = frames[getSliderValue()].Bladder.perimeter };
         }
 
+        public FrameMetrics getBladderMetrics(int index)
+        {
+            return new FrameMetrics() { area = frames[index].Bladder.area, perimeter = frames[index].Bladder.perimeter };
+        }
+
         public FrameMetrics getThicknessMetrics()
         {
             return new FrameMetrics() { area = frames[getSliderValue()].Thickness.area, perimeter = frames[getSliderValue()].Thickness.perimeter, meanThickness = frames[getSliderValue()].Thickness.meanThickness };
+        }
+
+        public FrameMetrics getThicknessMetrics(int index)
+        {
+            return new FrameMetrics() { area = frames[index].Thickness.area, perimeter = frames[index].Thickness.perimeter, meanThickness = frames[index].Thickness.meanThickness };
         }
 
         public FrameMetrics getTumorMetrics(int index)
