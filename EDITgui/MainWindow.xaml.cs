@@ -63,13 +63,12 @@ namespace EDITgui
 
             user = new Login(this);
             user.Margin = new Thickness(0, 0, 0, 0);
-            //user.Visibility = Visibility.Collapsed; //-------------
-            this.totalGrid.Children.Add(user);
+            this.totalGrid.Children.Add(user); //----------1
 
-
-            //context = new Context(this, user);
-            //comparator = new Comparator3D(context);
-            //AddComparatorView();
+            //user.Visibility = Visibility.Collapsed; //-------------2
+            //context = new Context(this, user);  //-------------2
+            //comparator = new Comparator3D(context);  //-------------2
+            //AddComparatorView();  //-------------2
 
         }
 
@@ -89,7 +88,7 @@ namespace EDITgui
 
         public void doAfterUserAuthentication()
         {
-            user.Visibility = Visibility.Collapsed;
+            user.Visibility = Visibility.Collapsed; //-----1
             currentProcess = process.AUTO;
 
             context = new Context(this, user);
@@ -249,42 +248,14 @@ namespace EDITgui
            
             vtkActor actor = vtkActor.New();
             actor.SetMapper(mapper);
-
+            geometry.actor = actor;
             if (geometry.checkbox.IsChecked == true)
             {
-                switch (geometry.geometryName)
-                {
-                    case Messages.bladderGeometry:
-                        actor.GetProperty().SetColor(1, 1, 1);
-                        actor.GetProperty().SetOpacity(1);
-                        break;
-                    case Messages.outerWallGeometry:
-                        actor.GetProperty().SetColor(1, 1, 0);
-                        actor.GetProperty().SetOpacity(0.8);
-                        break;
-                    case Messages.layerGeometry:
-                        actor.GetProperty().SetColor(0, 1, 0);
-                        actor.GetProperty().SetOpacity(0.3);
-                        break;
-                    case Messages.oxyGeometry:
-                        actor.GetProperty().SetColor(1, 0, 0);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                    case Messages.deoxyGeometry:
-                        actor.GetProperty().SetColor(0, 0, 1);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                    case Messages.tumorGeometry:
-                        actor.GetProperty().SetColor(1, 0, 1);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                }
-                geometry.actor = actor;
+                context.getPallet().updateGeometryColor(geometry);
                 renderer.AddActor(actor);
             }
             myRenderWindowControl.RenderWindow.Render();
         }
-
 
         public void OnGeometryComboboxUnchecked(object sender, RoutedEventArgs e)
         {
@@ -668,6 +639,11 @@ namespace EDITgui
         private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
         {
             if (context.getCore() != null) context.getCore().setLoggingOnOff(false);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            context.getPallet().CreatePalletWindow();
         }
     }
 

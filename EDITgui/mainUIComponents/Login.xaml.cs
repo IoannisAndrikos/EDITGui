@@ -30,6 +30,7 @@ namespace EDITgui
         public Login()
         {
             InitializeComponent();
+            
         }
 
         public Login(MainWindow mainWindow)
@@ -37,8 +38,8 @@ namespace EDITgui
             InitializeComponent();
             this.mainWindow = mainWindow;
             this.messages = new Messages();
-           // isAuthenticated = true; //-----------------
-           // mainWindow.doAfterUserAuthentication(); //-------------
+            //isAuthenticated = true; //-----------------2
+            //mainWindow.doAfterUserAuthentication(); //-------------2
         }
 
         string username;

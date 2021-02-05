@@ -25,6 +25,7 @@ namespace EDITgui
         private LoadActions loadActions;
         private SaveActions saveActions;
         private Slicer3D slicer;
+        private Pallet pallet;
 
         public Context(MainWindow mainWindow, Login user)
         {
@@ -46,6 +47,7 @@ namespace EDITgui
             this.loadActions = new LoadActions(this);
             this.saveActions = new SaveActions(this);
             this.studyFile = new StudyFile();
+            this.pallet = new Pallet(this);
         }
 
 
@@ -134,5 +136,11 @@ namespace EDITgui
         {
             return this.studyFile;
         }
+
+        public Pallet getPallet()
+        {
+            return this.pallet;
+        }
+
     }
 }

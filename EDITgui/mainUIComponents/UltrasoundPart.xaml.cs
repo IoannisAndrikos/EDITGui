@@ -754,9 +754,10 @@ namespace EDITgui
                 registrationPoint = context.getRegistration().getRegistrationPoints(slider_value);
                 if(registrationPoint != zeroPoint){
                     RegistrationMarker registrationMarker = new RegistrationMarker();
-                    canvasUltrasound.Children.Add(registrationMarker);
+                    
                     Canvas.SetLeft(registrationMarker, registrationPoint.X);
                     Canvas.SetTop(registrationMarker, registrationPoint.Y);
+                    canvasUltrasound.Children.Add(registrationMarker);
                 }
 
             }

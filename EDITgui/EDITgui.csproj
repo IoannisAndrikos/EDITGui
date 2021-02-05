@@ -149,6 +149,10 @@
     <Compile Include="Comparator3D\GeometryItemsDropdown.xaml.cs">
       <DependentUpon>GeometryItemsDropdown.xaml</DependentUpon>
     </Compile>
+    <Compile Include="pallet\Pallet.cs" />
+    <Compile Include="pallet\PalletWindow.xaml.cs">
+      <DependentUpon>PalletWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -215,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Comparator3D\GeometryItemsDropdown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="pallet\PalletWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

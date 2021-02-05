@@ -350,15 +350,13 @@
 
                 </MenuItem>
                 <MenuItem Header="_View" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
-                    <MenuItem Header="_Visualization 2D" Template="{DynamicResource MenuSubItemControlTemplate}"/>
+                    <MenuItem Header="_Pallet" Template="{DynamicResource MenuSubItemControlTemplate}" Click="MenuItem_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
         <Grid x:Name="ComparatorGrid" Margin="0,65,0,0" Visibility="Collapsed">
             <Border x:Name="comparatorBorders" BorderBrush="#FF335B5B" BorderThickness="1" Margin="10"/>
         </Grid>
-
-
     </Grid>
 
 
