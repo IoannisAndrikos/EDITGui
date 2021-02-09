@@ -65,7 +65,7 @@ namespace EDITgui
             writeInfoXMLFile(path, collectAllStudySetings(), SaveActions.FileType.settings);
 
             //save registration points
-            writeRegistrationPointsTXT(path);
+            //writeRegistrationPointsTXT(path);
 
 
         }
@@ -158,18 +158,18 @@ namespace EDITgui
         }
 
 
-        public void writeRegistrationPointsTXT(string path)
-        {
-            string filePath = getFolderName(path, SaveActions.FileType.Registration, true) + getProperFileName(FileType.Registration);
-            List<string> registrationPointsTextList = context.getRegistration().getRegistrationPointsTextList();
+        //public void writeRegistrationPointsTXT(string path)
+        //{
+        //    string filePath = getFolderName(path, SaveActions.FileType.Registration, true) + getProperFileName(FileType.Registration);
+        //    List<string> registrationPointsTextList = context.getRegistration().getRegistrationPointsTextList();
             
-            StreamWriter sw = new StreamWriter(filePath);
-            foreach (string registrationPointString in registrationPointsTextList)
-            {
-                sw.WriteLine(registrationPointString.Replace(",", "."));
-            }
-            sw.Close();
-        }
+        //    StreamWriter sw = new StreamWriter(filePath);
+        //    foreach (string registrationPointString in registrationPointsTextList)
+        //    {
+        //        sw.WriteLine(registrationPointString.Replace(",", "."));
+        //    }
+        //    sw.Close();
+        //}
 
 
 

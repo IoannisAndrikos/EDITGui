@@ -331,6 +331,84 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="TextBoxStyle1" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF335B5B"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF335B5B"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="6" RadiusX="6" Stroke="#FF335B5B" Fill="#FF343433"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp">
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
@@ -364,16 +442,17 @@
                 </StackPanel>
                 <StackPanel Margin="10,0,0,0" Width="100.48">
                     <Button x:Name="repeat_process" Content="Repeat Process" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Center" Width="100" Click="Repeat_process_Click" Margin="0,5,0,0"/>
+                    <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="100" Click="Recalculate_Click" FontSize="11" Margin="0,5,0.48,0"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="options" Orientation="Horizontal" HorizontalAlignment="Left" Width="272.668">
                 <StackPanel x:Name="options2D" Width="155.601">
                     <Grid Height="130.79" Width="152.667" HorizontalAlignment="Left">
-                        <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="79.499,3.27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20"/>
-                        <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="79.499,28.437,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="3"/>
-                        <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="79.499,53.345,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-                        <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="79.499,78.173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="1.0"/>
-                        <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="79.499,102.673,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="40"/>
+                        <TextBox x:Name="Repeats" HorizontalAlignment="Left" Height="20.167" Margin="79.499,3.27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="20" Style="{DynamicResource TextBoxStyle1}" SelectionBrush="#FF335B5B"/>
+                        <TextBox x:Name="Smoothing" HorizontalAlignment="Left" Height="20.167" Margin="79.499,28.437,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Style="{DynamicResource TextBoxStyle1}" Text="3" SelectionBrush="#FF335B5B"/>
+                        <TextBox x:Name="Lamda1" HorizontalAlignment="Left" Height="20.167" Margin="79.499,53.345,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Style="{DynamicResource TextBoxStyle1}" Text="1.0" SelectionBrush="#FF335B5B"/>
+                        <TextBox x:Name="Lamda2" HorizontalAlignment="Left" Height="20.167" Margin="79.499,78.173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Style="{DynamicResource TextBoxStyle1}" Text="1.0" SelectionBrush="#FF335B5B"/>
+                        <TextBox x:Name="LevelsetSize" HorizontalAlignment="Left" Height="20.167" Margin="79.499,102.673,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Style="{DynamicResource TextBoxStyle1}" Text="40" SelectionBrush="#FF335B5B"/>
                         <Label x:Name="label_Repeats" Content="Repeats:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,-0.24,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
                         <Label x:Name="label_Smoothing" Content="Smoothing:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,23.683,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
                         <Label x:Name="label_lamda1" Content="Lamda1:" HorizontalAlignment="Left" Height="34.5" Margin="7.332,49.091,0,0" VerticalAlignment="Top" Width="72.167" Foreground="White" FontSize="11"/>
@@ -390,9 +469,9 @@
         </Grid>
         <Grid x:Name="frame_actions_infos" HorizontalAlignment="Right" Height="93.476" Margin="0,0,38.334,0" VerticalAlignment="Top" Width="738">
             <local:ThreeStateButton x:Name="switch_auto_manual" HorizontalAlignment="Left" Margin="7,45,0,0" VerticalAlignment="Top" Height="25.828" Width="84.086" MouseLeftButtonDown="Switch_auto_manual_MouseLeftButtonDown" Visibility="Hidden"/>
-            <Label x:Name="metrics_label" Content="" HorizontalContentAlignment="Right" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="135.11" Height="54.413" Background="{x:Null}" Visibility="Hidden"/>
             <Label x:Name="ultrasound_studyname_label" Content="" HorizontalAlignment="Left" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="303.5" Foreground="White" FontSize="11"/>
             <Label x:Name="frame_num_label" Content="" HorizontalAlignment="Right" Height="25" Margin="0,7.5,0,0" VerticalAlignment="Top" Width="70" Foreground="White" FontSize="11"/>
+            <Label x:Name="metrics_label" Content="" HorizontalContentAlignment="Right" Foreground="Cyan" FontFamily="Math" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="157.11" Height="54.413" Background="{x:Null}"/>
         </Grid>
 
     </Grid>

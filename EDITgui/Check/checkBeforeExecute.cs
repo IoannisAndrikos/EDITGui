@@ -22,7 +22,8 @@ namespace EDITgui
             extract3DLayer, 
             extract2DThickness,
             extract2DTumor,
-            recalculate, 
+            recalculateBladder, 
+            recalculateThickness, 
             extract3DThickness,
             extractOXYDeOXY,
             extract3DTumor,
@@ -67,14 +68,24 @@ namespace EDITgui
                         return context.getMessages().noOXYdicom;
                     }
                     break;
-                case executionType.recalculate:
+                case executionType.recalculateBladder:
+                    if (context.getUltrasoundPart().ultrasoundDicomFile == null)
+                    {
+                        return context.getMessages().noOXYdicom;
+                    }
+                    if (!context.getImages().getBladderPoints().Any())
+                    {
+                        return context.getMessages().noThicknessForUniqueFrame;
+                    }
+                    break;
+                case executionType.recalculateThickness:
                     if (context.getPhotoAcousticPart().OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
-                        if (!context.getPhotoAcousticPart().areTherePoints())
-                        {
-                            return context.getMessages().noThicknessForUniqueFrame;
-                        }
+                    }
+                    if (!context.getImages().getThicknessPoints().Any())
+                    {
+                        return context.getMessages().noThicknessForUniqueFrame;
                     }
                     break;
                 case executionType.extract3DThickness:

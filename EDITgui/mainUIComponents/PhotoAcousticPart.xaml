@@ -121,6 +121,50 @@
             </Setter>
             <Setter Property="Foreground" Value="White"/>
         </Style>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="TextBoxStyle1" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF335B5B"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF335B5B"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="applicationGrid" Background="#FF1C1F1F" MouseRightButtonUp="ApplicationGrid_MouseRightButtonUp" Margin="0">
         <Rectangle x:Name="image_Rectangle" Fill="#FF333333" HorizontalAlignment="Left" Height="514" Margin="0,39,0,0" Stroke="#FF335B5B" VerticalAlignment="Top" Width="738"/>
@@ -145,8 +189,8 @@
         </Grid>
         <Grid x:Name="OXY_Buttons" Height="132" Margin="0,560,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="738">
             <Grid x:Name="segmentation_config" Width="162" HorizontalAlignment="Left" Margin="0">
-                <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,8.753,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3"/>
-                <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,33.92,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7"/>
+                <TextBox x:Name="minThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,8.753,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.3" Style="{DynamicResource TextBoxStyle1}" SelectionBrush="#FF335B5B"/>
+                <TextBox x:Name="maxThickness" HorizontalAlignment="Left" Height="20.167" Margin="113.157,33.92,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40.333" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="White" Text="0.7" SelectionBrush="#FF335B5B"/>
                 <Label x:Name="label_minThickness" Content="min thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,6.077,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White" FontSize="11"/>
                 <Label x:Name="label_maxThickness" Content="max thickness (mm):" HorizontalAlignment="Left" Height="34.5" Margin="0.99,30,0,0" VerticalAlignment="Top" Width="116.667" Foreground="White" FontSize="11"/>
                 <CheckBox x:Name="big_tumor" Content="Major tumor existence" HorizontalAlignment="Left" Height="27.333" Margin="6.665,64.5,0,0" VerticalAlignment="Top" Width="154.825" Background="White" BorderBrush="#FF335B5B" Foreground="#FFFBFBFB" FontSize="11"/>
@@ -174,8 +218,8 @@
                 <StackPanel Margin="15,0,0,0" Width="100">
                     <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Center" Height="26" Margin="0,5,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="LoadDeOXYDicom_Click" FontSize="11"/>
                     <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Recalculate_Click" FontSize="11" Margin="0,5,0,0"/>
-                    <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_Click" FontSize="11" Margin="0,5,0,0"/>
-                    <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_3D_Click" FontSize="11" Margin="0,5,0,0"/>
+                    <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_Click" FontSize="11" Margin="0,5,0,0" Visibility="Hidden"/>
+                    <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_3D_Click" FontSize="11" Margin="0,5,0,0" Visibility="Hidden"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

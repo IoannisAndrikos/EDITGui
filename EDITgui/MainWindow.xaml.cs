@@ -35,7 +35,7 @@ namespace EDITgui
     /// </summary>
     public partial class MainWindow : Window
     {
-        public enum process{ AUTO, ANOTATION}
+        public enum Mode{ AUTO, ANOTATION}
 
         public string workingPath;
         public string loadedStudyPath = null; //is filled if study is loaded
@@ -46,7 +46,7 @@ namespace EDITgui
 
         public vtkRenderer renderer;
         public List<Geometry> STLGeometries = new List<Geometry>();
-        public process currentProcess;
+        public Mode currentMode;
 
         Login user;
         Context context;
@@ -89,7 +89,7 @@ namespace EDITgui
         public void doAfterUserAuthentication()
         {
             user.Visibility = Visibility.Collapsed; //-----1
-            currentProcess = process.AUTO;
+            currentMode = Mode.AUTO;
 
             context = new Context(this, user);
 
@@ -111,10 +111,10 @@ namespace EDITgui
             context.getUltrasoundPoints2D().Height = 454.4;
 
 
-            context.getRegistration().Margin = new Thickness(585, 420.279, 0, 0);
-            context.getRegistration().HorizontalAlignment = HorizontalAlignment.Left;
-            context.getRegistration().VerticalAlignment = VerticalAlignment.Top;
-            context.getRegistration().Height = 133;
+            //context.getRegistration().Margin = new Thickness(585, 420.279, 0, 0);
+            //context.getRegistration().HorizontalAlignment = HorizontalAlignment.Left;
+            //context.getRegistration().VerticalAlignment = VerticalAlignment.Top;
+            //context.getRegistration().Height = 133;
 
 
             context.getPhotoAcousticPoints2D().Margin = new Thickness(11, 95, 0, 0);
@@ -539,7 +539,15 @@ namespace EDITgui
             }
             else
             {
-                context.getSaveActions().saveAvailableData(loadedStudyPath);
+                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes)
+                {
+                    context.getSaveActions().saveAvailableData(loadedStudyPath);
+                }
+                else if (result == MessageBoxResult.No)
+                {
+                    context.getSaveActions().doSave();
+                }
             }
 
         }

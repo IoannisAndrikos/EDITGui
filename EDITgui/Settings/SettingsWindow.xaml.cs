@@ -22,7 +22,7 @@ namespace EDITgui
     {
         Settings settings;
 
-        public MainWindow.process currentProcess;
+        public MainWindow.Mode mode;
 
         public SettingsWindow()
         {
@@ -38,17 +38,17 @@ namespace EDITgui
             this.Visibility = Visibility.Visible;
         }
 
-        public void setState(MainWindow.process state)
+        public void setState(MainWindow.Mode state)
         {
             switch (state)
             {
-                case MainWindow.process.AUTO:
-                    currentProcess = MainWindow.process.AUTO;
+                case MainWindow.Mode.AUTO:
+                    mode = MainWindow.Mode.AUTO;
                     label_auto_manual.Content = "Auto";
                     Auto_manual.setCustomDotToLeft();
                     break;
-                case MainWindow.process.ANOTATION:
-                    currentProcess = MainWindow.process.ANOTATION;
+                case MainWindow.Mode.ANOTATION:
+                    mode = MainWindow.Mode.ANOTATION;
                     label_auto_manual.Content = "Annotation";
                     Auto_manual.setCustomDotToRight();
                     break;
@@ -57,15 +57,15 @@ namespace EDITgui
 
         private void Auto_manual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            switch (currentProcess)
+            switch (mode)
             {
-                case MainWindow.process.AUTO:
+                case MainWindow.Mode.AUTO:
                     label_auto_manual.Content = "Annotation";
-                    currentProcess = MainWindow.process.ANOTATION;
+                    mode = MainWindow.Mode.ANOTATION;
                     break;
-                case MainWindow.process.ANOTATION:
+                case MainWindow.Mode.ANOTATION:
                     label_auto_manual.Content = "Auto";
-                    currentProcess = MainWindow.process.AUTO;
+                    mode = MainWindow.Mode.AUTO;
                     break;
             }
         }

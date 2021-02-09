@@ -119,6 +119,32 @@ namespace EDITgui
             return new List<List<EDITCore.CVPoint>>();
         }
 
+        [HandleProcessCorruptedStateExceptions]
+        public List<EDITCore.CVPoint> recalculateBladderOfContour(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist, 
+            int frame, List<EDITCore.CVPoint> thicknessCvPoints, bool fixArtifact)
+        {
+            try
+            {
+                editPro.setSegmentationConfigurations(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist);
+                editPro.extractBladderForUniqueFrame(frame, thicknessCvPoints, fixArtifact);
+                if (response.isSuccessful())
+                {
+                    return response.getUniqueFramesData();
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+            }
+            catch (Exception)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return new List<EDITCore.CVPoint>();
+        }
+
+
+
         //[HandleProcessCorruptedStateExceptions]
         //public List<List<EDITCore.CVPoint>> fixArtifact(int repeats, int smoothing, double lamda1, double lamda2, int levelsetSize, bool applyEqualizeHist,
         //   int startingFrame, int endingFrame, List<Point> userPoints, List<List<EDITCore.CVPoint>> bladderCvPoints)
@@ -143,10 +169,6 @@ namespace EDITgui
         //    }
         //    return new List<List<EDITCore.CVPoint>>();
         //}
-
-
-
-
 
         public void repeatSegmentation()
         {
@@ -174,7 +196,6 @@ namespace EDITgui
             }
             return null;
         }
-
 
         [HandleProcessCorruptedStateExceptions]
         public void writePointsAndImages()

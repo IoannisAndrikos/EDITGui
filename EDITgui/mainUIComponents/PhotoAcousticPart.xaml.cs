@@ -279,13 +279,13 @@ namespace EDITgui
                 if (!thicknessCvPoints.Any()) return;
                 context.getImages().fillThicknessFromBackEnd(thicknessCvPoints, context.getCore().meanThickness, context.getUltrasoundPart().startingFrame);
             });
-            updateCanvas();
+            doCorrection(true, true);
             stopSpinner();
         }
 
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
-            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.recalculate);
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.recalculateThickness);
             if (message != null)
             {
                 CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
@@ -445,7 +445,7 @@ namespace EDITgui
                 draw_points(selectedObject);
                 metrics_label.Foreground = selectedObject.polylineColor;
                 metrics_label.Content = selectedObject.metrics;
-                draw_polyline_ultrasound(context.getImages().getBladderPoints());
+                //draw_polyline_ultrasound(context.getImages().getBladderPoints());
             }
         }
 
@@ -502,25 +502,25 @@ namespace EDITgui
             closeCurvePoints.Clear();
         }
 
-        private void draw_polyline_ultrasound(List<Point> points)
-        {
-            List<Point> closeCurvePoints = points.ToList();//new List<Point>();
-            if(closeCurvePoints.Any()) closeCurvePoints.Add(points[0]);
+        //private void draw_polyline_ultrasound(List<Point> points)
+        //{
+        //    List<Point> closeCurvePoints = points.ToList();//new List<Point>();
+        //    if(closeCurvePoints.Any()) closeCurvePoints.Add(points[0]);
 
-            for (int i = 0; i < closeCurvePoints.Count - 1; i++)
-            {
-                Polyline pl = new Polyline();
-                pl.FillRule = FillRule.EvenOdd;
-                pl.StrokeThickness = 0.5;
-                pl.Points.Add(closeCurvePoints.ElementAt(i));
-                pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
-                pl.Stroke = ViewAspects.silver;//context.getColors().silver;
-                pl.StrokeStartLineCap = PenLineCap.Round;
-                pl.StrokeEndLineCap = PenLineCap.Round;
-                canvasPhotoAcoustic.Children.Add(pl);
-            }
-            closeCurvePoints.Clear();
-        }
+        //    for (int i = 0; i < closeCurvePoints.Count - 1; i++)
+        //    {
+        //        Polyline pl = new Polyline();
+        //        pl.FillRule = FillRule.EvenOdd;
+        //        pl.StrokeThickness = 0.5;
+        //        pl.Points.Add(closeCurvePoints.ElementAt(i));
+        //        pl.Points.Add(closeCurvePoints.ElementAt(i + 1));
+        //        pl.Stroke = ViewAspects.silver;//context.getColors().silver;
+        //        pl.StrokeStartLineCap = PenLineCap.Round;
+        //        pl.StrokeEndLineCap = PenLineCap.Round;
+        //        canvasPhotoAcoustic.Children.Add(pl);
+        //    }
+        //    closeCurvePoints.Clear();
+        //}
 
         private void drawPolylineOfRest2DObjects()
         {
@@ -863,7 +863,7 @@ namespace EDITgui
             Wait.Visibility = Visibility.Hidden;
         }
 
-        public void doCorrection(bool update = true, bool updateUlrasound = true)
+        public void doCorrection(bool update = true, bool updateUlrasound = false)
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;

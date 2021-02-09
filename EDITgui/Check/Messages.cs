@@ -122,6 +122,13 @@ namespace EDITgui
 
         public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost.";
 
+        public string getMessageAfterChangingSystemMode(MainWindow.Mode currentMode, MainWindow.Mode newMode)
+        {
+            return "Are sure for changing the system mode from " + currentMode.ToString() + " to " + newMode.ToString() + ". Any changes that you have already performed will be lost.";
+        }
+
+        public string changeAutoManualMode = "Are sure for changing the process mode. Any changes that you have already performed will be lost.";
+
         public string addTumorWithoutBladderAnnotation = "Before proceeding with the tumor annotation you should have performed the bladder annotation";
 
         public string addTumorWithoutThicknessAnnotation = "Before proceeding with the tumor annotation you should have performed the thickness annotation";
@@ -132,7 +139,7 @@ namespace EDITgui
 
         public string getOverwriteExistingStudyQuestion(string path)
         {
-            return "The current study will overwrite the existing study : '" + path + "'. Do you accept this?. If you want to save it as a new study press 'No'.";
+            return "Do you want to overwrite the existing study : '" + path;
         }
 
         public string  alreadySpecifiedRegistrationPointForCurrentFrame = "There is an already specified registration point for the current frame. Select another frame to insert the new registration point";
@@ -174,6 +181,8 @@ namespace EDITgui
         public string noOXYdicom = "No OXY DICOM file was loaded.";
 
         public string noThicknessForUniqueFrame = "There are no initial thickness points for the current frame.";
+
+        public string noBladderForUniqueFrame = "There are no initial bladder points for the current frame.";
 
         public string noOXYAndDeOXYImages = "No OXY Or DeOXY DICOM file was loaded.";
 

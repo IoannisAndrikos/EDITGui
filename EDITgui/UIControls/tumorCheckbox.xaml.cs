@@ -111,7 +111,7 @@ namespace EDITgui
             }
             else if ((dropdownContainer is manage2DUltrasound))
             {
-                ((manage2DUltrasound)dropdownContainer).selectedItem = this.index;
+                ((manage2DUltrasound)dropdownContainer).setSelectedItem(this.index);
                 ((manage2DUltrasound)dropdownContainer).updateCanvas();
             }
 

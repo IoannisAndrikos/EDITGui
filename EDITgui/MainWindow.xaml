@@ -338,11 +338,9 @@
         <DockPanel VerticalAlignment="Top" Height="25">
             <Menu DockPanel.Dock="Top" Background="#FF333333" Foreground="White">
                 <MenuItem Header="_File" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
-                    <MenuItem Header="_Νew Study" Template="{DynamicResource MenuSubItemControlTemplate}"/>
                     <MenuItem Header="_Open Study" Template="{DynamicResource MenuSubItemControlTemplate}" Click="LoadStudy_Click" />
                     <MenuItem x:Name="OverwriteStudy" Header="_Save Study" Template="{DynamicResource MenuSubItemControlTemplate}" Click="OverwriteStudy_Click" />
                     <MenuItem x:Name="SaveStudyAs" Header="_Save Study As" Template="{DynamicResource MenuSubItemControlTemplate}" Click="SaveStudyAs_Click" />
-                    <MenuItem Header="_Exit" Template="{DynamicResource MenuSubItemControlTemplate}" />
                 </MenuItem>
                 <MenuItem Header="_Tools" Height="24.76" Foreground="White" Background="#FF333333" Template="{DynamicResource MenuItemControlTemplate1}">
                     <MenuItem Header="_Settings" Template="{DynamicResource MenuSubItemControlTemplate}" Click="Settings_Click" />

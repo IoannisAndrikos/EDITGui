@@ -61,6 +61,7 @@ namespace EDITgui
         Point registrationPoint;
         Point zeroPoint = new Point(0, 0);
 
+        List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
 
         //-----------for slider----------
         Slider slider;
@@ -106,7 +107,7 @@ namespace EDITgui
             this.context = context;
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
             applicationGrid.Children.Add(context.getUltrasoundPoints2D()); //add tumor annotation option here
-            applicationGrid.Children.Add(context.getRegistration()); //add tumor annotation option here
+            //applicationGrid.Children.Add(context.getRegistration()); //add tumor annotation option here
             doInsertUserPoints();
         }
 
@@ -155,7 +156,7 @@ namespace EDITgui
                     slider.Visibility = Visibility.Visible;
                     switch_auto_manual.Visibility = Visibility.Visible;
                     context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
-                    context.getRegistration().Visibility = Visibility.Visible;
+                   // context.getRegistration().Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
                 }
@@ -167,7 +168,7 @@ namespace EDITgui
                     switch_auto_manual.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
                     context.getUltrasoundPoints2D().Visibility = Visibility.Collapsed;
-                    context.getRegistration().Visibility = Visibility.Collapsed;
+                  //  context.getRegistration().Visibility = Visibility.Collapsed;
                 }
                 doRepeatProcess();
                 stopSpinner();
@@ -196,7 +197,7 @@ namespace EDITgui
             slider.Visibility = Visibility.Visible;
             switch_auto_manual.Visibility = Visibility.Visible;
             context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
-            context.getRegistration().Visibility = Visibility.Visible;
+            //context.getRegistration().Visibility = Visibility.Visible;
             calibration_x = image.Source.Width / canvasUltrasound.Width;
             calibration_y = image.Source.Height / canvasUltrasound.Height;
             doRepeatProcess();
@@ -247,9 +248,40 @@ namespace EDITgui
                 if (!bladderCvPoints.Any()) return; 
                 context.getImages().fillBladderFromBackEnd(bladderCvPoints, this.startingFrame);
             });
-            doCorrection();
+            doCorrection(true, true);
             stopSpinner();
         }
+
+
+        private async void Recalculate_Click(object sender, RoutedEventArgs e)
+        {
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.recalculateBladder);
+            if (message != null)
+            {
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
+
+            startSpinner();
+            int repeats = int.Parse(Repeats.Text);
+            int smoothing = int.Parse(Smoothing.Text);
+            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            int levelsetSize = int.Parse(LevelsetSize.Text);
+            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
+            bool fixArtifact = chechBox_ArtifactCorrection.IsChecked.Value;
+
+            await Task.Run(() =>
+            {
+                contourForFix = context.getCore().recalculateBladderOfContour(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, slider_value, context.getImages().getUniqueFrameCVPoints(context.getImages().getBladderPoints()), fixArtifact);
+                if (!contourForFix.Any()) return;
+                context.getImages().fillUniqueFrameBladderFromBackEnd(contourForFix);
+            });
+            doCorrection(true, true);
+            stopSpinner();
+
+        }
+
 
         private void Repeat_process_Click(object sender, RoutedEventArgs e)
         {
@@ -269,7 +301,7 @@ namespace EDITgui
             startingFrame = -1;
             endingFrame = -1;
             doInsertUserPoints();
-            context.getRegistration().initializeRegistrationPoints();
+            //context.getRegistration().initializeRegistrationPoints();
             context.getMainWindow().cleanVTKRender();
             context.getPhotoAcousticPart().doRepeatProcess(); //trigger repeat process of photoAcousticPart
         }
@@ -329,14 +361,14 @@ namespace EDITgui
                 slider_value = (int)slider.Value;
                 BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value.ToString();
-                switch (context.getMainWindow().currentProcess)
+                switch (context.getMainWindow().currentMode)
                 {
-                    case MainWindow.process.AUTO:
+                    case MainWindow.Mode.AUTO:
                         if (userPoints.Count == 2){
                             doCorrection(false,false);
                         }
                         break;
-                    case MainWindow.process.ANOTATION:
+                    case MainWindow.Mode.ANOTATION:
                         doCorrection(false,false);
                         break;
                 }
@@ -429,7 +461,7 @@ namespace EDITgui
 
                 if (e.ChangedButton == MouseButton.Left)
                 {
-                    if (context.getMainWindow().currentProcess == MainWindow.process.AUTO && contourSeg == ContourSegmentation.INSERT_USER_POINTS && userPoints.Count < 2)
+                    if (context.getMainWindow().currentMode == MainWindow.Mode.AUTO && contourSeg == ContourSegmentation.INSERT_USER_POINTS && userPoints.Count < 2)
                     {
                         clear_canvas();
                         points.Clear();
@@ -511,13 +543,13 @@ namespace EDITgui
                 }
             }else if (registration)
             {
-                Point point = e.GetPosition(image);
-                if (context.getRegistration().setRegistrationPoint(point, slider_value) == 0)
-                {
-                    clear_canvas();
-                    display();
-                }
-                registration = false;
+                //Point point = e.GetPosition(image);
+                //if (context.getRegistration().setRegistrationPoint(point, slider_value) == 0)
+                //{
+                //    clear_canvas();
+                //    display();
+                //}
+                //registration = false;
             }
         }
 
@@ -751,14 +783,14 @@ namespace EDITgui
                     Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
                 }
 
-                registrationPoint = context.getRegistration().getRegistrationPoints(slider_value);
-                if(registrationPoint != zeroPoint){
-                    RegistrationMarker registrationMarker = new RegistrationMarker();
+                //registrationPoint = context.getRegistration().getRegistrationPoints(slider_value);
+                //if(registrationPoint != zeroPoint){
+                //    RegistrationMarker registrationMarker = new RegistrationMarker();
                     
-                    Canvas.SetLeft(registrationMarker, registrationPoint.X);
-                    Canvas.SetTop(registrationMarker, registrationPoint.Y);
-                    canvasUltrasound.Children.Add(registrationMarker);
-                }
+                //    Canvas.SetLeft(registrationMarker, registrationPoint.X);
+                //    Canvas.SetTop(registrationMarker, registrationPoint.Y);
+                //    canvasUltrasound.Children.Add(registrationMarker);
+                //}
 
             }
         }
@@ -885,7 +917,7 @@ namespace EDITgui
         public void doInsertUserPoints()
         {
             this.switch_auto_manual.doCorrectionState();
-            if(context.getMainWindow().currentProcess == MainWindow.process.ANOTATION)
+            if(context.getMainWindow().currentMode == MainWindow.Mode.ANOTATION)
             {
                 contourSeg = ContourSegmentation.CORRECTION;
             }
@@ -928,7 +960,7 @@ namespace EDITgui
 
         public bool autoExecutionUserPointsWereSet()
         {
-            return (context.getMainWindow().currentProcess == MainWindow.process.AUTO && startingFrame != -1 && endingFrame != -1);
+            return (context.getMainWindow().currentMode == MainWindow.Mode.AUTO && startingFrame != -1 && endingFrame != -1);
         }
     }
 }

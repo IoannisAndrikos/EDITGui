@@ -217,6 +217,17 @@ namespace EDITgui
             }
         }
 
+        public void fillUniqueFrameBladderFromBackEnd(List<EDITCore.CVPoint> cvp)
+        {
+            frames[getSliderValue()].Bladder.points.Clear();
+            for (int j = 0; j < cvp.Count(); j++)
+            {
+                frames[getSliderValue()].Bladder.points.Add(new Point(cvp[j].X, cvp[j].Y)); // * (1 / calibration_x)
+                frames[getSliderValue()].Bladder.area = context.getMetrics().calulateArea(frames[getSliderValue()].Bladder.points);
+                frames[getSliderValue()].Bladder.perimeter = context.getMetrics().calulatePerimeter(frames[getSliderValue()].Bladder.points);
+            }
+        }
+
 
         public void fillTumorFromBackEnd(List<List<EDITCore.CVPoint>> cvp, int startingFrame)
         {

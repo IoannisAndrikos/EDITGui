@@ -14,7 +14,7 @@ namespace EDITgui
         private UltrasoundPart ultrasoundPart;
         private PhotoAcousticPart photoAcousticPart;
         private manage2DUltrasound ultrasoundPoints2D;
-        private Registration registration;
+        //private Registration registration;
         private manage2DPhotoAcoustic photoAcousticPoints2D;
         private metricsCalculations metrics;
         private coreFunctionality core;
@@ -35,7 +35,7 @@ namespace EDITgui
             this.mainWindow = mainWindow;
             this.images = new ImageSequence(this);
             this.ultrasoundPoints2D = new manage2DUltrasound(this);
-            this.registration = new Registration(this);
+            //this.registration = new Registration(this);
             this.photoAcousticPoints2D = new manage2DPhotoAcoustic(this);
             this.ultrasoundPart = new UltrasoundPart(this);
             this.photoAcousticPart = new PhotoAcousticPart(this);
@@ -81,10 +81,10 @@ namespace EDITgui
             return this.ultrasoundPoints2D;
         }
 
-        public Registration getRegistration()
-        {
-            return this.registration;
-        }
+        //public Registration getRegistration()
+        //{
+        //    return this.registration;
+        //}
 
 
         public manage2DPhotoAcoustic getPhotoAcousticPoints2D()
