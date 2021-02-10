@@ -770,13 +770,13 @@ namespace EDITgui
                 metrics_label.Foreground = selectedObject.polylineColor;
                 metrics_label.Content = selectedObject.metrics;
 
-                if (slider_value == startingFrame && !context.getImages().getBladderPoints().Any())
+                if (slider_value == startingFrame && !context.getImages().getBladderPoints().Any() && userPoints.Count > 0)
                 {
                     canvasUltrasound.Children.Add(startingFrameMarker);
                     Canvas.SetLeft(startingFrameMarker, userPoints[0].X);
                     Canvas.SetTop(startingFrameMarker, userPoints[0].Y);
                 }
-                if (slider_value == endingFrame && !context.getImages().getBladderPoints().Any())
+                if (slider_value == endingFrame && !context.getImages().getBladderPoints().Any() && userPoints.Count > 1)
                 {
                     canvasUltrasound.Children.Add(endingFrameMarker);
                     Canvas.SetLeft(endingFrameMarker, userPoints[1].X);

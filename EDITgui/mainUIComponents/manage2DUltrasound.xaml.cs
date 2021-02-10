@@ -20,8 +20,8 @@ namespace EDITgui
     /// </summary>
     public partial class manage2DUltrasound : UserControl
     {
-        static double tumorCheckbox_topMargin = 6.5;
-        Thickness itemMargin = new Thickness(0, tumorCheckbox_topMargin, 0, 0);
+        static double tumorCheckbox_topMargin = 4;
+        Thickness itemMargin = new Thickness(5, tumorCheckbox_topMargin, 0, 0);
 
         public delegate void addTumorItemHandler(int index);
         public static event addTumorItemHandler tumorWasAdded = delegate { };
@@ -36,7 +36,7 @@ namespace EDITgui
         public int selectedItem = -2;
 
         double checkBoxMinHeight = 19.97;
-        static int maxItemNumber = 14; //taking into account the UI size
+        static int maxItemNumber = 10; //taking into account the UI size
         int leftMarginHasItems = 25;
         int leftMarginHasNoItems = 4;
 
@@ -64,10 +64,10 @@ namespace EDITgui
             checkboxItems.Children.Clear();
             for (int i = 0; i < context.getUltrasoundPart().fileCount; i++)
             {
-                objectsPanelHeight.Add(62);
+                objectsPanelHeight.Add(120);
             }
             doHasNoItems();
-            objectsPanel.Height = 62;
+            objectsPanel.Height = 120;
         }
 
 
@@ -76,6 +76,7 @@ namespace EDITgui
         {
             if(this.checkbox_OuterWall.IsChecked == true)
             {
+                this.checkbox_Bladder.IsChecked = false;
                 foreach (tumorCheckbox tc in checkboxItems.Children)
                 {
                     tc.check_box.IsChecked = false;
@@ -87,21 +88,36 @@ namespace EDITgui
             else
             {
                 this.checkbox_OuterWall.IsChecked = false;
-                setSelectedItem(-2);
+                setBladderAsSelected();
                 updateCanvas();
             }
         }
 
-        public void setSelectedItem(int index)
+        private void Checkbox_Bladder_Click(object sender, RoutedEventArgs e)
         {
             this.checkbox_OuterWall.IsChecked = false;
+            foreach (tumorCheckbox tc in checkboxItems.Children)
+            {
+                tc.check_box.IsChecked = false;
+            }
+            setBladderAsSelected();
+            updateCanvas();
+        }
+
+
+        public void setSelectedTumor(int index)
+        {
+            this.checkbox_OuterWall.IsChecked = false;
+            this.checkbox_Bladder.IsChecked = false;
             this.selectedItem = index;
+            updateCanvas();
         }
 
 
         public void setBladderAsSelected()
         {
-            setSelectedItem(-2);
+            selectedItem = -2;
+            this.checkbox_Bladder.IsChecked = true;
         }
 
         private void OpenButton_Click_1(object sender, RoutedEventArgs e)
@@ -132,12 +148,13 @@ namespace EDITgui
             }
             else
             {
-                objectsPanelHeight[slider_value] = 62;
-                objectsPanel.Height = 62;
+                objectsPanelHeight[slider_value] = 120;
+                objectsPanel.Height = 120;
                 for (int i = 0; i < context.getImages().getTumorItemsCount(); i++)
                 {
                     increaseDropdownHeight();
                     tumorCheckbox checkbox = new tumorCheckbox(this, i, false);
+                    checkbox.FontSize = 11;
                     checkbox.Margin = itemMargin;
                     checkboxItems.Children.Add(checkbox);
                 }
@@ -151,6 +168,7 @@ namespace EDITgui
             {
                 increaseDropdownHeight();
                 tumorCheckbox checkbox = new tumorCheckbox(this, index, false);
+                checkbox.FontSize = 11;
                 checkbox.Margin = itemMargin;
                 checkboxItems.Children.Add(checkbox);
             }
@@ -195,6 +213,7 @@ namespace EDITgui
                 increaseDropdownHeight();
                 int index = context.getImages().addTumor();
                 tumorCheckbox checkbox = new tumorCheckbox(this, index);
+                checkbox.FontSize = 11;
                 checkbox.Margin = itemMargin;
                 checkboxItems.Children.Add(checkbox);
                 tumorWasAdded(checkbox.getIndex());
@@ -229,7 +248,7 @@ namespace EDITgui
 
         public void decreaseDropdownHeight()
         {
-            if (objectsPanel.Height > 70)
+            if (objectsPanel.Height > 130)
             {
                 objectsPanelHeight[slider_value] -= (checkBoxMinHeight + tumorCheckbox_topMargin);
                 objectsPanel.Height = objectsPanelHeight[slider_value];
@@ -256,7 +275,11 @@ namespace EDITgui
 
         public void updateCanvas()
         {
-            context.getUltrasoundPart().doCorrection();
+            if(context.getUltrasoundPart().contourSeg == UltrasoundPart.ContourSegmentation.CORRECTION)
+            {
+                context.getUltrasoundPart().doCorrection();
+            }
+           
             context.getUltrasoundPart().updateCanvas();
         }
 
@@ -408,14 +431,20 @@ namespace EDITgui
 
         public void updateSelectedObjectMetrics()
         {
-            if (selectedItem >= 0)
-            {
-                context.getImages().recalculateTumorMetrics(selectedItem);
-            }
-            else
+            if (selectedItem == -2)
             {
                 context.getImages().recalculateBladderMetrics();
             }
+            else if(selectedItem == -1)
+            {
+                context.getImages().recalculateThicknessMetrics();
+            }
+            else
+            {
+                context.getImages().recalculateTumorMetrics(selectedItem);
+            }
         }
+
+        
     }
 }

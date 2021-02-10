@@ -82,7 +82,7 @@ namespace EDITgui
 
                 if (settingsWindow.mode != context.getMainWindow().currentMode)
                 {
-                    MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getMessageAfterChangingSystemMode(settingsWindow.mode, context.getMainWindow().currentMode), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                    MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getMessageAfterChangingSystemMode(context.getMainWindow().currentMode, settingsWindow.mode), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                     if (result == MessageBoxResult.Yes)
                     {
                         doAutoOrManual(settingsWindow.mode);

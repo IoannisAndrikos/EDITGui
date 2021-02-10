@@ -192,7 +192,7 @@ namespace EDITgui
 
         private void Button_OK_Click(object sender, RoutedEventArgs e)
         {
-            doSave(currentView);
+            doSave(newView);
             this.Close();
         }
 

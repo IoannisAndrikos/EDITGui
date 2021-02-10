@@ -863,7 +863,7 @@ namespace EDITgui
             Wait.Visibility = Visibility.Hidden;
         }
 
-        public void doCorrection(bool update = true, bool updateUlrasound = false)
+        public void doCorrection(bool update = true, bool updateUlrasound = true)
         {
             this.switch_auto_manual.doCorrectionState();
             contourSeg = ContourSegmentation.CORRECTION;

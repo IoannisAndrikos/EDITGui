@@ -410,9 +410,6 @@
                 <Button x:Name="Button_Apply" MinWidth="88" MaxWidth="160" Margin="0" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="71.2" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Apply_Click">
                     <Label x:Name="Label_Ok1" Padding="0" Margin="0" Foreground="White" Content="_Apply"/>
                 </Button>
-                <Button x:Name="Button_Reset" MinWidth="88" MaxWidth="160" Margin="0" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="70.4" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="Button_Reset_Click">
-                    <Label x:Name="Label_Ok2" Padding="0" Margin="0" Foreground="White" Content="_Reset"/>
-                </Button>
             </Grid>
         </StackPanel>
 

@@ -63,12 +63,10 @@ namespace EDITgui
             if (dropdownContainer is manage2DPhotoAcoustic)
             {
                  ((manage2DPhotoAcoustic)dropdownContainer).removeItem(this);
-                 ((manage2DPhotoAcoustic)dropdownContainer).updateCanvas();
             }
             else if((dropdownContainer is manage2DUltrasound))
             {
                ((manage2DUltrasound)dropdownContainer).removeItem(this);
-                ((manage2DUltrasound)dropdownContainer).updateCanvas();
             }
         }
 
@@ -106,13 +104,11 @@ namespace EDITgui
         {
             if (dropdownContainer is manage2DPhotoAcoustic)
             {
-                ((manage2DPhotoAcoustic)dropdownContainer).selectedItem = this.index;
-                ((manage2DPhotoAcoustic)dropdownContainer).updateCanvas();
+                ((manage2DPhotoAcoustic)dropdownContainer).setSelectedTumor(this.index);
             }
             else if ((dropdownContainer is manage2DUltrasound))
             {
-                ((manage2DUltrasound)dropdownContainer).setSelectedItem(this.index);
-                ((manage2DUltrasound)dropdownContainer).updateCanvas();
+                ((manage2DUltrasound)dropdownContainer).setSelectedTumor(this.index);
             }
 
             foreach (tumorCheckbox tm in getItemPanel().Children)

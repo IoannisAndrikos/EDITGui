@@ -6,42 +6,7 @@
              xmlns:local="clr-namespace:EDITgui"
              mc:Ignorable="d" Width="100" Height="318.134" HorizontalAlignment="Center" VerticalAlignment="Center">
     <UserControl.Resources>
-
         <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28.163" Height="23.249">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
-                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="5.565" RadiusX="5.565" Stroke="#FF335B5B" Fill="#FF343433"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0" Width="8.564" Content="+" Height="19.248"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True"/>
-                            <Trigger Property="IsDefaulted" Value="True"/>
-                            <Trigger Property="IsMouseOver" Value="True"/>
-                            <Trigger Property="IsPressed" Value="True"/>
-                            <Trigger Property="IsEnabled" Value="False"/>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -62,41 +27,6 @@
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="rectangle" RadiusY="5" RadiusX="5" Stroke="#FF335B5B" Fill="#FF1C1F1F" Margin="0"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0" Height="18.677"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True"/>
-                            <Trigger Property="IsDefaulted" Value="True"/>
-                            <Trigger Property="IsMouseOver" Value="True"/>
-                            <Trigger Property="IsPressed" Value="True"/>
-                            <Trigger Property="IsEnabled" Value="False"/>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <Style x:Key="ButtonStyle3" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="21.877" Width="19.143">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
-                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="5" RadiusX="5" Stroke="#FF335B5B" Fill="#FF333333" Margin="0,0,0,4.4"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0,0,0,4.4" Height="17.477"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True"/>
@@ -149,23 +79,40 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Grid x:Name="templateRoot" Background="{x:Null}" SnapsToDevicePixels="True">
+                        <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border x:Name="checkBoxBorder" BorderThickness="{TemplateBinding BorderThickness}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Border x:Name="checkBoxBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="White">
                                 <Grid x:Name="markGrid">
-                                    <Path x:Name="optionMark" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Fill="#FF335B5B" Margin="1" Opacity="0" Stretch="None"/>
-                                    <Rectangle x:Name="indeterminateMark" Margin="2" Opacity="0"/>
+                                    <Path x:Name="optionMark" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Fill="{StaticResource OptionMark.Static.Glyph}" Margin="1" Opacity="0" Stretch="None"/>
+                                    <Rectangle x:Name="indeterminateMark" Fill="{StaticResource OptionMark.Static.Glyph}" Margin="2" Opacity="0"/>
                                 </Grid>
                             </Border>
-                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="5,0,0,0" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource OptionMarkFocusVisual}"/>
                                 <Setter Property="Padding" Value="4,-1,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.MouseOver.Background}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+
+
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="true">
                                 <Setter Property="Opacity" TargetName="optionMark" Value="1"/>
@@ -180,17 +127,53 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="Auto" Width="Auto">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF335B5B"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="3.039" RadiusX="3.039" Stroke="{x:Null}" Fill="#FF1C1F1F" Margin="0"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" OpacityMask="Black" Margin="0.98,-2.467,0,0" Height="15.611" Width="11.364"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
     </UserControl.Resources>
     <Grid>
-        <Border x:Name="objectsPanel" BorderBrush="#FF335B5B" BorderThickness="1" Height="62" Margin="0,0,0,33" VerticalAlignment="Bottom">
+        <Border x:Name="objectsPanel" BorderBrush="#FF335B5B" BorderThickness="1" Height="120" Margin="0,0,0,33" VerticalAlignment="Bottom">
             <Grid Background="#FF1C1F1F" Margin="0">
-                <CheckBox x:Name="checkbox_OuterWall" Content="Outer Wall" Height="16.6" Margin="0,6.5,0,0" Width="94.933" Foreground="White" BorderBrush="{x:Null}" Click="Checkbox_OuterWall_Click" Style="{DynamicResource CheckBoxStyle1}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                <Separator Background="#FF335B5B" Margin="0,25,0,0" VerticalAlignment="Top"/>
-                <StackPanel x:Name="checkboxItems" Margin="0,25,0,0"/>
+                <CheckBox x:Name="checkbox_Bladder" Content="Bladder" Height="16.6" Margin="0,6.5,0,0" Width="80" Foreground="White" BorderBrush="{x:Null}" Click="Checkbox_Bladder_Click" Style="{DynamicResource CheckBoxStyle1}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11" IsChecked="True"/>
+                <Separator Background="#FF335B5B" Margin="0,49.067,0,0" VerticalAlignment="Top"/>
+                <StackPanel x:Name="checkboxItems" Margin="0,65,0,19"/>
+                <CheckBox x:Name="checkbox_OuterWall" Content="Outer Wall" Height="16.6" Margin="9,27.467,9,0" Width="80" Foreground="White" BorderBrush="{x:Null}" Click="Checkbox_OuterWall_Click" Style="{DynamicResource CheckBoxStyle1}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                <Button x:Name="addButton" Content="✚" HorizontalAlignment="Right" Height="13.267" Margin="0,0,3,3" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="12.6" Click="AddButton_Click"/>
+                <Label Content="Tumors:" HorizontalAlignment="Left" Height="22.933" Margin="0,44.334,0,0" VerticalAlignment="Top" Width="64.031" Foreground="#FF335B5B" FontSize="11"/>
             </Grid>
         </Border>
-        <Button x:Name="openButton" Content="⮝" HorizontalAlignment="Left" Height="22.134" Margin="5,0,0,5" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="20" Click="OpenButton_Click_1"/>
-        <Button x:Name="addButton" Content="✚" HorizontalAlignment="Left" Height="22.134" Margin="25,0,0,5" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Bottom" Width="20" Click="AddButton_Click"/>
+        <Button x:Name="openButton" Content="⮝" HorizontalAlignment="Left" Height="22.134" Margin="5,0,0,5" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Bottom" Width="20" Click="OpenButton_Click_1"/>
     </Grid>
 </UserControl>
