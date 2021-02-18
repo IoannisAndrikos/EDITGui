@@ -19,6 +19,10 @@ namespace EDITgui
         public static SolidColorBrush greenMarker = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FF00"));
         public static SolidColorBrush redMarker = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFF0000"));
 
+        public static SolidColorBrush greenUI = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF335B5B"));
+        public static SolidColorBrush blackUI = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF000000"));
+
+
 
         public static SolidColorBrush selectSlicerImageGreen = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF4FA6A6"));
 

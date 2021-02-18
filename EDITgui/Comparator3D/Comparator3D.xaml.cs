@@ -35,11 +35,11 @@ namespace EDITgui
     /// </summary>
     public partial class Comparator3D : UserControl
     {
-        int count = 100;
+        int count = 1000;
         Context context;
 
         public RenderWindowControl myRenderWindowControl;
-        List<UIElement> studyItems = new List<UIElement>();
+        public List<GeometryItemsDropdown> studyItems = new List<GeometryItemsDropdown>();
         System.Windows.Forms.Integration.WindowsFormsHost host;
       
         public vtkRenderer renderer;
@@ -50,6 +50,10 @@ namespace EDITgui
         {
             InitializeComponent();
             this.context = context;
+            volumeLabel.Content = context.getMessages().volume + Environment.NewLine + "  (" + context.getMessages().mmB3 + ")";
+            SurfaceAreaLabel.Content = context.getMessages().surface + Environment.NewLine + context.getMessages().area + " (" + context.getMessages().mmB2 + ")";
+            volumeLabel.Visibility = Visibility.Collapsed;
+            SurfaceAreaLabel.Visibility = Visibility.Collapsed;
         }
 
         private void Comparator_Loaded(object sender, RoutedEventArgs e)
@@ -71,11 +75,10 @@ namespace EDITgui
             renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
         }
 
-
         double rendererGridWidth;
         private void Comparator_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            rendererGridWidth = this.ActualWidth - infoGrid.ActualWidth;
+            rendererGridWidth = this.ActualWidth - infoGrid.ActualWidth - metricsPanel.ActualWidth;
 
             if (rendererGridWidth >= 0) rendererGrid.Width = rendererGridWidth - 1;
             if (this.ActualHeight >= 0) rendererGrid.Height = this.ActualHeight;
@@ -94,24 +97,23 @@ namespace EDITgui
 
         public void addStudy(string path)
         {
-            GeometryItemsDropdown dropdown = new GeometryItemsDropdown(context, this);
-            dropdown.HorizontalAlignment = HorizontalAlignment.Center;
-            dropdown.VerticalAlignment = VerticalAlignment.Top;
-
-            bool geometriesWereFound = dropdown.checkAndLoadAvailableGeometries(path);
-
+            GeometryItemsDropdown study = new GeometryItemsDropdown(context, this, this.StudiesPanel.Children.Count);
+            bool geometriesWereFound = study.checkAndLoadAvailableGeometries(path);
+ 
             if (geometriesWereFound)
             {
-                //Add geometries
+                addDropdownToStudiesPanel(study);
+                studyItems.Add(study);
 
-                if (StudiesPanel.Children.Count >= 1)
+                study.getStudyMetrics().HorizontalAlignment = HorizontalAlignment.Left;
+                study.getStudyMetrics().VerticalAlignment = VerticalAlignment.Stretch;
+                study.getStudyMetrics().Margin = new Thickness(0, 10, 0, 0);
+                metricsPanel.Children.Add(study.getStudyMetrics());
+                if (metricsPanel.Children.Count > 0)
                 {
-                    dropdown.Margin = new Thickness(0, -120, 0, 0);
+                    volumeLabel.Visibility = Visibility.Visible;
+                    SurfaceAreaLabel.Visibility = Visibility.Visible;
                 }
-
-                StackPanel.SetZIndex(dropdown, count);
-                count = count - 1;
-                StudiesPanel.Children.Add(dropdown);
             }
             else
             {
@@ -119,5 +121,56 @@ namespace EDITgui
             }
         }
 
+        public void removeStudy(GeometryItemsDropdown study)
+        {
+            StudiesPanel.Children.RemoveAt(study.studyIndex);
+           // StudiesPanel.Children.Clear();
+            metricsPanel.Children.Remove(study.getStudyMetrics());//RemoveAt(study.studyIndex);
+
+            if (metricsPanel.Children.Count == 0)
+            {
+                volumeLabel.Visibility = Visibility.Collapsed;
+                SurfaceAreaLabel.Visibility = Visibility.Collapsed;
+            }
+
+            foreach (Geometry geometry in study.STLGeometries)
+            {
+                if (geometry.actor != null)
+                {
+                    renderer.RemoveActor(geometry.actor);
+                }
+            }
+            studyItems.Remove(study);
+
+            int countNew = study.studyIndex;
+            foreach (GeometryItemsDropdown existingStudy in studyItems)
+            {
+                if (existingStudy.studyIndex > countNew)
+                {
+                    existingStudy.updateIndex(countNew);
+                    countNew = countNew + 1;
+                }
+            }
+            if(studyItems.Any()) studyItems[0].Margin = new Thickness(0, 5, 0, 0);
+            renderer.GetRenderWindow().Render();
+        }
+
+        private void addDropdownToStudiesPanel(GeometryItemsDropdown dropdown)
+        {
+            dropdown.HorizontalAlignment = HorizontalAlignment.Center;
+            dropdown.VerticalAlignment = VerticalAlignment.Top;
+            //Add geometries
+            if (StudiesPanel.Children.Count > 0)
+            {
+                dropdown.Margin = new Thickness(0, -110, 0, 0);
+            }
+            else
+            {
+                dropdown.Margin = new Thickness(0, 5, 0, 0);
+            }
+            StackPanel.SetZIndex(dropdown, count); 
+            count = count - 1;
+            StudiesPanel.Children.Add(dropdown);
+        }
     }
 }

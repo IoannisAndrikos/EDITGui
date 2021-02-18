@@ -420,7 +420,7 @@ namespace EDITgui
             imageActor.SetUserTransform(transform);
 
             implPlaneWidget.VisibilityOff();
-
+       
             renderer.AddActor(imageActor);
 
             myRenderWindowControl.RenderWindow.Render();

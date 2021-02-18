@@ -28,18 +28,28 @@ namespace EDITgui
         public string studyPath;
         StudyFile toolPaths;
         public List<Geometry> STLGeometries = new List<Geometry>();
-
         private Context context;
+        metricsItem studyMetrics;
         private Comparator3D comparator;
+        vtkIterativeClosestPointTransform icp;
+        vtkTransformPolyDataFilter icpTransformFilter;
 
-        public GeometryItemsDropdown(Context context, Comparator3D comparator)
+        public int studyIndex;
+
+        public GeometryItemsDropdown(Context context, Comparator3D comparator, int index)
         {
             InitializeComponent();
             this.comparator = comparator;
             this.context = context;
+            this.studyIndex = index;
             this.toolPaths = new StudyFile();
             Content.Visibility = Visibility.Collapsed;
             openCloseButton.Content = "\u2B9f";
+        }
+
+        public metricsItem getStudyMetrics()
+        {
+            return this.studyMetrics;
         }
 
         private void OpenCloseButton_Click(object sender, RoutedEventArgs e)
@@ -48,12 +58,35 @@ namespace EDITgui
             {
                 openCloseButton.Content = "\u2B9d";
                 Content.Visibility = Visibility.Visible;
+                studyInfoPanel.Fill = ViewAspects.greenUI; 
             }
             else
             {
                 openCloseButton.Content = "\u2B9f";
                 Content.Visibility = Visibility.Collapsed;
+                studyInfoPanel.Fill = ViewAspects.blackUI;
             }
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            comparator.removeStudy(this);
+        }
+
+
+        public void updateIndex(int index)
+        {
+            foreach(Geometry geometry in STLGeometries)
+            {
+                if (geometry.checkbox.IsChecked == true)
+                {
+                    vtkTransform translateAlongWithXAxis = vtkTransform.New();
+                    translateAlongWithXAxis.Translate((studyIndex-1)*15, 0, 0);
+                    translateAlongWithXAxis.Update();
+                    geometry.actor.SetUserTransform(translateAlongWithXAxis);
+                }
+            }
+            this.studyIndex = index;
         }
 
         public bool checkAndLoadAvailableGeometries(string path)
@@ -71,6 +104,7 @@ namespace EDITgui
             {
                 geometry = new Geometry() { geometryName = Messages.bladderGeometry, Path = Oblect3DFile, actor = null };
                 OnAddAvailableGeometry(geometry);
+                if(studyIndex > 0) fitGeometryAccordingToBaselineStudy();
                 geometriesWereFound = true;
             }
 
@@ -102,9 +136,9 @@ namespace EDITgui
                 OnAddAvailableGeometry(geometry);
                 geometriesWereFound = true;
             }
+            if (geometriesWereFound) studyMetrics = new metricsItem(this.title.Content.ToString());
 
             return geometriesWereFound;
-
         }
 
 
@@ -168,6 +202,8 @@ namespace EDITgui
             vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
             string extension = Path.GetExtension(geometry.Path);
 
+            vtkPolyData polyData = vtkPolyData.New();
+
             if (extension == ".stl")
             {
                 reader.SetFileName(geometry.Path);
@@ -175,67 +211,56 @@ namespace EDITgui
                 if (geometry.checkbox.IsChecked == true)
                 {
                     vtkMassProperties mass = vtkMassProperties.New();
+                    polyData = reader.GetOutput();
                     mass.SetInput(reader.GetOutput());
                     mass.Update();
-                    geometry.volumeLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetVolume(), 2) + " mm\xB3";
-                    geometry.surfaceAreaLabel.Content = geometry.geometryName.ToString() + " = " + Math.Round(mass.GetSurfaceArea(), 2) + " mm\xB2";
+                    geometry.volumeLabel.Content = Math.Round(mass.GetVolume(), 2);
+                    geometry.surfaceAreaLabel.Content = Math.Round(mass.GetSurfaceArea(), 2);
+                    studyMetrics.visualizeMetrics(geometry);
                 }
-
-
-                mapper.SetInputConnection(reader.GetOutputPort());
+                mapper.SetInput(reader.GetOutput());
                 mapper.Update();
 
             }
             else if (extension == ".txt")
             {
-                vtkPolyData polyData = vtkPolyData.New();
                 polyData.SetPoints(txtPointsToPolyData(geometry.Path));
                 vtkVertexGlyphFilter glyphFilter = vtkVertexGlyphFilter.New();
                 glyphFilter.SetInput(polyData);
                 glyphFilter.Update();
-
-                mapper.SetInputConnection(glyphFilter.GetOutputPort());
+                //mapper.SetInputConnection(glyphFilter.GetOutputPort());
+                polyData = glyphFilter.GetOutput();
+                mapper.SetInput(glyphFilter.GetOutput());
             }
 
+            if (studyIndex > 0 && icp != null)
+            {
+                icpTransformFilter = vtkTransformPolyDataFilter.New();
+                icpTransformFilter.SetInput(polyData);
+                icpTransformFilter.SetTransform(icp);
+                icpTransformFilter.Update();
+                mapper.SetInputConnection(icpTransformFilter.GetOutputPort());
+            }
+
+            vtkTransform translateAlongWithXAxis = vtkTransform.New();
+            translateAlongWithXAxis.Translate(studyIndex * 15, 0, 0);
+            translateAlongWithXAxis.Update();
 
             vtkActor actor = vtkActor.New();
             actor.SetMapper(mapper);
+            geometry.actor = actor;
+
+            //translate geometry along with x-axis
+            geometry.actor.SetUserTransform(translateAlongWithXAxis);
 
             if (geometry.checkbox.IsChecked == true)
             {
-                switch (geometry.geometryName)
-                {
-                    case Messages.bladderGeometry:
-                        actor.GetProperty().SetColor(1, 1, 1);
-                        actor.GetProperty().SetOpacity(1);
-                        break;
-                    case Messages.outerWallGeometry:
-                        actor.GetProperty().SetColor(1, 1, 0);
-                        actor.GetProperty().SetOpacity(0.8);
-                        break;
-                    case Messages.layerGeometry:
-                        actor.GetProperty().SetColor(0, 1, 0);
-                        actor.GetProperty().SetOpacity(0.3);
-                        break;
-                    case Messages.oxyGeometry:
-                        actor.GetProperty().SetColor(1, 0, 0);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                    case Messages.deoxyGeometry:
-                        actor.GetProperty().SetColor(0, 0, 1);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                    case Messages.tumorGeometry:
-                        actor.GetProperty().SetColor(1, 0, 1);
-                        actor.GetProperty().SetOpacity(0.6);
-                        break;
-                }
-                geometry.actor = actor;
-               comparator.renderer.AddActor(actor);
+                context.getPallet().updateGeometryColor(geometry);
+                comparator.renderer.AddActor(actor);
             }
+            comparator.renderer.ResetCamera();
 
             comparator.renderer.GetRenderWindow().Render();
-           // comparator.myRenderWindowControl.RenderWindow.Render();
         }
 
 
@@ -244,17 +269,41 @@ namespace EDITgui
             CheckBox ch = (sender as CheckBox);
             Geometry geometry = STLGeometries.Find(x => x.geometryName == ch.Content);
             string extension = Path.GetExtension(geometry.Path);
-            if (extension == ".stl")
-            {
-                geometry.volumeLabel.Visibility = Visibility.Hidden;
-                geometry.surfaceAreaLabel.Visibility = Visibility.Hidden;
-            }
+            studyMetrics.hideMetrics(geometry);
 
             if (geometry.checkbox.IsChecked == false)
             {
                 comparator.renderer.RemoveActor(geometry.actor);
             }
             comparator.renderer.GetRenderWindow().Render();
+        }
+
+
+        private void fitGeometryAccordingToBaselineStudy()
+        {
+
+            vtkSTLReader STLreaderTarget = vtkSTLReader.New();
+            STLreaderTarget.SetFileName(comparator.studyItems[0].STLGeometries.Find(x => x.geometryName == Messages.bladderGeometry).Path);
+            STLreaderTarget.Update();
+            vtkPolyData polyDataTarget = vtkPolyData.New();
+            polyDataTarget = STLreaderTarget.GetOutput();
+
+            vtkSTLReader STLreaderSolution = vtkSTLReader.New();
+            STLreaderSolution.SetFileName(this.STLGeometries.Find(x => x.geometryName == Messages.bladderGeometry).Path);
+            STLreaderSolution.Update();
+            vtkPolyData polyDataSolution = vtkPolyData.New();
+            polyDataSolution = STLreaderSolution.GetOutput();
+
+            icp = vtkIterativeClosestPointTransform.New();
+            icp.SetSource(polyDataSolution);
+            icp.SetTarget(polyDataTarget);
+            icp.GetLandmarkTransform().SetModeToRigidBody();
+            //icp.SetMaximumNumberOfIterations(1000);
+            icp.StartByMatchingCentroidsOff();
+            icp.Modified();
+            icp.Update();
+
+            Console.WriteLine(icp.GetMatrix());
         }
 
         private vtkPoints txtPointsToPolyData(string filename)
@@ -282,7 +331,5 @@ namespace EDITgui
 
             return points;
         }
-
-
     }
 }

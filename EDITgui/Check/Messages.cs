@@ -33,6 +33,9 @@ namespace EDITgui
 
         public string mmB3 = "mm\xB3";
 
+        public string volume = "Volume";
+
+        public string surface = "Surface";
 
         //---------------------------------------SETTINGS FILE VARIABLES--------------------------------------
         public string startingFrame = "StartingFrame";
