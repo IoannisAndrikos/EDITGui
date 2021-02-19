@@ -297,8 +297,8 @@
 
     </Window.Resources>
     <Grid x:Name="totalGrid" Margin="0">
-        <local:twoStatesButton x:Name="switch_2D_3D" Margin="0,29.181,0,0" VerticalAlignment="Top" Height="30.664" Width="150.001" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown" HorizontalAlignment="Center"/>
-        <Grid x:Name="components2D" Background="#FF1C1F1F" Margin="0,65,0,0" HorizontalAlignment="Center">
+        <local:MultipleStateButton x:Name="switch_2D_3D" Margin="0,32,0,0" VerticalAlignment="Top" MouseLeftButtonDown="Switch_2D_3D_MouseLeftButtonDown" HorizontalAlignment="Center"/>
+        <Grid x:Name="Panel2D" Background="#FF1C1F1F" Margin="0,65,0,0" HorizontalAlignment="Center">
             <!-- -->
 
 
@@ -307,7 +307,7 @@
 
 
         </Grid>
-        <Grid x:Name="Viewer3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,65,0,0" Visibility="Collapsed">
+        <Grid x:Name="Panel3D" Background="#FF1C1F1F" Loaded="Viewer3D_Loaded" Margin="0,65,0,0" Visibility="Collapsed">
             <Border x:Name="rendererPanel" BorderBrush="#FF335B5B" BorderThickness="1" Margin="10" SizeChanged="RendererPanel_SizeChanged" Background="Black">
                 <StackPanel x:Name="stackPanel" Margin="0">
                     <StackPanel x:Name="objectsViewer" Height="473" Orientation="Horizontal">
@@ -335,7 +335,7 @@
                                 <RotateTransform Angle="90" />
                             </Separator.LayoutTransform>
                         </Separator>
-                        <Grid x:Name="rendererGrid" Margin="0" Loaded="RendererGrid_Loaded"/>
+                        <Grid x:Name="rendererGrid" Margin="0"/>
                     </StackPanel>
                     <Separator Margin="0" Foreground="White" Background="#FF335B5B" Height="1"/>
                 </StackPanel>
@@ -361,7 +361,7 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid x:Name="ComparatorGrid" Margin="0,65,0,0" Visibility="Collapsed">
+        <Grid x:Name="PanelCompare" Margin="0,65,0,0">
             <Border x:Name="comparatorBorders" BorderBrush="#FF335B5B" BorderThickness="1" Margin="10"/>
         </Grid>
     </Grid>

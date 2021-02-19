@@ -26,6 +26,7 @@ namespace EDITgui
         private SaveActions saveActions;
         private Slicer3D slicer;
         private Pallet pallet;
+        private Comparator3D comparator;
 
         public Context(MainWindow mainWindow, Login user)
         {
@@ -48,6 +49,7 @@ namespace EDITgui
             this.saveActions = new SaveActions(this);
             this.studyFile = new StudyFile();
             this.pallet = new Pallet(this);
+            this.comparator = new Comparator3D(this);
         }
 
 
@@ -140,6 +142,11 @@ namespace EDITgui
         public Pallet getPallet()
         {
             return this.pallet;
+        }
+
+        public Comparator3D getComparator()
+        {
+            return this.comparator;
         }
 
     }

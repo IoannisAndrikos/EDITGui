@@ -58,19 +58,20 @@ namespace EDITgui
 
         private void Comparator_Loaded(object sender, RoutedEventArgs e)
         {
+            //----------------------------------
             host = new System.Windows.Forms.Integration.WindowsFormsHost();
             myRenderWindowControl = new RenderWindowControl();
             myRenderWindowControl.SetBounds(0, 0, 0, 0); // not too big in case it disappears.
                                                          // Assign the control as the host control's child.
-
             host.Child = myRenderWindowControl;
 
-            host.Margin = new Thickness(0,0,0,0);
+            host.Margin = new Thickness(0, 0, 0, 0);
             host.HorizontalAlignment = HorizontalAlignment.Stretch;
             host.VerticalAlignment = VerticalAlignment.Stretch;
-           
+
             rendererGrid.Children.Add(host);
             renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
+            renderer.SetRenderWindow(myRenderWindowControl.RenderWindow);
             renderer.GetActiveCamera().SetPosition(0, 0, 50);
             renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
         }
@@ -107,7 +108,7 @@ namespace EDITgui
 
                 study.getStudyMetrics().HorizontalAlignment = HorizontalAlignment.Left;
                 study.getStudyMetrics().VerticalAlignment = VerticalAlignment.Stretch;
-                study.getStudyMetrics().Margin = new Thickness(0, 10, 0, 0);
+                study.getStudyMetrics().Margin = new Thickness(-7, 10, 0, 0);
                 metricsPanel.Children.Add(study.getStudyMetrics());
                 if (metricsPanel.Children.Count > 0)
                 {

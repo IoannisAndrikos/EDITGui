@@ -852,14 +852,14 @@ namespace EDITgui
         public void startSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
-            context.getMainWindow().components2D.IsEnabled = false;
+            context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
         public void stopSpinner()
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
-            context.getMainWindow().components2D.IsEnabled = true;
+            context.getMainWindow().Panel2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 

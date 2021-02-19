@@ -152,6 +152,9 @@
     <Compile Include="Comparator3D\metricsItem.xaml.cs">
       <DependentUpon>metricsItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIControls\MultipleStateButton.xaml.cs">
+      <DependentUpon>MultipleStateButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="pallet\Pallet.cs" />
     <Compile Include="pallet\PalletWindow.xaml.cs">
       <DependentUpon>PalletWindow.xaml</DependentUpon>
@@ -226,6 +229,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Comparator3D\metricsItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControls\MultipleStateButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

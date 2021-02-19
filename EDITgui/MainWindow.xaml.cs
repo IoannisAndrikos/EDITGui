@@ -53,7 +53,7 @@ namespace EDITgui
 
         public static int count = 0;
 
-        Comparator3D comparator;
+        //public Comparator3D comparator;
         public MainWindow()
         {
             InitializeComponent();
@@ -67,24 +67,8 @@ namespace EDITgui
 
             //user.Visibility = Visibility.Collapsed; //-------------2
             //context = new Context(this, user);  //-------------2
-            //comparator = new Comparator3D(context);  //-------------2
-            //AddComparatorView();  //-------------2
 
         }
-
-        //-------------------PILOT--------------------
-        private void AddComparatorView()
-        {
-            comparator.Height = double.NaN;
-            comparator.Width = double.NaN;
-            comparator.Margin = new Thickness(0, 0, 0, 0);
-            comparator.HorizontalAlignment = HorizontalAlignment.Stretch;
-            comparator.VerticalAlignment = VerticalAlignment.Stretch;
-
-            comparatorBorders.Child = comparator;
-        }
-        //----------------------------------------
-
 
         public void doAfterUserAuthentication()
         {
@@ -122,14 +106,22 @@ namespace EDITgui
             context.getPhotoAcousticPoints2D().VerticalAlignment = VerticalAlignment.Top;
             context.getPhotoAcousticPoints2D().Height = 454.4;
 
-            this.components2D.Children.Add(context.getUltrasoundPart());
-            this.components2D.Children.Add(context.getPhotoAcousticPart());
+            this.Panel2D.Children.Add(context.getUltrasoundPart());
+            this.Panel2D.Children.Add(context.getPhotoAcousticPart());
 
             context.getSlicer().Margin = new Thickness(1,0,0,0);
             context.getSlicer().Width = double.NaN;
             context.getSlicer().HorizontalAlignment = HorizontalAlignment.Stretch;
             context.getSlicer().VerticalAlignment = VerticalAlignment.Stretch;
             this.stackPanel.Children.Add(context.getSlicer());
+
+            context.getComparator().Height = double.NaN;
+            context.getComparator().Width = double.NaN;
+            context.getComparator().Margin = new Thickness(0, 0, 0, 0);
+            context.getComparator().HorizontalAlignment = HorizontalAlignment.Stretch;
+            context.getComparator().VerticalAlignment = VerticalAlignment.Stretch;
+            comparatorBorders.Child = context.getComparator();
+            PanelCompare.Visibility = Visibility.Collapsed;
 
 
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
@@ -289,7 +281,6 @@ namespace EDITgui
             host.VerticalAlignment = VerticalAlignment.Stretch;
             rendererGrid.Children.Add(host);
             renderer = myRenderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
-            host.Visibility = Visibility.Hidden;
 
             renderer.GetActiveCamera().SetPosition(0, 0, 50);
             renderer.GetActiveCamera().SetFocalPoint(0, 0, 5);
@@ -307,15 +298,15 @@ namespace EDITgui
             count++;
         }
 
-        private void RendererGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            if(count == 1)
-            {
-               Dispatcher.BeginInvoke(new Action(() => host.Visibility = Visibility.Visible));
-               // Dispatcher.Invoke(new Action(() => { host.Visibility = Visibility.Visible; }), System.Windows.Threading.DispatcherPriority.ContextIdle, null);
-            }
+        //private void RendererGrid_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    if(count == 1)
+        //    {
+        //       Dispatcher.BeginInvoke(new Action(() => host.Visibility = Visibility.Visible));
+        //       // Dispatcher.Invoke(new Action(() => { host.Visibility = Visibility.Visible; }), System.Windows.Threading.DispatcherPriority.ContextIdle, null);
+        //    }
            
-        }
+        //}
 
         vtkImplicitPlaneRepresentation implPlaneWidget;
         vtkImplicitPlaneWidget2 planeWidget;
@@ -570,7 +561,6 @@ namespace EDITgui
                 renderer.RemoveActor(imageActor);
             }
 
-           
             volumeMetricsItems.Items.Clear();
             SurfaceAreaMetricsItems.Items.Clear();
             geometryItems.Children.Clear();
@@ -604,15 +594,20 @@ namespace EDITgui
         {
             switch (switch_2D_3D.currentState)
             {
-                case twoStatesButton.states.threeDimensional:
-
-                    components2D.Visibility = Visibility.Collapsed;
-                    Viewer3D.Visibility = Visibility.Visible;
+                case MultipleStateButton.states.threeDimensional:
+                    Panel2D.Visibility = Visibility.Collapsed;
+                    PanelCompare.Visibility = Visibility.Collapsed;
+                    Panel3D.Visibility = Visibility.Visible;
                     break;
-                case twoStatesButton.states.twoDimensional:
-
-                    Viewer3D.Visibility = Visibility.Collapsed;
-                    components2D.Visibility = Visibility.Visible;
+                case MultipleStateButton.states.twoDimensional:
+                    Panel3D.Visibility = Visibility.Collapsed;
+                    PanelCompare.Visibility = Visibility.Collapsed;
+                    Panel2D.Visibility = Visibility.Visible;
+                    break;
+                case MultipleStateButton.states.compare:
+                    Panel2D.Visibility = Visibility.Collapsed;
+                    Panel3D.Visibility = Visibility.Collapsed;
+                    PanelCompare.Visibility = Visibility.Visible;
                     break;
             }
         }

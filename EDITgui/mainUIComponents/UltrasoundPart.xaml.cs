@@ -876,7 +876,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
             //applicationGrid.IsEnabled = false;
-            context.getMainWindow().components2D.IsEnabled = false;
+            context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
         }
 
@@ -884,7 +884,7 @@ namespace EDITgui
         {
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
             //applicationGrid.IsEnabled = true;
-            context.getMainWindow().components2D.IsEnabled = true;
+            context.getMainWindow().Panel2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
         }
 
