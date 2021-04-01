@@ -39,6 +39,7 @@ namespace EDITgui
 
         public string workingPath;
         public string loadedStudyPath = null; //is filled if study is loaded
+        public bool studyUpdated = true;
         public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
         vtkAxesActor axesActor;
@@ -528,12 +529,13 @@ namespace EDITgui
             {
                 context.getSaveActions().doSave();
             }
-            else
+            else if(!studyUpdated)
             {
                 MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
                     context.getSaveActions().saveAvailableData(loadedStudyPath);
+                    studyUpdated = true;
                 }
                 else if (result == MessageBoxResult.No)
                 {
@@ -576,9 +578,43 @@ namespace EDITgui
             myRenderWindowControl.RenderWindow.Render();
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (context != null && !studyUpdated)
+            {
+                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().saveBeforeExit, context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes)
+                {
+                    e.Cancel = true;
+                    if (loadedStudyPath == null)
+                    {
+                        context.getSaveActions().doSave();
+                    }
+                    else if (!studyUpdated)
+                    {
+                        result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            context.getSaveActions().saveAvailableData(loadedStudyPath);
+                            studyUpdated = true;
+                        }
+                        else if (result == MessageBoxResult.No)
+                        {
+                            context.getSaveActions().doSave();
+                        }
+                    }
+                }
+                else if (result == MessageBoxResult.Cancel || result ==MessageBoxResult.None)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (this.user!=null && this.user.isAuthenticated)
+            if (context!=null)//(this.user!=null && this.user.isAuthenticated)
             {
                 //close logging process
                 context.getCore().setLoggingOnOff(false);
@@ -648,6 +684,8 @@ namespace EDITgui
         {
             context.getPallet().CreatePalletWindow();
         }
+
+       
     }
 
     public class Geometry

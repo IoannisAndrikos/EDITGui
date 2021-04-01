@@ -358,6 +358,7 @@ namespace EDITgui
         {
             try
             {
+                saveFrameAlgorithmSetting();
                 slider_value = (int)slider.Value;
                 BitmapFromPath(imagesDir + Path.DirectorySeparatorChar + slider_value.ToString() + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value.ToString();
@@ -377,6 +378,7 @@ namespace EDITgui
                 context.getUltrasoundPoints2D().updatePanel(slider_value);
                 context.getPhotoAcousticPoints2D().updatePanel(slider_value);
 
+                updateFrameAlgorithmSetting();
                 updateCanvas();
             }
             catch(Exception ex){
@@ -387,6 +389,38 @@ namespace EDITgui
         private void Ultrasound_slider_Initialized(object sender, EventArgs e)
         {
             slider = sender as Slider;
+        }
+
+
+        public void saveFrameAlgorithmSetting()
+        {
+            context.getImages().getCurrentFrameSettings().repeats = int.Parse(Repeats.Text);
+            context.getImages().getCurrentFrameSettings().smoothing = int.Parse(Smoothing.Text);
+            context.getImages().getCurrentFrameSettings().lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().levelSize = int.Parse(LevelsetSize.Text);
+            context.getImages().getCurrentFrameSettings().filtering = chechBox_FIltering.IsChecked.Value;
+            context.getImages().getCurrentFrameSettings().probeArtifactCorrection = chechBox_ArtifactCorrection.IsChecked.Value;
+
+
+            context.getImages().getCurrentFrameSettings().minThickness = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().maxThickness = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().majorThicknessExistence = context.getPhotoAcousticPart().big_tumor.IsChecked.Value;
+        }
+
+        public void updateFrameAlgorithmSetting()
+        {
+            Repeats.Text = context.getImages().getCurrentFrameSettings().repeats.ToString();
+            Smoothing.Text = context.getImages().getCurrentFrameSettings().smoothing.ToString();
+            Lamda1.Text = string.Format("{0:0.0}", context.getImages().getCurrentFrameSettings().lamda1);
+            Lamda2.Text = string.Format("{0:0.0}", context.getImages().getCurrentFrameSettings().lamda2);
+            LevelsetSize.Text = context.getImages().getCurrentFrameSettings().levelSize.ToString();
+            chechBox_FIltering.IsChecked = context.getImages().getCurrentFrameSettings().filtering;
+            chechBox_ArtifactCorrection.IsChecked = context.getImages().getCurrentFrameSettings().probeArtifactCorrection;
+
+            context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", context.getImages().getCurrentFrameSettings().minThickness);
+            context.getPhotoAcousticPart().maxThickness.Text = string.Format("{0:0.0}", context.getImages().getCurrentFrameSettings().maxThickness);
+            context.getPhotoAcousticPart().big_tumor.IsChecked = context.getImages().getCurrentFrameSettings().majorThicknessExistence;
         }
 
         //----------------------------------------------------------CANVAS OPERATIONS--------------------------------------------------------
@@ -878,6 +912,7 @@ namespace EDITgui
             //applicationGrid.IsEnabled = false;
             context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
+            context.getMainWindow().studyUpdated = false;
         }
 
         public void stopSpinner()

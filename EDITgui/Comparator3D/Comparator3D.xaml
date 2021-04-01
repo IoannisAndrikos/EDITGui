@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDITgui"
              xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Name="Comparator" x:Class="EDITgui.Comparator3D"
-             mc:Ignorable="d" Loaded="Comparator_Loaded" SizeChanged="Comparator_SizeChanged" Height="696.4" Width="1516.8" Style="{DynamicResource CustomEDITCombobox}">
+             mc:Ignorable="d" Loaded="Comparator_Loaded" SizeChanged="Comparator_SizeChanged" Height="696.4" Width="1516.8">
 
     <UserControl.Resources>
 

@@ -31,6 +31,7 @@ namespace EDITgui
             {
                 saveAvailableData(saveFileDialog.FileName);
                 context.getMainWindow().loadedStudyPath = saveFileDialog.FileName;
+                context.getMainWindow().studyUpdated = true;
             }
         }
 
@@ -63,6 +64,10 @@ namespace EDITgui
             //save info
             // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
             writeInfoXMLFile(path, collectAllStudySetings(), SaveActions.FileType.settings);
+
+
+            //save Algorithm frames settings
+            writeAlgorithmFrameSettingsTXT(path);
 
             //save registration points
             //writeRegistrationPointsTXT(path);
@@ -189,7 +194,6 @@ namespace EDITgui
 
         public void writeInfoXMLFile(string path, List<StudySetting> info, FileType type)
         {
-            string filename = getProperFileName(type);
             string filePath = getFolderName(path, type, true) + getProperFileName(type);
             XmlWriter xmlWriter = XmlWriter.Create(filePath);
             xmlWriter.WriteStartDocument();
@@ -200,9 +204,34 @@ namespace EDITgui
             }
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
-
-
         }
+
+
+        public void writeAlgorithmFrameSettingsTXT(string path)
+        {
+            context.getUltrasoundPart().saveFrameAlgorithmSetting();
+
+            string filename = getProperFileName(FileType.algorithmFrameSettings);
+
+            string filePath = getFolderName(path, FileType.algorithmFrameSettings, true) + filename;
+            StreamWriter sw = new StreamWriter(filePath);
+            for (int i = 0; i < context.getUltrasoundPart().fileCount -1 ; i++)
+            {
+                sw.WriteLine(messages.frame + ": " +  i.ToString() + " " + context.getImages().getFrameSettings(i).repeats +
+                    " " + context.getImages().getFrameSettings(i).smoothing +
+                    " " + context.getImages().getFrameSettings(i).lamda1 + 
+                    " " + context.getImages().getFrameSettings(i).lamda2 + 
+                    " " + context.getImages().getFrameSettings(i).levelSize +
+                    " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).filtering)).ToString() +
+                    " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).probeArtifactCorrection)).ToString() +
+                    " " + context.getImages().getFrameSettings(i).maxThickness +
+                    " " + context.getImages().getFrameSettings(i).minThickness + 
+                    " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).majorThicknessExistence)).ToString() 
+                    );
+            }
+            sw.Close();
+        }
+
 
         public List<StudySetting> collectAllStudySetings()
         {
@@ -220,15 +249,15 @@ namespace EDITgui
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = 0 });
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = 0 });
             }
-            studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(context.getUltrasoundPart().Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(context.getUltrasoundPart().Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(context.getUltrasoundPart().Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(context.getUltrasoundPart().Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(context.getUltrasoundPart().LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_FIltering.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });    
+            //studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(context.getUltrasoundPart().Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(context.getUltrasoundPart().Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(context.getUltrasoundPart().Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(context.getUltrasoundPart().Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(context.getUltrasoundPart().LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_FIltering.IsChecked.Value)).ToString()) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
+            //studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });    
             return studyInfo;
         }
 

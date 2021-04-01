@@ -51,24 +51,6 @@ namespace EDITgui
             return frames[getSliderValue()].Tumors[index].points;
         }
 
-        public List<List<List<Point>>> getTotalTumorPoints()
-        {
-            List<List<List<Point>>> tumors = new List<List<List<Point>>>();
-            for(int i=0; i< frames.Count; i++)
-            {
-                tumors.Add(new List<List<Point>>());
-                for(int j =0; j < frames[i].Tumors.Count; j++)
-                {
-                    tumors[i].Add(new List<Point>());
-                    for(int  k=0; k < frames[i].Tumors[j].points.Count; k++)
-                    {
-                        tumors[i][j].Add(frames[i].Tumors[j].points[k]);
-                    }
-                }
-            }
-            return tumors;
-        }
-
 
         public FrameMetrics getBladderMetrics()
         {
@@ -98,6 +80,16 @@ namespace EDITgui
         public int getTumorItemsCount()
         {
             return frames[getSliderValue()].Tumors.Count;
+        }
+
+        public AlgorithmSettings getCurrentFrameSettings()
+        {
+            return frames[getSliderValue()].frameSettings;
+        }
+
+        public AlgorithmSettings getFrameSettings(int index)
+        {
+            return frames[index].frameSettings;
         }
 
         //---------------------------------- SETTERS ---------------------------------------
@@ -188,6 +180,35 @@ namespace EDITgui
             }
             return totalPoints;
         }
+
+        public List<List<List<Point>>> getTotalTumorPoints()
+        {
+            List<List<List<Point>>> tumors = new List<List<List<Point>>>();
+            for (int i = 0; i < frames.Count; i++)
+            {
+                tumors.Add(new List<List<Point>>());
+                for (int j = 0; j < frames[i].Tumors.Count; j++)
+                {
+                    tumors[i].Add(new List<Point>());
+                    for (int k = 0; k < frames[i].Tumors[j].points.Count; k++)
+                    {
+                        tumors[i][j].Add(frames[i].Tumors[j].points[k]);
+                    }
+                }
+            }
+            return tumors;
+        }
+
+
+        public int getFirtTumorFrame()
+        {
+            foreach (Frame frame in frames)
+            {
+                if (frame.Tumors.Any()) return frame.frameIndex;
+            }
+            return 0;
+        }
+
 
         public List<double> getTotalMeanThickness()
         {
@@ -306,6 +327,41 @@ namespace EDITgui
             }
             return cvp;
         }
+
+        //Convert EDITCore.CVPoint to Point
+        public List<List<List<EDITCore.CVPoint>>> getAllFramesCVPoints(List<List<List<Point>>> points)
+        {
+            List<List<List<EDITCore.CVPoint>>> cvp = new List<List<List<EDITCore.CVPoint>>>();
+            //List<EDITCore.CVPoint> contour = new List<EDITCore.CVPoint>();
+
+            List<List<EDITCore.CVPoint>> contour = new List<List<EDITCore.CVPoint>>();
+            for (int k = 0; k < points.Count; k++)
+            {
+                List<EDITCore.CVPoint> contour_k = new List<EDITCore.CVPoint>();
+                if (points[k].Any())
+                {
+                    //for (int i = startingFrame; i <= endingFrame; i++)
+                    for (int i = 0; i < points[k].Count; i++)
+                    {
+                        if (points[k][i].Any())
+                        {
+                            for (int j = 0; j < points[k][i].Count(); j++)
+                            {
+                                contour_k.Add(new EDITCore.CVPoint(points[k][i][j].X, points[k][i][j].Y));
+                            }
+                            contour.Add(contour_k.ToList());
+                            contour_k.Clear();
+                        }
+                    }
+                    cvp.Add(contour.ToList());
+                    contour.Clear();
+                }
+            }
+            return cvp;
+        }
+        
+
+
 
         public List<EDITCore.CVPoint> getUniqueFrameCVPoints(List<Point> points)
         {

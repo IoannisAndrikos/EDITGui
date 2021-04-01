@@ -415,16 +415,16 @@ namespace EDITgui
             metrics = context.getImages().getBladderMetrics();
             if (metrics.area == 0) return "";
 
-            return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
-                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+            return context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
         }
 
         private string getTumorMetricsString()
         {
             metrics = context.getImages().getTumorMetrics(selectedItem);
             if (metrics.area == 0) return "";
-            return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
-                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+            return context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
         }
 
 

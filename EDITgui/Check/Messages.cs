@@ -80,7 +80,9 @@ namespace EDITgui
 
         public string thicknessPoints = "Thickness_Points";
 
-        public string tumors = "Tumors";
+        public string tumors = "Tumor_Points";
+
+        public string algorithmsConfigurations = "Configurations";
 
         public string bladderAreaTXT = "BladderArea.txt";
 
@@ -89,6 +91,8 @@ namespace EDITgui
         public string meanThicknessTXT = "MeanThickness.txt";
 
         public string settingsXML = "Settings.xml";
+
+        public string algorithmsIndexes = "Indexes_of_algorithms.txt";
 
         public string ulrasoundDCM = "ultrasound.dcm";
 
@@ -144,6 +148,8 @@ namespace EDITgui
         {
             return "Do you want to overwrite the existing study : '" + path;
         }
+
+        public string saveBeforeExit = "Do you want to save your changes before closing the program";
 
         public string  alreadySpecifiedRegistrationPointForCurrentFrame = "There is an already specified registration point for the current frame. Select another frame to insert the new registration point";
       
@@ -203,6 +209,8 @@ namespace EDITgui
 
         public string visualizationOfbladderGeomteryisNeeded = "Before applying slicer you have to render the 3D geometry of the bladder.";
 
-        public string noCorrectStudyFolder = "The selected folder does not contain any study 3D geometries.";
+        public string no3DObjectsWereFound = "The selected folder does not contain any study 3D geometries.";
+
+        public string noCorrectStudyFolder = "The selected folder is not a study folder.";
     }
 }

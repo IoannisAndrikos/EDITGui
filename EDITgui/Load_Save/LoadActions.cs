@@ -46,6 +46,9 @@ namespace EDITgui
             context.getPhotoAcousticPart().startSpinner();
             string studyName = Path.GetFileName(path);
 
+
+            bool isStudyFolder = false;
+
             await Task.Run(() =>
             {
                 ultrasoundDicomFile = getFolderName(path, FileType.UltrasoundDicomFile, false) + getProperFileName(FileType.UltrasoundDicomFile);
@@ -55,6 +58,7 @@ namespace EDITgui
                     UltrasoundimagesDir = context.getCore().exportImages(ultrasoundDicomFile);
                     pixelSpacing = context.getCore().pixelSpacing;
                     imageSize = context.getCore().imageSize;
+                    isStudyFolder = true;
                 }
                 OXYDicomFile = getFolderName(path, FileType.OXYDicomFile, false) + Path.DirectorySeparatorChar + getProperFileName(FileType.OXYDicomFile);
                 if (File.Exists(OXYDicomFile))
@@ -72,6 +76,12 @@ namespace EDITgui
 
             context.getUltrasoundPart().stopSpinner();
             context.getPhotoAcousticPart().stopSpinner();
+
+            if (!isStudyFolder)
+            {
+                CustomMessageBox.Show(context.getMessages().noCorrectStudyFolder, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
 
             if (UltrasoundimagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
@@ -92,6 +102,7 @@ namespace EDITgui
             //The order below plays significant role! Be careful here!
             loadAvailableBladderPoints(path);
             loadXMLSettingsFile(path);
+            loadAlgorithmsSettings(path);
             loadAvailableThicknessPoints(path);
             loadAvailableTumorsPoints(path);
             load3DAvailableData(path);
@@ -170,12 +181,12 @@ namespace EDITgui
                     y = double.Parse(xmlElement.InnerText.Replace(",", "."), CultureInfo.InvariantCulture);
                     settings.Add(xmlElement.Name, y);
                 }
-                setStudySettings(settings);
+                setStudyGlogalSettings(settings);
             }
         }
 
 
-        void setStudySettings(Dictionary<string, double> settings)
+        void setStudyGlogalSettings(Dictionary<string, double> settings)
         {
             try
             {
@@ -199,20 +210,48 @@ namespace EDITgui
                     }
                 }
 
-                context.getUltrasoundPart().Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
-                context.getUltrasoundPart().Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
-                context.getUltrasoundPart().Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
-                context.getUltrasoundPart().Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
-                context.getUltrasoundPart().LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
-                context.getUltrasoundPart().chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
-                context.getUltrasoundPart().closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
-                context.getCore().fillHoles = context.getUltrasoundPart().closedSurface.IsChecked.Value;
-                context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
-                context.getPhotoAcousticPart().maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
+                //context.getUltrasoundPart().Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
+                //context.getUltrasoundPart().Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
+                //context.getUltrasoundPart().Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
+                //context.getUltrasoundPart().Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
+                //context.getUltrasoundPart().LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
+                //context.getUltrasoundPart().chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
+                //context.getUltrasoundPart().closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
+                //context.getCore().fillHoles = context.getUltrasoundPart().closedSurface.IsChecked.Value;
+                //context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
+                //context.getPhotoAcousticPart().maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
             }
             catch (Exception e)
             {
                 CustomMessageBox.Show(messages.limitedSettingsFile, messages.warning, MessageBoxButton.OK);
+            }
+        }
+
+        private void loadAlgorithmsSettings(string path)
+        {
+            string algoritmsSettingsFile = getFolderName(path, FileType.algorithmFrameSettings, false) + getProperFileName(FileType.algorithmFrameSettings);
+            if (File.Exists(algoritmsSettingsFile))
+            {
+                StreamReader sr = new StreamReader(algoritmsSettingsFile);
+                String line;
+                int frame = 0;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] col = line.Split(' ');
+                    frame = Int32.Parse(col[1]);
+                    context.getImages().getFrameSettings(frame).repeats = Int32.Parse(col[2]);
+                    context.getImages().getFrameSettings(frame).smoothing = Int32.Parse(col[3]);
+                    context.getImages().getFrameSettings(frame).lamda1 = Double.Parse(col[4], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).lamda2 = Double.Parse(col[5], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).levelSize = Int32.Parse(col[6]);
+                    context.getImages().getFrameSettings(frame).filtering = ToBool(Int32.Parse(col[7]));
+                    context.getImages().getFrameSettings(frame).probeArtifactCorrection = ToBool(Int32.Parse(col[8]));
+                    context.getImages().getFrameSettings(frame).maxThickness = Double.Parse(col[9], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).minThickness = Double.Parse(col[10], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).majorThicknessExistence = ToBool(Int32.Parse(col[11]));
+                }
+
+                context.getUltrasoundPart().updateFrameAlgorithmSetting();
             }
         }
 
@@ -234,8 +273,6 @@ namespace EDITgui
                 }
             }
         }
-
-
 
         private void loadAvailableThicknessPoints(string path)
         {
@@ -298,8 +335,6 @@ namespace EDITgui
                 }
             }
         }
-
-
 
         private List<double> loadAvailableThicknessMetrics(string path)
         {

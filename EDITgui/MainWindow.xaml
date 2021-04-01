@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="EDIT"
         Height="825.7" 
-        Width="1618.5" Background="#FF1C1F1F" Closed="Window_Closed">
+        Width="1618.5" Background="#FF1C1F1F" Closed="Window_Closed" Closing="Window_Closing">
 
     <Window.Resources>
 
@@ -314,9 +314,9 @@
                         <Grid x:Name="geomtriesAndMetricsPanel" Width="170" HorizontalAlignment="Left">
                             <StackPanel x:Name="geometries" Margin="0" Background="Black">
                                 <Label Content="Geometries:" HorizontalAlignment="Left" Height="24.666" VerticalAlignment="Top" Width="75.999" Foreground="#FF335B5B" Margin="10,0,0,0"/>
-                                <StackPanel x:Name="geometryItems" HorizontalAlignment="Left" Height="127" Width="160" Margin="10,0,0,0"/>
-                                <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Left" Height="24.666" VerticalAlignment="Top" Width="75.999" Foreground="#FF335B5B" Margin="10,10,0,0"/>
-                                <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5">
+                                <StackPanel x:Name="geometryItems" HorizontalAlignment="Left" Height="140" Width="160" Margin="10,0,0,0"/>
+                                <Label x:Name="volume_label" Content="Volume:" HorizontalAlignment="Left" Height="24.666" VerticalAlignment="Top" Width="75.999" Foreground="#FF335B5B" Margin="10,0,0,0"/>
+                                <ListBox x:Name="volumeMetricsItems" HorizontalAlignment="Left" Height="130" VerticalAlignment="Top" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" IsHitTestVisible="False" Focusable="False" IsTextSearchEnabled="False" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5">
                                     <ListBox.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -326,8 +326,8 @@
                                         </TransformGroup>
                                     </ListBox.RenderTransform>
                                 </ListBox>
-                                <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Left" Height="24.666" VerticalAlignment="Top" Width="83.332" Foreground="#FF335B5B" Margin="10,20,0,0"/>
-                                <ListBox x:Name="SurfaceAreaMetricsItems" Height="100" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="surfaceArea_label" Content="Surface Area:" HorizontalAlignment="Left" Height="24.666" VerticalAlignment="Top" Width="83.332" Foreground="#FF335B5B" Margin="10,0,0,0"/>
+                                <ListBox x:Name="SurfaceAreaMetricsItems" Height="130" Width="160" Background="{x:Null}" BorderBrush="{x:Null}" Focusable="False" IsTextSearchEnabled="False" IsHitTestVisible="False" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             </StackPanel>
                         </Grid>
                         <Separator Background="#FF335B5B" Margin="0">

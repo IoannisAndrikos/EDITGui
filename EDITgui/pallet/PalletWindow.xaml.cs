@@ -19,7 +19,7 @@ namespace EDITgui
     /// </summary>
     public partial class PalletWindow : Window
     {
-        public enum selectionItem { bladder, outewall, layer, OXY, DeOXY, none}
+        public enum selectionItem { bladder, outewall, tumor, layer, OXY, DeOXY, none}
 
         Pallet pallet;
 
@@ -74,6 +74,8 @@ namespace EDITgui
                     return Messages.bladderGeometry;
                 case selectionItem.outewall:
                     return Messages.outerWallGeometry;
+                case selectionItem.tumor:
+                    return Messages.tumorGeometry;
                 case selectionItem.layer:
                     return Messages.layerGeometry;
                 case selectionItem.OXY:
@@ -119,6 +121,16 @@ namespace EDITgui
             selected = selectionItem.outewall;
             unselectRestItems(this.checkBox_OuterWall);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
+        }
+
+        private void CheckBox_Tumor_Click(object sender, RoutedEventArgs e)
+        {
+            updateOnSelectCheckbox();
+            this.checkBox_Tumor.IsChecked = true;
+            selected = selectionItem.tumor;
+            unselectRestItems(this.checkBox_Tumor);
+            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
+
         }
 
         private void CheckBox_Layer_Click(object sender, RoutedEventArgs e)

@@ -21,7 +21,7 @@ namespace EDITgui
 
         public enum FileType
         {
-            bladderPoints, thicknessPoints, settings, Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D, Registration,
+            bladderPoints, thicknessPoints, settings, algorithmFrameSettings ,Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D, Registration,
             UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, MeanThickness, Tumors
         }
 
@@ -56,6 +56,9 @@ namespace EDITgui
                     break;
                 case FileType.settings:
                     filename = messages.settingsXML;
+                    break;
+                case FileType.algorithmFrameSettings:
+                    filename = messages.algorithmsIndexes;
                     break;
                 case FileType.UltrasoundDicomFile:
                     filename = messages.ulrasoundDCM;
@@ -107,6 +110,9 @@ namespace EDITgui
                     break;
                 case FileType.settings:
                     dir = path + Path.DirectorySeparatorChar;
+                    break;
+                case FileType.algorithmFrameSettings:
+                    dir = path + Path.DirectorySeparatorChar + messages.algorithmsConfigurations + Path.DirectorySeparatorChar;
                     break;
                 case FileType.Bladder3D:
                 case FileType.Thickness3D:

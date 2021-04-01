@@ -76,6 +76,7 @@ namespace EDITgui
         List<Polyline> polylines = new List<Polyline>();
         List<List<EDITCore.CVPoint>> thicknessCvPoints = new List<List<EDITCore.CVPoint>>();
         List<List<EDITCore.CVPoint>> bladderCvPoints = new List<List<EDITCore.CVPoint>>();
+        List<List<List<EDITCore.CVPoint>>> tumorCvPoints = new List<List<List<EDITCore.CVPoint>>>();
         List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
     
         public String thicknessGeometryPath = null;
@@ -102,6 +103,7 @@ namespace EDITgui
 
         public void sliderValueChanged(int value)
         {
+            //savePhotoacousticFrameAlgorithmSetting();
             slider_value = value;
             if (slider_value < fileCount)
             {
@@ -114,8 +116,23 @@ namespace EDITgui
                     BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + value + ".bmp");
                 }
                 frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
+                //updatePhotoacousticFrameAlgorithmSetting();
                 doCorrection(true, false);
             }
+        }
+
+        private void savePhotoacousticFrameAlgorithmSetting()
+        {
+            context.getImages().getCurrentFrameSettings().minThickness = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().maxThickness = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            context.getImages().getCurrentFrameSettings().majorThicknessExistence = big_tumor.IsChecked.Value;
+        }
+
+        private void updatePhotoacousticFrameAlgorithmSetting()
+        {
+            //minThickness.Text = string.Format("{0.0}", context.getImages().getFrameSettings().minThickness.ToString());
+            //maxThickness.Text = context.getImages().getFrameSettings().maxThickness.ToString();
+            //big_tumor.IsChecked = context.getImages().getFrameSettings().majorThicknessExistence;
         }
 
         public void OnUltrasoundZoomChanged(List<Matrix> obj)
@@ -364,31 +381,31 @@ namespace EDITgui
 
         private async void Extract_Tumor_Click(object sender, RoutedEventArgs e)
         {
-            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DTumor);
-            if (message != null)
-            {
-                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
-                return;
-            }
+            //string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DTumor);
+            //if (message != null)
+            //{
+            //    CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+            //    return;
+            //}
 
-            thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
-            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
-            if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
+            //thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
+            //bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+            //if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
 
-            Point startingPoint = context.getUltrasoundPart().userPoints[0];
+            //Point startingPoint = context.getUltrasoundPart().userPoints[0];
 
-            startSpinner();
+            //startSpinner();
   
-            await Task.Run(() => {
-                thicknessCvPoints = context.getCore().Tumor2DExtraction2D(startingPoint, bladderCvPoints, thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
-                if(!thicknessCvPoints.Any()) return;
-                context.getImages().fillTumorFromBackEnd(thicknessCvPoints, context.getUltrasoundPart().startingFrame);
-            });
-            context.getPhotoAcousticPoints2D().updatePanel(slider_value);
-            context.getUltrasoundPoints2D().updatePanel(slider_value);
-            context.getUltrasoundPart().updateCanvas();
-            updateCanvas();
-            stopSpinner();
+            //await Task.Run(() => {
+            //    thicknessCvPoints = context.getCore().Tumor2DExtraction2D(startingPoint, bladderCvPoints, thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
+            //    if(!thicknessCvPoints.Any()) return;
+            //    context.getImages().fillTumorFromBackEnd(thicknessCvPoints, context.getUltrasoundPart().startingFrame);
+            //});
+            //context.getPhotoAcousticPoints2D().updatePanel(slider_value);
+            //context.getUltrasoundPoints2D().updatePanel(slider_value);
+            //context.getUltrasoundPart().updateCanvas();
+            //updateCanvas();
+            //stopSpinner();
         }
 
         private async void Extract_Tumor_3D_Click(object sender, RoutedEventArgs e)
@@ -400,16 +417,18 @@ namespace EDITgui
                 return;
             }
 
-            thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
-            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
-            if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
+            tumorCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalTumorPoints());
 
-            Point startingPoint = context.getUltrasoundPart().userPoints[0];
+            int startingFrame = context.getImages().getFirtTumorFrame() - context.getUltrasoundPart().startingFrame;
+
+            if (!tumorCvPoints.Any()) return;
+
+            //Point startingPoint = context.getUltrasoundPart().userPoints[0];
 
             startSpinner();
             String txtPath = null;
             await Task.Run(() => {
-                txtPath = context.getCore().Tumor2DExtraction3D();
+                txtPath = context.getCore().Tumor3DExtraction(tumorCvPoints, startingFrame);
             });
 
             EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = Messages.tumorGeometry, Path = txtPath, actor = null };
@@ -854,6 +873,7 @@ namespace EDITgui
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
             context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
+            context.getMainWindow().studyUpdated = false;
         }
 
         public void stopSpinner()

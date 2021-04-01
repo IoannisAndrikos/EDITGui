@@ -387,41 +387,67 @@ namespace EDITgui
 
 
 
+        //[HandleProcessCorruptedStateExceptions]
+        //public List<List<EDITCore.CVPoint>> Tumor2DExtraction2D(Point startingPoint, List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints, String bladderGeometryPath, String thicknessGeometryPath)
+        //{
+        //    try
+        //    {
+        //        editPro.extractTumor2D(new EDITCore.CVPoint(startingPoint.X, startingPoint.Y), bladderCvPoints, thicknessCvPoints, bladderGeometryPath, thicknessGeometryPath);
+        //        if (response.isSuccessful())
+        //        {
+        //            return response.getAllFramesData();
+        //        }
+        //        else
+        //        {
+        //            displayFailureMessage(response.getFailure());
+        //        }
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        displayFailureMessage(context.getMessages().errorOccured);
+        //    }
+        //    return null;
+        //}
+
+
+
+        //[HandleProcessCorruptedStateExceptions]
+        //public String Tumor2DExtraction3D()
+        //{
+        //    try
+        //    {
+        //        editPro.extractTumor3D();
+        //        if (response.isSuccessful())
+        //        {
+        //            List<String> paths = response.getPaths();
+        //            return paths[0];
+        //        }
+        //        else
+        //        {
+        //            displayFailureMessage(response.getFailure());
+        //        }
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        displayFailureMessage(context.getMessages().errorOccured);
+        //    }
+        //    return null;
+        //}
+
+
+
         [HandleProcessCorruptedStateExceptions]
-        public List<List<EDITCore.CVPoint>> Tumor2DExtraction2D(Point startingPoint, List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints, String bladderGeometryPath, String thicknessGeometryPath)
+        public String Tumor3DExtraction(List<List<List<EDITCore.CVPoint>>> tumorCvPoints, int startingFrame)
         {
             try
             {
-                editPro.extractTumor2D(new EDITCore.CVPoint(startingPoint.X, startingPoint.Y), bladderCvPoints, thicknessCvPoints, bladderGeometryPath, thicknessGeometryPath);
+                editPro.extractTumor3D(tumorCvPoints, startingFrame);
                 if (response.isSuccessful())
                 {
-                    return response.getAllFramesData();
-                }
-                else
-                {
-                    displayFailureMessage(response.getFailure());
-                }
-
-            }
-            catch (Exception e)
-            {
-                displayFailureMessage(context.getMessages().errorOccured);
-            }
-            return null;
-        }
-
-
-
-        [HandleProcessCorruptedStateExceptions]
-        public String Tumor2DExtraction3D()
-        {
-            try
-            {
-                editPro.extractTumor3D();
-                if (response.isSuccessful())
-                {
-                    List<String> paths = response.getPaths();
-                    return paths[0];
+                    String paths = response.getPath();
+                    return paths;
                 }
                 else
                 {

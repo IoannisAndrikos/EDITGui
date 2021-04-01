@@ -25,7 +25,6 @@ namespace EDITgui
             }
         }
 
-
         public double pointSize = 2.5;
 
         public  SolidColorBrush cyan = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));

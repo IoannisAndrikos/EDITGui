@@ -419,12 +419,12 @@ namespace EDITgui
             string metricsString;
 
 
-            metricsString = context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
-                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+            metricsString = context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
 
             if (metrics.meanThickness>0 && context.getMainWindow().currentMode == MainWindow.Mode.AUTO)
             {
-                metricsString += Environment.NewLine + context.getMessages().meanThickness + " = " + Math.Round(metrics.meanThickness, 2) + " " + context.getMessages().mm;
+                metricsString += Environment.NewLine + context.getMessages().meanThickness + " = " + string.Format("{0:0.00}", metrics.meanThickness) + " " + context.getMessages().mm;
             }
             return metricsString;
         }
@@ -435,8 +435,8 @@ namespace EDITgui
 
             if (metrics.area == 0) return "";
 
-            return context.getMessages().perimeter + " = " + Math.Round(metrics.perimeter, 2) + " " + context.getMessages().mm + Environment.NewLine +
-                                                         context.getMessages().area + " = " + Math.Round(metrics.area, 2) + " " + context.getMessages().mmB2;
+            return context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
+                                                         context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
         }
 
 
