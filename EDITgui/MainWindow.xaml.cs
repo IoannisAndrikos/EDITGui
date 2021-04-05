@@ -38,8 +38,7 @@ namespace EDITgui
         public enum Mode{ AUTO, ANOTATION}
 
         public string workingPath;
-        public string loadedStudyPath = null; //is filled if study is loaded
-        public bool studyUpdated = true;
+       // public string loadedStudyPath = null; //is filled if study is loaded
         public RenderWindowControl myRenderWindowControl;
         System.Windows.Forms.Integration.WindowsFormsHost host;
         vtkAxesActor axesActor;
@@ -176,9 +175,6 @@ namespace EDITgui
         }
 
        
-
-        
-
         public void OnGeometryComboboxChecked(object sender, RoutedEventArgs e)
         {
           //  host.Visibility = Visibility.Visible;
@@ -198,7 +194,6 @@ namespace EDITgui
             {
                 CustomMessageBox.Show(context.getMessages().noObject3DLoaded, context.getMessages().warning, MessageBoxButton.OK);
             }
-            
         }
 
 
@@ -207,7 +202,6 @@ namespace EDITgui
             vtkSTLReader reader = vtkSTLReader.New();
             vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
             string extension = Path.GetExtension(geometry.Path);
-
 
             if(extension == ".stl")
             {
@@ -525,17 +519,16 @@ namespace EDITgui
 
         private void OverwriteStudy_Click(object sender, RoutedEventArgs e)
         {
-            if (loadedStudyPath == null)
+            if (context.getLoadActions().getLoadedStudyPath() == null)
             {
                 context.getSaveActions().doSave();
             }
-            else if(!studyUpdated)
+            else if(!context.getSaveActions().checkIfStudyWasSaved())
             {
-                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(context.getLoadActions().getLoadedStudyPath()), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
-                    context.getSaveActions().saveAvailableData(loadedStudyPath);
-                    studyUpdated = true;
+                    context.getSaveActions().saveAvailableData(context.getLoadActions().getLoadedStudyPath());
                 }
                 else if (result == MessageBoxResult.No)
                 {
@@ -580,23 +573,22 @@ namespace EDITgui
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (context != null && !studyUpdated)
+            if (context != null && !context.getSaveActions().checkIfStudyWasSaved())
             {
                 MessageBoxResult result = CustomMessageBox.Show(context.getMessages().saveBeforeExit, context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)
                 {
                     e.Cancel = true;
-                    if (loadedStudyPath == null)
+                    if (context.getLoadActions().getLoadedStudyPath() == null)
                     {
                         context.getSaveActions().doSave();
                     }
-                    else if (!studyUpdated)
+                    else if (!context.getSaveActions().checkIfStudyWasSaved())
                     {
-                        result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(loadedStudyPath), context.getMessages().warning, MessageBoxButton.YesNoCancel);
+                        result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(context.getLoadActions().getLoadedStudyPath()), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                         if (result == MessageBoxResult.Yes)
                         {
-                            context.getSaveActions().saveAvailableData(loadedStudyPath);
-                            studyUpdated = true;
+                            context.getSaveActions().saveAvailableData(context.getLoadActions().getLoadedStudyPath());
                         }
                         else if (result == MessageBoxResult.No)
                         {
@@ -712,7 +704,7 @@ namespace EDITgui
                 case Messages.deoxyGeometry:
                     return SaveActions.FileType.DeOXY3D;
                 case Messages.tumorGeometry:
-                    return SaveActions.FileType.Tumors;
+                    return SaveActions.FileType.Tumors3D;
             }
 
             return SaveActions.FileType.Bladder3D; //never

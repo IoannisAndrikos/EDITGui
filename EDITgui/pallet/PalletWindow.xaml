@@ -404,11 +404,11 @@
                 </StackPanel>
 
             </StackPanel>
-            <Grid Height="60" Margin="0">
-                <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="0" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="70.4" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_OK_Click">
+            <Grid Height="37.6" Margin="0">
+                <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="70.4" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_OK_Click">
                     <Label x:Name="Label_Ok" Padding="0" Margin="0" Foreground="White" Content="_OK"/>
                 </Button>
-                <Button x:Name="Button_Apply" MinWidth="88" MaxWidth="160" Margin="0" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="71.2" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Apply_Click">
+                <Button x:Name="Button_Apply" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="71.2" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Apply_Click">
                     <Label x:Name="Label_Ok1" Padding="0" Margin="0" Foreground="White" Content="_Apply"/>
                 </Button>
             </Grid>

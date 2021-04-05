@@ -22,7 +22,7 @@ namespace EDITgui
         public enum FileType
         {
             bladderPoints, thicknessPoints, settings, algorithmFrameSettings ,Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D, Registration,
-            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, MeanThickness, Tumors
+            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, MeanThickness, Tumors2D, Tumors3D
         }
 
         public string getWorkspace()
@@ -78,6 +78,9 @@ namespace EDITgui
                 case FileType.OXY3D:
                     filename = messages.oxyTXT;
                     break;
+                case FileType.Tumors3D:
+                    filename = messages.tumorSTL;
+                    break;
                 case FileType.Registration:
                     filename = messages.registrationTXT;
                     break;
@@ -105,7 +108,7 @@ namespace EDITgui
                 case FileType.thicknessPoints:
                     dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.thicknessPoints + Path.DirectorySeparatorChar;
                     break;
-                case FileType.Tumors:
+                case FileType.Tumors2D:
                     dir = path + Path.DirectorySeparatorChar + messages.points2D + Path.DirectorySeparatorChar + messages.tumors + Path.DirectorySeparatorChar;
                     break;
                 case FileType.settings:
@@ -119,6 +122,7 @@ namespace EDITgui
                 case FileType.OXY3D:
                 case FileType.Layer3D:
                 case FileType.DeOXY3D:
+                case FileType.Tumors3D:
                 case FileType.Registration:
                     dir = path + Path.DirectorySeparatorChar + messages.objects3D + Path.DirectorySeparatorChar;
                     break;

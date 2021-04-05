@@ -15,10 +15,24 @@ namespace EDITgui
    {
         Context context;
 
+        private string loadedStudyPath = null;
+
         public LoadActions(Context context)
         {
             this.context = context;
         }
+
+
+        public string getLoadedStudyPath()
+        {
+            return this.loadedStudyPath;
+        }
+
+        public void setLoadedStudyPath(string path)
+        {
+            this.loadedStudyPath = path;
+        }
+
 
         public void doLoad()
         {
@@ -28,7 +42,6 @@ namespace EDITgui
             {
                 //load available 2D Data
                 loadAvailableData(browserDialog.SelectedPath);
-                context.getMainWindow().loadedStudyPath = browserDialog.SelectedPath;
             }
         }
 
@@ -80,6 +93,7 @@ namespace EDITgui
             if (!isStudyFolder)
             {
                 CustomMessageBox.Show(context.getMessages().noCorrectStudyFolder, context.getMessages().warning, MessageBoxButton.OK);
+                setLoadedStudyPath(null);
                 return;
             }
 
@@ -110,6 +124,9 @@ namespace EDITgui
 
             context.getUltrasoundPart().updateCanvas();
             context.getPhotoAcousticPart().updateCanvas();
+
+            setLoadedStudyPath(path);
+            context.getSaveActions().saved();
         }
 
         public void load3DAvailableData(string path)
@@ -163,7 +180,14 @@ namespace EDITgui
                 geometry = new Geometry() { geometryName = Messages.deoxyGeometry, Path = object3D, actor = null };
                 context.getMainWindow().OnAddAvailableGeometry(geometry);
             }
-
+            Oblect3DFile = getFolderName(path, FileType.Tumors3D, false) + getProperFileName(FileType.Tumors3D);
+            if (File.Exists(Oblect3DFile))
+            {
+                object3D = oblectFileLocation + getProperFileName(FileType.Tumors3D);
+                File.Copy(Oblect3DFile, object3D, true);
+                geometry = new Geometry() { geometryName = Messages.deoxyGeometry, Path = object3D, actor = null };
+                context.getMainWindow().OnAddAvailableGeometry(geometry);
+            }
 
         }
 
@@ -299,7 +323,7 @@ namespace EDITgui
         private void loadAvailableTumorsPoints(string path)
         {
             string framePointsFile;
-            string pointsDir = getFolderName(path, FileType.Tumors, false);
+            string pointsDir = getFolderName(path, FileType.Tumors2D, false);
             List<List<Point>> points = new List<List<Point>>();
             if (Directory.Exists(pointsDir))
             {

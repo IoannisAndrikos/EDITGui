@@ -148,6 +148,5 @@ namespace EDITgui
         {
             return this.comparator;
         }
-
     }
 }

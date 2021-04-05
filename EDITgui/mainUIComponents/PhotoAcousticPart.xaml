@@ -219,7 +219,7 @@
                     <Button x:Name="loaddeOXYDicom" Content="Load DeOXY " HorizontalAlignment="Center" Height="26" Margin="0,5,0,0" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="LoadDeOXYDicom_Click" FontSize="11"/>
                     <Button x:Name="recalculate" Content="Recaclulate" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Recalculate_Click" FontSize="11" Margin="0,5,0,0"/>
                     <Button x:Name="extract_Tumor" Content="Tumor 2D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_Click" FontSize="11" Margin="0,5,0,0" Visibility="Hidden"/>
-                    <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_3D_Click" FontSize="11" Margin="0,5,0,0" Visibility="Hidden"/>
+                    <Button x:Name="extract_Tumor_3D" Content="Tumor 3D" HorizontalAlignment="Center" Height="26" Style="{DynamicResource ButtonStyle1}" VerticalAlignment="Top" Width="100" Click="Extract_Tumor_3D_Click" FontSize="11" Margin="0,5,0,0"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

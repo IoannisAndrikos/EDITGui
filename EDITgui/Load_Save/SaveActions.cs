@@ -15,11 +15,37 @@ namespace EDITgui
     public class SaveActions : StudyFile
     {
         Context context;
+        private enum savedOrNot { SAVED, NOTSAVED }
+        private savedOrNot status;
 
         public SaveActions(Context context)
         {
             this.context = context;
+            status = savedOrNot.SAVED;
         }
+
+        public void saved()
+        {
+            this.status = savedOrNot.SAVED;
+        }
+
+        public void dataUpdatedWithoutSave()
+        {
+            this.status = savedOrNot.NOTSAVED;
+        }
+
+        public bool checkIfStudyWasSaved()
+        {
+            if (status == savedOrNot.SAVED)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         public void doSave()
         {
@@ -30,8 +56,6 @@ namespace EDITgui
             if (saveFileDialog.ShowDialog() == true)
             {
                 saveAvailableData(saveFileDialog.FileName);
-                context.getMainWindow().loadedStudyPath = saveFileDialog.FileName;
-                context.getMainWindow().studyUpdated = true;
             }
         }
 
@@ -65,14 +89,12 @@ namespace EDITgui
             // saveActions.writeInfoTXTFile(saveFileDialog.FileName, saveActions.collectAllStudyInfo(), SaveActions.FileType.info);
             writeInfoXMLFile(path, collectAllStudySetings(), SaveActions.FileType.settings);
 
-
             //save Algorithm frames settings
             writeAlgorithmFrameSettingsTXT(path);
 
-            //save registration points
-            //writeRegistrationPointsTXT(path);
-
-
+            //update status
+            context.getLoadActions().setLoadedStudyPath(path);
+            saved();
         }
 
 
@@ -120,7 +142,7 @@ namespace EDITgui
             StreamWriter sw;
             for (int i = 0; i <tumors.Count; i++)
             {
-                filePath = getFolderName(path, SaveActions.FileType.Tumors, true) + i.ToString() + ".txt";
+                filePath = getFolderName(path, SaveActions.FileType.Tumors2D, true) + i.ToString() + ".txt";
                 sw = new StreamWriter(filePath);
                 for (int j = 0; j < tumors[i].Count; j++)
                 {
@@ -217,15 +239,16 @@ namespace EDITgui
             StreamWriter sw = new StreamWriter(filePath);
             for (int i = 0; i < context.getUltrasoundPart().fileCount -1 ; i++)
             {
-                sw.WriteLine(messages.frame + ": " +  i.ToString() + " " + context.getImages().getFrameSettings(i).repeats +
-                    " " + context.getImages().getFrameSettings(i).smoothing +
-                    " " + context.getImages().getFrameSettings(i).lamda1 + 
-                    " " + context.getImages().getFrameSettings(i).lamda2 + 
-                    " " + context.getImages().getFrameSettings(i).levelSize +
+                sw.WriteLine(messages.frame + ": " +  i.ToString() + " " + 
+                     context.getImages().getFrameSettings(i).repeats.ToString() +
+                    " " + context.getImages().getFrameSettings(i).smoothing.ToString() +
+                    " " + context.getImages().getFrameSettings(i).lamda1.ToString() + 
+                    " " + context.getImages().getFrameSettings(i).lamda2.ToString() + 
+                    " " + context.getImages().getFrameSettings(i).levelSize.ToString() +
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).filtering)).ToString() +
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).probeArtifactCorrection)).ToString() +
-                    " " + context.getImages().getFrameSettings(i).maxThickness +
-                    " " + context.getImages().getFrameSettings(i).minThickness + 
+                    " " + context.getImages().getFrameSettings(i).maxThickness.ToString() +
+                    " " + context.getImages().getFrameSettings(i).minThickness.ToString() + 
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).majorThicknessExistence)).ToString() 
                     );
             }
@@ -249,15 +272,7 @@ namespace EDITgui
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = 0 });
                 studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = 0 });
             }
-            //studyInfo.Add(new StudySetting() { infoName = settingType.Repeats, infoValue = double.Parse(context.getUltrasoundPart().Repeats.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.Smoothing, infoValue = double.Parse(context.getUltrasoundPart().Smoothing.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.Lamda1, infoValue = double.Parse(context.getUltrasoundPart().Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.Lamda2, infoValue = double.Parse(context.getUltrasoundPart().Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.LevelSize, infoValue = double.Parse(context.getUltrasoundPart().LevelsetSize.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.Filtering, infoValue = double.Parse((ToInt(context.getUltrasoundPart().chechBox_FIltering.IsChecked.Value)).ToString()) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.ClosedSurface, infoValue = double.Parse((ToInt(context.getUltrasoundPart().closedSurface.IsChecked.Value)).ToString()) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.minThickness, infoValue = double.Parse(context.getPhotoAcousticPart().minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });
-            //studyInfo.Add(new StudySetting() { infoName = settingType.maxThickness, infoValue = double.Parse(context.getPhotoAcousticPart().maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture) });    
+           
             return studyInfo;
         }
 

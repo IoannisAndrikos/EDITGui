@@ -104,6 +104,8 @@ namespace EDITgui
 
         public string thicknessSTL = "Thickness.stl";
 
+        public string tumorSTL = "Tumor.stl";
+
         public string oxyTXT = "OXY.txt";
 
         public string deoxyTXT = "DeOXY.txt";

@@ -428,7 +428,7 @@ namespace EDITgui
             startSpinner();
             String txtPath = null;
             await Task.Run(() => {
-                txtPath = context.getCore().Tumor3DExtraction(tumorCvPoints, startingFrame);
+                txtPath = context.getCore().Tumor3DExtraction(tumorCvPoints, startingFrame, context.getUltrasoundPart().bladderGeometryPath, context.getPhotoAcousticPart().thicknessGeometryPath);
             });
 
             EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = Messages.tumorGeometry, Path = txtPath, actor = null };
@@ -614,6 +614,7 @@ namespace EDITgui
                         display();
                     }
                 }
+                context.getSaveActions().dataUpdatedWithoutSave();
             }
         }
 
@@ -651,6 +652,7 @@ namespace EDITgui
                         startPosition1 = e.GetPosition(image);
                         ellipse.CaptureMouse();
                     }
+                    context.getSaveActions().dataUpdatedWithoutSave();
                 }
             }
 
@@ -686,6 +688,7 @@ namespace EDITgui
                     catch { }
 
                     updateCanvas();
+                    context.getSaveActions().dataUpdatedWithoutSave();
                 }
             }
         }
@@ -712,31 +715,37 @@ namespace EDITgui
         {
             if (!selectedObjectHasPoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
-            List<Point> pointsToRemove = new List<Point>();
-            int count = 0;
-            for (int i = 0; i < context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count; i++)
+            try
             {
-                if (context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
-                    context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                List<Point> pointsToRemove = new List<Point>();
+                int count = 0;
+                for (int i = 0; i < context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count; i++)
+                {
+                    if (context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                        context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
                     {
-                    pointsToRemove.Add(context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i]);
-                    if (count == 0) indexA = i;
-                    count++;
+                        pointsToRemove.Add(context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i]);
+                        if (count == 0) indexA = i;
+                        count++;
                     }
 
-            }
+                }
 
-            canvasPhotoAcoustic.Children.Remove(rectRemovePoints);
-            if (count == context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count)
+                canvasPhotoAcoustic.Children.Remove(rectRemovePoints);
+                if (count == context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count)
+                {
+                    doManual();
+                    context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                    return;
+                }
+                context.getPhotoAcousticPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
+                if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
+                if (pointsToRemove.Any()) context.getSaveActions().dataUpdatedWithoutSave();
+                pointsToRemove.Clear();
+            }catch(Exception ex)
             {
-                doManual();
-                context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
-                return;
-            }
-            context.getPhotoAcousticPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
-            if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
 
-            pointsToRemove.Clear();
+            }
         }
 
 
@@ -746,12 +755,19 @@ namespace EDITgui
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                var mouse = Mouse.GetPosition(image);
-                Canvas.SetLeft(rectRemovePoints, _start.X > mouse.X ? mouse.X : _start.X);
-                Canvas.SetTop(rectRemovePoints, _start.Y > mouse.Y ? mouse.Y : _start.Y);
+                try
+                {
+                    var mouse = Mouse.GetPosition(image);
+                    Canvas.SetLeft(rectRemovePoints, _start.X > mouse.X ? mouse.X : _start.X);
+                    Canvas.SetTop(rectRemovePoints, _start.Y > mouse.Y ? mouse.Y : _start.Y);
 
-                rectRemovePoints.Width = Math.Abs(mouse.X - _start.X);
-                rectRemovePoints.Height = Math.Abs(mouse.Y - _start.Y);
+                    rectRemovePoints.Width = Math.Abs(mouse.X - _start.X);
+                    rectRemovePoints.Height = Math.Abs(mouse.Y - _start.Y);
+                }catch(Exception ex)
+                {
+
+                }
+
             }
 
 
@@ -873,7 +889,6 @@ namespace EDITgui
             ((Storyboard)FindResource("WaitStoryboard")).Begin();
             context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
-            context.getMainWindow().studyUpdated = false;
         }
 
         public void stopSpinner()
@@ -881,6 +896,7 @@ namespace EDITgui
             ((Storyboard)FindResource("WaitStoryboard")).Stop();
             context.getMainWindow().Panel2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
+            context.getSaveActions().dataUpdatedWithoutSave();
         }
 
         public void doCorrection(bool update = true, bool updateUlrasound = true)
@@ -900,6 +916,7 @@ namespace EDITgui
             metrics_label.Visibility = Visibility.Hidden;
             if (selectedObjectHasPoints()) context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Clear();
             updateCanvas();
+            context.getUltrasoundPart().updateCanvas();
         }
 
         public void doFillPoints()

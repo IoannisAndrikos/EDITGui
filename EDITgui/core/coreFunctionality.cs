@@ -439,11 +439,11 @@ namespace EDITgui
 
 
         [HandleProcessCorruptedStateExceptions]
-        public String Tumor3DExtraction(List<List<List<EDITCore.CVPoint>>> tumorCvPoints, int startingFrame)
+        public String Tumor3DExtraction(List<List<List<EDITCore.CVPoint>>> tumorCvPoints, int startingFrame, string bladderSTLPath, string thicknessSTLPath)
         {
             try
             {
-                editPro.extractTumor3D(tumorCvPoints, startingFrame);
+                editPro.extractTumor3D(tumorCvPoints, startingFrame, bladderSTLPath, thicknessSTLPath);
                 if (response.isSuccessful())
                 {
                     String paths = response.getPath();

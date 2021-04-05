@@ -502,8 +502,7 @@ namespace EDITgui
 
                         if (userPoints.Count == 0)
                         {
-                            startingFrameMarker = new FrameMarker(FrameMarker.Type.starting);
-                            canvasUltrasound.Children.Add(startingFrameMarker);
+                            canvasUltrasound.Children.Add(getStartingFrameMarker());
                             Canvas.SetLeft(startingFrameMarker, point.X );
                             Canvas.SetTop(startingFrameMarker, point.Y );
                             userPoints.Add(point);
@@ -511,8 +510,7 @@ namespace EDITgui
                         }
                         else if (userPoints.Count > 0 && userPoints.Count < 2)
                         {
-                            endingFrameMarker = new FrameMarker(FrameMarker.Type.ending);
-                            canvasUltrasound.Children.Add(endingFrameMarker);
+                            canvasUltrasound.Children.Add(getEndingFrameMarker());
                             Canvas.SetLeft(endingFrameMarker, point.X);
                             Canvas.SetTop(endingFrameMarker, point.Y);
                             userPoints.Add(point);
@@ -575,15 +573,7 @@ namespace EDITgui
                         display();
                     }
                 }
-            }else if (registration)
-            {
-                //Point point = e.GetPosition(image);
-                //if (context.getRegistration().setRegistrationPoint(point, slider_value) == 0)
-                //{
-                //    clear_canvas();
-                //    display();
-                //}
-                //registration = false;
+                context.getSaveActions().dataUpdatedWithoutSave();
             }
         }
 
@@ -621,6 +611,7 @@ namespace EDITgui
                         startPosition1 = e.GetPosition(image);
                         ellipse.CaptureMouse();
                     }
+                    context.getSaveActions().dataUpdatedWithoutSave();
                 }
             }
 
@@ -658,6 +649,8 @@ namespace EDITgui
                     catch { }
 
                     updateCanvas();
+
+                    context.getSaveActions().dataUpdatedWithoutSave();
                 }
             }
         }
@@ -684,31 +677,38 @@ namespace EDITgui
         {
             if (!selectedObjectHasPoints() || contourSeg == ContourSegmentation.MANUAL) return;
 
-            List<Point> pointsToRemove = new List<Point>();
-            int count = 0;
-            for (int i = 0; i < context.getUltrasoundPoints2D().getSelectedObject2D().points.Count; i++)
+            try
             {
-                if (context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
-                    context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                List<Point> pointsToRemove = new List<Point>();
+                int count = 0;
+                for (int i = 0; i < context.getUltrasoundPoints2D().getSelectedObject2D().points.Count; i++)
                 {
-                    pointsToRemove.Add(context.getUltrasoundPoints2D().getSelectedObject2D().points[i]);
-                    if (count == 0) indexA = i;
-                    count++;
+                    if (context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                        context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                    {
+                        pointsToRemove.Add(context.getUltrasoundPoints2D().getSelectedObject2D().points[i]);
+                        if (count == 0) indexA = i;
+                        count++;
+                    }
+
                 }
 
+                canvasUltrasound.Children.Remove(rectRemovePoints);
+                if (count == context.getUltrasoundPoints2D().getSelectedObject2D().points.Count)
+                {
+                    doManual();
+                    context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                    return;
+                }
+                context.getUltrasoundPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
+                if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
+                if (pointsToRemove.Any()) context.getSaveActions().dataUpdatedWithoutSave();
+                pointsToRemove.Clear();
             }
-
-            canvasUltrasound.Children.Remove(rectRemovePoints);
-            if (count == context.getUltrasoundPoints2D().getSelectedObject2D().points.Count)
+            catch(Exception ex)
             {
-                doManual();
-                context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
-                return;
-            }
-            context.getUltrasoundPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
-            if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
 
-            pointsToRemove.Clear();
+            }
         }
 
 
@@ -718,12 +718,18 @@ namespace EDITgui
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                var mouse = Mouse.GetPosition(image);
-                Canvas.SetLeft(rectRemovePoints, _start.X > mouse.X ? mouse.X : _start.X);
-                Canvas.SetTop(rectRemovePoints, _start.Y > mouse.Y ? mouse.Y : _start.Y);
+                try
+                {
+                    var mouse = Mouse.GetPosition(image);
+                    Canvas.SetLeft(rectRemovePoints, _start.X > mouse.X ? mouse.X : _start.X);
+                    Canvas.SetTop(rectRemovePoints, _start.Y > mouse.Y ? mouse.Y : _start.Y);
 
-                rectRemovePoints.Width = Math.Abs(mouse.X - _start.X);
-                rectRemovePoints.Height = Math.Abs(mouse.Y - _start.Y);
+                    rectRemovePoints.Width = Math.Abs(mouse.X - _start.X);
+                    rectRemovePoints.Height = Math.Abs(mouse.Y - _start.Y);
+                }catch(Exception ex)
+                {
+
+                } 
             }
 
 
@@ -806,28 +812,41 @@ namespace EDITgui
 
                 if (slider_value == startingFrame && !context.getImages().getBladderPoints().Any() && userPoints.Count > 0)
                 {
-                    canvasUltrasound.Children.Add(startingFrameMarker);
+                    canvasUltrasound.Children.Add(getStartingFrameMarker());
                     Canvas.SetLeft(startingFrameMarker, userPoints[0].X);
                     Canvas.SetTop(startingFrameMarker, userPoints[0].Y);
                 }
                 if (slider_value == endingFrame && !context.getImages().getBladderPoints().Any() && userPoints.Count > 1)
                 {
-                    canvasUltrasound.Children.Add(endingFrameMarker);
+                    canvasUltrasound.Children.Add(getEndingFrameMarker());
                     Canvas.SetLeft(endingFrameMarker, userPoints[1].X);
                     Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
                 }
-
-                //registrationPoint = context.getRegistration().getRegistrationPoints(slider_value);
-                //if(registrationPoint != zeroPoint){
-                //    RegistrationMarker registrationMarker = new RegistrationMarker();
-                    
-                //    Canvas.SetLeft(registrationMarker, registrationPoint.X);
-                //    Canvas.SetTop(registrationMarker, registrationPoint.Y);
-                //    canvasUltrasound.Children.Add(registrationMarker);
-                //}
-
             }
         }
+
+
+        private FrameMarker getStartingFrameMarker()
+        {
+            if (startingFrameMarker == null)
+            {
+                startingFrameMarker = new FrameMarker(FrameMarker.Type.starting);
+            }
+            
+            return startingFrameMarker;
+        }
+
+
+        private FrameMarker getEndingFrameMarker()
+        {
+            if (endingFrameMarker == null)
+            {
+                endingFrameMarker = new FrameMarker(FrameMarker.Type.ending);
+            }
+            return endingFrameMarker;
+        }
+
+
 
         protected List<Matrix> zoom_out = new List<Matrix>();
         private void canvasUltrasound_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -912,7 +931,6 @@ namespace EDITgui
             //applicationGrid.IsEnabled = false;
             context.getMainWindow().Panel2D.IsEnabled = false;
             Wait.Visibility = Visibility.Visible;
-            context.getMainWindow().studyUpdated = false;
         }
 
         public void stopSpinner()
@@ -921,6 +939,7 @@ namespace EDITgui
             //applicationGrid.IsEnabled = true;
             context.getMainWindow().Panel2D.IsEnabled = true;
             Wait.Visibility = Visibility.Hidden;
+            context.getSaveActions().dataUpdatedWithoutSave();
         }
 
         public void doCorrection(bool update = true, bool updatePhotoAcoustic = true)
@@ -939,6 +958,7 @@ namespace EDITgui
             metrics_label.Visibility = Visibility.Hidden;
             if (selectedObjectHasPoints()) context.getUltrasoundPoints2D().getSelectedObject2D().points.Clear();
             updateCanvas();
+            context.getPhotoAcousticPart().updateCanvas();
         }
 
         public void doFillPoints()
