@@ -152,6 +152,16 @@
     <Compile Include="Comparator3D\metricsItem.xaml.cs">
       <DependentUpon>metricsItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TumorGroups\manageTumorGroups.cs" />
+    <Compile Include="TumorGroups\TumorGroupItem.xaml.cs">
+      <DependentUpon>TumorGroupItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TumorGroups\TumorGroupsWindow.xaml.cs">
+      <DependentUpon>TumorGroupsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="mainUIComponents\managePhotoacousticImaging.xaml.cs">
+      <DependentUpon>managePhotoacousticImaging.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIControls\MultipleStateButton.xaml.cs">
       <DependentUpon>MultipleStateButton.xaml</DependentUpon>
     </Compile>
@@ -178,11 +188,11 @@
     </Compile>
     <Compile Include="mainUIComponents\Context.cs" />
     <Compile Include="manage2DPoints\ImageSequence.cs" />
-    <Compile Include="mainUIComponents\manage2DPhotoAcoustic.xaml.cs">
-      <DependentUpon>manage2DPhotoAcoustic.xaml</DependentUpon>
+    <Compile Include="mainUIComponents\photoAcousticDataParser.xaml.cs">
+      <DependentUpon>photoAcousticDataParser.xaml</DependentUpon>
     </Compile>
     <Compile Include="manage2DPoints\Frame.cs" />
-    <Compile Include="UIControls\tumorCheckbox.xaml.cs">
+    <Compile Include="TumorGroups\tumorCheckbox.xaml.cs">
       <DependentUpon>tumorCheckbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustMessageBox\CustomMessageBox.cs" />
@@ -192,8 +202,8 @@
     <Compile Include="mainUIComponents\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
-    <Compile Include="mainUIComponents\manage2DUltrasound.xaml.cs">
-      <DependentUpon>manage2DUltrasound.xaml</DependentUpon>
+    <Compile Include="mainUIComponents\ultrasoundDataParser.xaml.cs">
+      <DependentUpon>ultrasoundDataParser.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIControls\twoStatesButton.xaml.cs">
       <DependentUpon>twoStatesButton.xaml</DependentUpon>
@@ -232,6 +242,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="TumorGroups\TumorGroupItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TumorGroups\TumorGroupsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="mainUIComponents\managePhotoacousticImaging.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIControls\MultipleStateButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -260,11 +282,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="mainUIComponents\manage2DPhotoAcoustic.xaml">
+    <Page Include="mainUIComponents\photoAcousticDataParser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIControls\tumorCheckbox.xaml">
+    <Page Include="TumorGroups\tumorCheckbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -280,7 +302,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="mainUIComponents\manage2DUltrasound.xaml">
+    <Page Include="mainUIComponents\ultrasoundDataParser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

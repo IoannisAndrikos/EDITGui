@@ -18,7 +18,7 @@ namespace EDITgui
     /// <summary>
     /// Interaction logic for obectsDropdown.xaml
     /// </summary>
-    public partial class manage2DUltrasound : UserControl
+    public partial class photoAcousticDataParser : UserControl
     {
         static double tumorCheckbox_topMargin = 4;
         Thickness itemMargin = new Thickness(5, tumorCheckbox_topMargin, 0, 0);
@@ -42,24 +42,25 @@ namespace EDITgui
 
         private List<double> objectsPanelHeight = new List<double>();
 
-        public manage2DUltrasound()
+
+        public photoAcousticDataParser()
         {
             InitializeComponent();
         }
 
-        public manage2DUltrasound(Context context)
+        public photoAcousticDataParser(Context context)
         {
             InitializeComponent();
             this.Visibility = Visibility.Collapsed;
             this.context = context;
             this.objectsPanel.Visibility = Visibility.Collapsed;
-            manage2DPhotoAcoustic.tumorWasAdded += onAddTumorCheckbox;
-            manage2DPhotoAcoustic.tumorWasRemoved += onRemoveTumorCheckbox;
+            ultrasoundDataParser.tumorWasAdded += onAddTumorCheckbox;
+            ultrasoundDataParser.tumorWasRemoved += onRemoveTumorCheckbox;
         }
 
         public void initializeTumors()
         {
-            setBladderAsSelected();
+            setThicknessAsSelected();
             objectsPanelHeight.Clear();
             checkboxItems.Children.Clear();
             for (int i = 0; i < context.getUltrasoundPart().fileCount; i++)
@@ -72,38 +73,37 @@ namespace EDITgui
 
 
 
-        private void Checkbox_OuterWall_Click(object sender, RoutedEventArgs e)
+        private void Checkbox_Bladder_Click(object sender, RoutedEventArgs e)
         {
-            if(this.checkbox_OuterWall.IsChecked == true)
+            if (this.checkbox_Bladder.IsChecked == true)
             {
-                this.checkbox_Bladder.IsChecked = false;
+                this.checkbox_OuterWall.IsChecked = false;
                 foreach (tumorCheckbox tc in checkboxItems.Children)
                 {
                     tc.check_box.IsChecked = false;
                 }
-                this.checkbox_OuterWall.IsChecked = true;
+                this.checkbox_Bladder.IsChecked = true;
                 this.selectedItem = -1;
                 updateCanvas();
             }
             else
             {
-                this.checkbox_OuterWall.IsChecked = false;
-                setBladderAsSelected();
+                this.checkbox_Bladder.IsChecked = false;
+                setThicknessAsSelected();
                 updateCanvas();
             }
         }
 
-        private void Checkbox_Bladder_Click(object sender, RoutedEventArgs e)
+        private void Checkbox_OuterWall_Click(object sender, RoutedEventArgs e)
         {
-            this.checkbox_OuterWall.IsChecked = false;
+            this.checkbox_Bladder.IsChecked = false;
             foreach (tumorCheckbox tc in checkboxItems.Children)
             {
                 tc.check_box.IsChecked = false;
             }
-            setBladderAsSelected();
+            setThicknessAsSelected();
             updateCanvas();
         }
-
 
         public void setSelectedTumor(int index)
         {
@@ -113,12 +113,12 @@ namespace EDITgui
             updateCanvas();
         }
 
-
-        public void setBladderAsSelected()
+        public void setThicknessAsSelected()
         {
             selectedItem = -2;
-            this.checkbox_Bladder.IsChecked = true;
+            this.checkbox_OuterWall.IsChecked = true;
         }
+
 
         private void OpenButton_Click_1(object sender, RoutedEventArgs e)
         {
@@ -135,11 +135,11 @@ namespace EDITgui
         }
 
         //--------------------EXTERNAL HANDLERS----------------------------
-        public void updatePanel (int value)
+        public void updatePanel(int value)
         {
             slider_value = value;
 
-            setBladderAsSelected();
+            setThicknessAsSelected();
             objectsPanel.Height = objectsPanelHeight[value];
             checkboxItems.Children.Clear();
             if (context.getImages().getTumorItemsCount() == 0)
@@ -153,7 +153,7 @@ namespace EDITgui
                 for (int i = 0; i < context.getImages().getTumorItemsCount(); i++)
                 {
                     increaseDropdownHeight();
-                    tumorCheckbox checkbox = new tumorCheckbox(this, i, false);
+                    tumorCheckbox checkbox = new tumorCheckbox(this, context, i, false);
                     checkbox.FontSize = 11;
                     checkbox.Margin = itemMargin;
                     checkboxItems.Children.Add(checkbox);
@@ -162,12 +162,53 @@ namespace EDITgui
             }
         }
 
+        public void updateAfterCreatingTumorGroup()
+        {
+            resetAllTumorCheckboxes();
+            context.getUltrasoundData().resetAllTumorCheckbox();
+            context.getPhotoAcousticPart().updateCanvas();
+            context.getUltrasoundData().updateCanvas();
+            context.getSaveActions().dataUpdatedWithoutSave();
+        }
+
+
+        public void resetAllTumorCheckboxes()
+        {
+            foreach (tumorCheckbox tumorCheckbox in checkboxItems.Children)
+            {
+                tumorCheckbox.updateGroupItemsOptions();
+            }
+        }
+
+        public void updateUltrasoundSideAfterSelectingTumorGroup(int tumorIndex, string group)
+        {
+            context.getPhotoAcousticPart().updateCanvas();
+            context.getUltrasoundData().updateAfterSelectingTumorGroup(tumorIndex, group);
+            context.getSaveActions().dataUpdatedWithoutSave();
+        }
+
+
+        public void updateAfterSelectingTumorGroup(int tumorIndex, string group)
+        {
+            int count = 0;
+            foreach (tumorCheckbox tc in checkboxItems.Children)
+            {
+                if (count == tumorIndex)
+                {
+                    var comboBoxItem = tc.groupOptionsDropdown.Items.OfType<ComboBoxItem>().FirstOrDefault(x => x.Content.ToString() == group);
+                    tc.groupOptionsDropdown.SelectedItem = comboBoxItem;
+                }
+                count = count + 1;
+            }
+            context.getPhotoAcousticPart().updateCanvas();
+        }
+
         private void onAddTumorCheckbox(int index)
         {
             if (checkboxItems.Children.Count <= maxItemNumber)
             {
                 increaseDropdownHeight();
-                tumorCheckbox checkbox = new tumorCheckbox(this, index, false);
+                tumorCheckbox checkbox = new tumorCheckbox(this, context, index, false);
                 checkbox.FontSize = 11;
                 checkbox.Margin = itemMargin;
                 checkboxItems.Children.Add(checkbox);
@@ -186,23 +227,24 @@ namespace EDITgui
                 ch.setIndex(i++);
                 if (ch.check_box.IsChecked == true) theRemovedCheckboxIsChecked = false;
             }
-            if (theRemovedCheckboxIsChecked) setBladderAsSelected(); //if it was selected set as selected the bladder
+            if (theRemovedCheckboxIsChecked) setThicknessAsSelected(); //if it was selected set as selected the bladder
 
             if (checkboxItems.Children.Count == 0) doHasNoItems();
             updateCanvas();
+
         }
         //-----------------------------------------------------------
 
         public void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (context.getUltrasoundPart().areTherePoints())
+            if (context.getPhotoAcousticPart().areTherePoints())
             {
                 doHasItems();
                 addItem();
             }
             else
             {
-                CustomMessageBox.Show(context.getMessages().addTumorWithoutBladderAnnotation, context.getMessages().warning, MessageBoxButton.OK);
+                CustomMessageBox.Show(context.getMessages().addTumorWithoutThicknessAnnotation, context.getMessages().warning, MessageBoxButton.OK);
             }
         }
 
@@ -212,7 +254,7 @@ namespace EDITgui
             {
                 increaseDropdownHeight();
                 int index = context.getImages().addTumor();
-                tumorCheckbox checkbox = new tumorCheckbox(this, index);
+                tumorCheckbox checkbox = new tumorCheckbox(this, context, index);
                 checkbox.FontSize = 11;
                 checkbox.Margin = itemMargin;
                 checkboxItems.Children.Add(checkbox);
@@ -220,10 +262,9 @@ namespace EDITgui
             }
         }
 
-
         public void removeItem(tumorCheckbox checkbox)
         {
-            if (checkbox.check_box.IsChecked == true) setBladderAsSelected();
+            if (checkbox.check_box.IsChecked == true) setThicknessAsSelected();
             decreaseDropdownHeight();
             context.getImages().removeTumor(checkbox.getIndex());
             checkboxItems.Children.Remove(checkbox);
@@ -239,7 +280,7 @@ namespace EDITgui
 
         private void increaseDropdownHeight()
         {
-            if (checkboxItems.Children.Count >= 1)
+            if (this.checkboxItems.Children.Count >= 1)
             {
                 objectsPanelHeight[slider_value] += checkBoxMinHeight + tumorCheckbox_topMargin;
                 objectsPanel.Height = objectsPanelHeight[slider_value];
@@ -255,6 +296,15 @@ namespace EDITgui
             }
         }
 
+        public void updateCanvas()
+        {
+            if (context.getPhotoAcousticPart().contourSeg == PhotoAcousticPart.ContourSegmentation.CORRECTION)
+            {
+                context.getPhotoAcousticPart().doCorrection();
+            }
+            context.getPhotoAcousticPart().updateCanvas();
+        }
+
         public void doHasItems()
         {
             Thickness addButtonMargin = addButton.Margin;
@@ -265,50 +315,39 @@ namespace EDITgui
 
         public void doHasNoItems()
         {
-           // Thickness addButtonMargin = addButton.Margin;
+            //Thickness addButtonMargin = addButton.Margin;
             //addButtonMargin.Left = leftMarginHasNoItems;
-           // addButton.Margin = addButtonMargin;
+            //addButton.Margin = addButtonMargin;
             //objectsPanel.Visibility = Visibility.Collapsed;
             //openButton.Visibility = Visibility.Collapsed;
             openButton.Content = "\u2B9D";
         }
 
-        public void updateCanvas()
-        {
-            if(context.getUltrasoundPart().contourSeg == UltrasoundPart.ContourSegmentation.CORRECTION)
-            {
-                context.getUltrasoundPart().doCorrection();
-            }
-           
-            context.getUltrasoundPart().updateCanvas();
-        }
 
-
-        //-----------------GETTERS---------------------
-        //---1--GET POINTS AND POLYLINES
         Selected2DObject selectedObject = new Selected2DObject() { points = null, metrics = null, polylineColor = null };
         public Selected2DObject getSelectedObject2D()
         {
             try
             {
-                if(selectedItem == -2)
-                {
-                    selectedObject.points = context.getImages().getBladderPoints();
-                    selectedObject.polylineColor = ViewAspects.cyan;
-                    selectedObject.metrics = getBladderMetricsString();
-                }else if(selectedItem == -1)
+                if (selectedItem == -2)
                 {
                     selectedObject.points = context.getImages().getThicknessPoints();
                     selectedObject.polylineColor = ViewAspects.cyan;
-                    selectedObject.metrics = context.getPhotoAcousticPoints2D().getThicknessMetricsString();
+                    selectedObject.metrics = getThicknessMetricsString();
+                }
+                else if (selectedItem == -1)
+                {
+                    selectedObject.points = context.getImages().getBladderPoints();
+                    selectedObject.polylineColor = ViewAspects.cyan;
+                    selectedObject.metrics = context.getUltrasoundData().getBladderMetricsString();
                 }
                 else
                 {
-                    selectedObject.points = context.getImages().getTumorPoints(selectedItem);
-                    selectedObject.polylineColor = ViewAspects.magenta;
+                    tumorItem tumor = context.getImages().getTumor(selectedItem);
+                    selectedObject.points = tumor.points;
+                    selectedObject.polylineColor = context.getImages().getProperTumorColor(tumor.group);
                     selectedObject.metrics = getTumorMetricsString();
                 }
-
 
                 //if (selectedItem >= 0)
                 //{
@@ -318,22 +357,23 @@ namespace EDITgui
                 //}
                 //else
                 //{
-                //    selectedObject.points = context.getImages().getBladderPoints();
+                //    selectedObject.points = context.getImages().getThicknessPoints();
                 //    selectedObject.polylineColor = ViewAspects.cyan;
-                //    selectedObject.metrics = getBladderMetricsString();
+                //    selectedObject.metrics = getThicknessMetricsString();
                 //}
 
                 return selectedObject;
             }
             catch (Exception ex)
             {
-                setBladderAsSelected();
-                selectedObject.points = context.getImages().getBladderPoints();
+                setThicknessAsSelected();
+                selectedObject.points = context.getImages().getThicknessPoints();
                 selectedObject.polylineColor = ViewAspects.cyan;
-                selectedObject.metrics = getBladderMetricsString();
+                selectedObject.metrics = getThicknessMetricsString();
                 return selectedObject;
             }
         }
+
 
         List<UIElement> polylines = new List<UIElement>();
         List<Point> tempPoints = new List<Point>();
@@ -342,7 +382,7 @@ namespace EDITgui
             polylines.Clear();
             if (selectedItem != -2)
             {
-                tempPoints = context.getImages().getBladderPoints().ToList();
+                tempPoints = context.getImages().getThicknessPoints().ToList();
                 if (tempPoints.Any())
                 {
                     tempPoints.Add(tempPoints[0]);
@@ -361,9 +401,10 @@ namespace EDITgui
                 }
                 tempPoints.Clear();
             }
+
             if (selectedItem != -1)
             {
-                tempPoints = context.getImages().getThicknessPoints().ToList();
+                tempPoints = context.getImages().getBladderPoints().ToList();
                 if (tempPoints.Any())
                 {
                     tempPoints.Add(tempPoints[0]);
@@ -386,7 +427,9 @@ namespace EDITgui
             {
                 if (i != selectedItem)
                 {
-                    tempPoints = context.getImages().getTumorPoints(i).ToList();
+                    tumorItem tempTumor = context.getImages().getTumor(i);
+
+                    tempPoints = tempTumor.points.ToList();
                     if (tempPoints.Any())
                     {
                         tempPoints.Add(tempPoints[0]);
@@ -397,7 +440,8 @@ namespace EDITgui
                             pl.StrokeThickness = 0.5;
                             pl.Points.Add(tempPoints.ElementAt(j));
                             pl.Points.Add(tempPoints.ElementAt(j + 1));
-                            pl.Stroke = ViewAspects.magenta;
+                            pl.Stroke = context.getImages().getProperTumorColor(tempTumor.group);
+                            pl.StrokeStartLineCap = PenLineCap.Round;
                             pl.StrokeStartLineCap = PenLineCap.Round;
                             pl.StrokeEndLineCap = PenLineCap.Round;
                             polylines.Add(pl);
@@ -410,41 +454,57 @@ namespace EDITgui
         }
 
         FrameMetrics metrics;
-        public string getBladderMetricsString()
+        public string getThicknessMetricsString()
         {
-            metrics = context.getImages().getBladderMetrics();
+            metrics = context.getImages().getThicknessMetrics();
+
             if (metrics.area == 0) return "";
 
-            return context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
+            string metricsString;
+
+
+            metricsString = context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
+
+            if (metrics.meanThickness>0 && context.getMainWindow().currentMode == MainWindow.Mode.AUTO)
+            {
+                metricsString += Environment.NewLine + context.getMessages().meanThickness + " = " + string.Format("{0:0.00}", metrics.meanThickness) + " " + context.getMessages().mm;
+            }
+            return metricsString;
         }
 
         private string getTumorMetricsString()
         {
             metrics = context.getImages().getTumorMetrics(selectedItem);
+
             if (metrics.area == 0) return "";
+
             return context.getMessages().perimeter + " = " + string.Format("{0:0.00}", metrics.perimeter) + " " + context.getMessages().mm + Environment.NewLine +
                                                          context.getMessages().area + " = " + string.Format("{0:0.00}", metrics.area) + " " + context.getMessages().mmB2;
         }
-
 
 
         public void updateSelectedObjectMetrics()
         {
             if (selectedItem == -2)
             {
-                context.getImages().recalculateBladderMetrics();
-            }
-            else if(selectedItem == -1)
-            {
                 context.getImages().recalculateThicknessMetrics();
+            }
+            else if (selectedItem == -1)
+            {
+                context.getImages().recalculateBladderMetrics();
             }
             else
             {
                 context.getImages().recalculateTumorMetrics(selectedItem);
             }
         }
-
-        
     }
+    public class Selected2DObject
+    {
+        public List<Point> points { set; get; }
+        public string metrics { set; get; }
+        public SolidColorBrush polylineColor { set; get; }
+    }
+
 }

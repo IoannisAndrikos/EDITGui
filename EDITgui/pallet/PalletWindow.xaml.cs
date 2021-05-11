@@ -19,11 +19,12 @@ namespace EDITgui
     /// </summary>
     public partial class PalletWindow : Window
     {
-        public enum selectionItem { bladder, outewall, tumor, layer, OXY, DeOXY, none}
+        public enum selectionItem {bladder_3D, outewall_3D, tumor_3D, layer_3D, OXY_3D, DeOXY_3D, GNR_3D, none}
 
         Pallet pallet;
 
         public selectionItem selected = selectionItem.none;
+  
         List<Object3DViewAspects> currentView;
         List<Object3DViewAspects> newView;
 
@@ -70,18 +71,21 @@ namespace EDITgui
         {
             switch (selected)
             {
-                case selectionItem.bladder:
+                //3D
+                case selectionItem.bladder_3D:
                     return Messages.bladderGeometry;
-                case selectionItem.outewall:
+                case selectionItem.outewall_3D:
                     return Messages.outerWallGeometry;
-                case selectionItem.tumor:
+                case selectionItem.tumor_3D:
                     return Messages.tumorGeometry;
-                case selectionItem.layer:
+                case selectionItem.layer_3D:
                     return Messages.layerGeometry;
-                case selectionItem.OXY:
+                case selectionItem.OXY_3D:
                     return Messages.oxyGeometry;
-                case selectionItem.DeOXY:
+                case selectionItem.DeOXY_3D:
                     return Messages.deoxyGeometry;
+                case selectionItem.GNR_3D:
+                    return Messages.GNRGeometry;
                 default:
                     return null;
             }
@@ -94,41 +98,39 @@ namespace EDITgui
         }
 
 
-        private void CheckBox_Bladder_Click(object sender, RoutedEventArgs e)
+        private void setInitialBladderClicked()
         {
-            updateOnSelectCheckbox();
-            this.checkBox_Bladder.IsChecked = true;
-            selected = selectionItem.bladder;
-            unselectRestItems(this.checkBox_Bladder);
-            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
+            this.checkBox_Bladder_3D.IsChecked = true;
+            selected = selectionItem.bladder_3D;
+            unselectRest3DItems(this.checkBox_Bladder_3D);
+            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName ==getSelectedStringName()).opacity);
 
         }
 
-
-        private void setInitialBladderClicked()
+        private void CheckBox_Bladder_Click(object sender, RoutedEventArgs e)
         {
-            this.checkBox_Bladder.IsChecked = true;
-            selected = selectionItem.bladder;
-            unselectRestItems(this.checkBox_Bladder);
-            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName ==getSelectedStringName()).opacity);
-
+            updateOnSelectCheckbox();
+            this.checkBox_Bladder_3D.IsChecked = true;
+            selected = selectionItem.bladder_3D;
+            unselectRest3DItems(this.checkBox_Bladder_3D);
+            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
         }
 
         private void CheckBox_OuterWall_Click(object sender, RoutedEventArgs e)
         {
             updateOnSelectCheckbox();
-            this.checkBox_OuterWall.IsChecked = true;
-            selected = selectionItem.outewall;
-            unselectRestItems(this.checkBox_OuterWall);
+            this.checkBox_OuterWall_3D.IsChecked = true;
+            selected = selectionItem.outewall_3D;
+            unselectRest3DItems(this.checkBox_OuterWall_3D);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
         }
 
         private void CheckBox_Tumor_Click(object sender, RoutedEventArgs e)
         {
             updateOnSelectCheckbox();
-            this.checkBox_Tumor.IsChecked = true;
-            selected = selectionItem.tumor;
-            unselectRestItems(this.checkBox_Tumor);
+            this.checkBox_Tumor_3D.IsChecked = true;
+            selected = selectionItem.tumor_3D;
+            unselectRest3DItems(this.checkBox_Tumor_3D);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
 
         }
@@ -136,34 +138,55 @@ namespace EDITgui
         private void CheckBox_Layer_Click(object sender, RoutedEventArgs e)
         {
             updateOnSelectCheckbox();
-            this.checkBox_Layer.IsChecked = true;
-            selected = selectionItem.layer;
-            unselectRestItems(this.checkBox_Layer);
+            this.checkBox_Layer_3D.IsChecked = true;
+            selected = selectionItem.layer_3D;
+            unselectRest3DItems(this.checkBox_Layer_3D);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
         }
 
         private void CheckBox_OXY_Click(object sender, RoutedEventArgs e)
         {
             updateOnSelectCheckbox();
-            this.checkBox_OXY.IsChecked = true;
-            selected = selectionItem.OXY;
-            unselectRestItems(this.checkBox_OXY);
+            this.checkBox_OXY_3D.IsChecked = true;
+            selected = selectionItem.OXY_3D;
+            unselectRest3DItems(this.checkBox_OXY_3D);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
         }
 
         private void CheckBox_DeOXY_Click(object sender, RoutedEventArgs e)
         {
             updateOnSelectCheckbox();
-            this.checkBox_DeOXY.IsChecked = true;
-            selected = selectionItem.DeOXY;
-            unselectRestItems(this.checkBox_DeOXY);
+            this.checkBox_DeOXY_3D.IsChecked = true;
+            selected = selectionItem.DeOXY_3D;
+            unselectRest3DItems(this.checkBox_DeOXY_3D);
+            setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
+        }
+
+        private void CheckBox_GNR(object sender, RoutedEventArgs e)
+        {
+            updateOnSelectCheckbox();
+            this.checkBox_GNR_3D.IsChecked = true;
+            selected = selectionItem.GNR_3D;
+            unselectRest3DItems(this.checkBox_GNR_3D);
             setCurrentSliderValuesFileds(newView.Find(x => x.objectName == getSelectedStringName()).colors, newView.Find(x => x.objectName == getSelectedStringName()).opacity);
         }
 
 
-        public void unselectRestItems(CheckBox checkedItem)
+        public void unselectRest3DItems(CheckBox checkedItem)
         {
-            foreach (CheckBox ch in checkBoxItems.Children)
+            foreach (CheckBox ch in options.Children)
+            {
+                if (ch.Content != checkedItem.Content)
+                {
+                    ch.IsChecked = false;
+                }
+
+            }
+        }
+
+        public void unselectRest2DItems(CheckBox checkedItem)
+        {
+            foreach (CheckBox ch in options.Children)
             {
                 if (ch.Content != checkedItem.Content)
                 {
@@ -212,5 +235,6 @@ namespace EDITgui
         {
             pallet.onPalletWindowClosing();
         }
+
     }
 }

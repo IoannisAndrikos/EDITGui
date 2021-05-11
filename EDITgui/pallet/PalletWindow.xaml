@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EDITgui"
         mc:Ignorable="d"
-        Title="Pallet" Height="315.633" Width="342.467" Background="#FF1C1F1F" Margin="0" Closing="Window_Closing">
+        Title="Pallet" Height="332.833" Width="342.467" Background="#FF1C1F1F" Margin="0" Closing="Window_Closing">
     <Window.Resources>
 
         <Style x:Key="FocusVisual">
@@ -373,19 +373,20 @@
 
     </Window.Resources>
     <Grid Background="#FF1C1F1F" Margin="0">
-        <StackPanel Height="257.433" Margin="0" Width="284" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel x:Name="palletpanel" Height="261.633" Margin="26.034,0,26.033,0" Width="284" HorizontalAlignment="Center" VerticalAlignment="Top">
             <Rectangle x:Name="rec" Height="40" Margin="0,10,0,0" OpacityMask="#FF000002" Fill="White"/>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <StackPanel x:Name="checkBoxItems" Margin="0,5,0,0" Width="106.567">
-                    <CheckBox x:Name="checkBox_Bladder" Content="Bladder" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,9,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Bladder_Click"/>
-                    <CheckBox x:Name="checkBox_OuterWall" Content="OuterWall" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_OuterWall_Click"/>
-                    <CheckBox x:Name="checkBox_Tumor" Content="Tumor" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Tumor_Click"/>
-                    <CheckBox x:Name="checkBox_Layer" Content="Layer" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Layer_Click"/>
-                    <CheckBox x:Name="checkBox_OXY" Content="OXY" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_OXY_Click"/>
-                    <CheckBox x:Name="checkBox_DeOXY" Content="DeOXY" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_DeOXY_Click"/>
+                <StackPanel x:Name="options" Margin="0,5,0,0" Width="106.567">
+                    <CheckBox x:Name="checkBox_Bladder_3D" Content="Bladder" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,9,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Bladder_Click"/>
+                    <CheckBox x:Name="checkBox_OuterWall_3D" Content="OuterWall" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_OuterWall_Click"/>
+                    <CheckBox x:Name="checkBox_Tumor_3D" Content="Tumor" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Tumor_Click"/>
+                    <CheckBox x:Name="checkBox_Layer_3D" Content="Layer" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_Layer_Click"/>
+                    <CheckBox x:Name="checkBox_OXY_3D" Content="OXY" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_OXY_Click"/>
+                    <CheckBox x:Name="checkBox_DeOXY_3D" Content="DeOXY" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_DeOXY_Click"/>
+                    <CheckBox x:Name="checkBox_GNR_3D" Content="GNRs" Height="16.833" BorderBrush="#FF335B5B" Background="#FF333333" Foreground="#FFFDFBFB" Margin="10,10,0,0" FontSize="11" Style="{DynamicResource CheckBoxStyle1}" Click="CheckBox_GNR"/>
                 </StackPanel>
                 <StackPanel x:Name="sliders" Margin="0,10,0,0" Width="167.467">
-                    <Grid Height="31.6" Margin="0">
+                    <Grid Height="31.6" Margin="0,21,0,0">
                         <Slider x:Name="red_slider" Orientation="Horizontal" Margin="50,0,0,0" Style="{DynamicResource SliderStyle1}" VerticalAlignment="Center" ValueChanged="Red_slider_ValueChanged" Maximum="255"/>
                         <Label x:Name="red_label" Content="Red:" Margin="2,0,0,5" Style="{DynamicResource SimpleLabel}" HorizontalAlignment="Left" Width="45" Height="15" Foreground="White"/>
                     </Grid>
@@ -404,15 +405,15 @@
                 </StackPanel>
 
             </StackPanel>
-            <Grid Height="37.6" Margin="0">
-                <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="70.4" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_OK_Click">
-                    <Label x:Name="Label_Ok" Padding="0" Margin="0" Foreground="White" Content="_OK"/>
-                </Button>
-                <Button x:Name="Button_Apply" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="71.2" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Apply_Click">
-                    <Label x:Name="Label_Ok1" Padding="0" Margin="0" Foreground="White" Content="_Apply"/>
-                </Button>
-            </Grid>
         </StackPanel>
+        <Grid Margin="47.2,0,9,11" VerticalAlignment="Bottom">
+            <Button x:Name="Button_OK" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="70.4" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_OK_Click">
+                <Label x:Name="Label_Ok" Padding="0" Margin="0" Foreground="White" Content="_OK"/>
+            </Button>
+            <Button x:Name="Button_Apply" MinWidth="88" MaxWidth="160" Margin="0,0,0,3" Background="#FF333333" BorderBrush="#FF335B5B" Foreground="#FF335B5B" Width="71.2" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Apply_Click">
+                <Label x:Name="Label_Ok1" Padding="0" Margin="0" Foreground="White" Content="_Apply"/>
+            </Button>
+        </Grid>
 
     </Grid>
 </Window>

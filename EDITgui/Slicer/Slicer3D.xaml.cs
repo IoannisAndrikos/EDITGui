@@ -32,6 +32,7 @@ namespace EDITgui
        public SlicerImageItem ultrasoundItem;
        public  SlicerImageItem OXYItem;
        public SlicerImageItem DeOXYItem;
+        public SlicerImageItem GNRItem; 
 
         int startingFrame;
         int endingFrame;
@@ -39,7 +40,8 @@ namespace EDITgui
 
         string ultrasoundImagesDir;
         string OXYImagesDir;
-        string DeOXYmagesDir;
+        string DeOXYImagesDir;
+        string GNRImagesDir;
 
         public Slicer3D()
         {
@@ -57,13 +59,20 @@ namespace EDITgui
         {
             this.ultrasoundImagesDir = null;
             this.OXYImagesDir = null;
-            this.DeOXYmagesDir = null;
+            this.DeOXYImagesDir = null;
+            this.GNRImagesDir = null;
 
             this.ultrasoundItem = null;
-            this.ultrasoundItem = null;
-            this.ultrasoundItem = null;
+            this.OXYItem = null;
+            this.DeOXYItem = null;
+            this.GNRItem = null;
+
             this.imageIsOverlayed = false;
-            imagePanel.Children.Clear();
+            //imagePanel.Children.Clear();
+            ultrasound_imagePanel.Children.Clear();
+            OXY_imagePanel.Children.Clear();
+            DeOXY_imagePanel.Children.Clear();
+            GNR_imagePanel.Children.Clear();
 
             HideSlicer.Visibility = Visibility.Collapsed;
             dataPanel.Visibility = Visibility.Collapsed;
@@ -87,8 +96,14 @@ namespace EDITgui
 
         public void setDeOXYImagesDir(string dir)
         {
-            this.DeOXYmagesDir = dir;
+            this.DeOXYImagesDir = dir;
         }
+
+        public void setGNRImagesDir(string dir)
+        {
+            this.GNRImagesDir = dir;
+        }
+
 
         private void updateFrameIndex(int index)
         {
@@ -107,7 +122,11 @@ namespace EDITgui
                 return;
             }
 
-            imagePanel.Children.Clear();
+            //imagePanel.Children.Clear();
+            ultrasound_imagePanel.Children.Clear();
+            OXY_imagePanel.Children.Clear();
+            DeOXY_imagePanel.Children.Clear();
+            GNR_imagePanel.Children.Clear();
             if (context.getUltrasoundPart().imagesDir != null)
             {
                 addUltrasound();
@@ -120,7 +139,7 @@ namespace EDITgui
                 bladder_label.Visibility = Visibility.Collapsed;
             }
 
-            if (context.getPhotoAcousticPart().OXYimagesDir != null)
+            if (context.getPhotoAcousticPart().photoacousticImaging.OXY_ImagesDir != null)
             {
                 addOXY();
                 photoaccoutic_metrics_label.Visibility = Visibility.Visible;
@@ -133,7 +152,10 @@ namespace EDITgui
             }
                
            
-            if (context.getPhotoAcousticPart().deOXYimagesDir != null) addDeOXY();
+            if (context.getPhotoAcousticPart().photoacousticImaging.DeOXY_ImagesDir != null) addDeOXY();
+            if (context.getPhotoAcousticPart().photoacousticImaging.GNR_ImagesDir != null) addGNR();
+
+
 
             HideSlicer.Visibility = Visibility.Visible;
             dataPanel.Visibility = Visibility.Visible;
@@ -172,8 +194,9 @@ namespace EDITgui
             this.startingFrame = context.getUltrasoundPart().startingFrame;
             this.endingFrame = context.getUltrasoundPart().endingFrame;
             setUltrasoundImagesDir(context.getUltrasoundPart().imagesDir);
-            setOXYImagesDir(context.getPhotoAcousticPart().OXYimagesDir);
-            setDeOXYImagesDir(context.getPhotoAcousticPart().deOXYimagesDir);
+            setOXYImagesDir(context.getPhotoAcousticPart().photoacousticImaging.OXY_ImagesDir);
+            setDeOXYImagesDir(context.getPhotoAcousticPart().photoacousticImaging.DeOXY_ImagesDir);
+            setGNRImagesDir(context.getPhotoAcousticPart().photoacousticImaging.GNR_ImagesDir);
         }
 
         public void addUltrasound()
@@ -181,9 +204,12 @@ namespace EDITgui
             ultrasoundItem = new SlicerImageItem(this, ultrasoundImagesDir, width, height);
             ultrasoundItem.HorizontalAlignment = HorizontalAlignment.Left;
             ultrasoundItem.VerticalAlignment = VerticalAlignment.Top;
-            ultrasoundItem.HorizontalAlignment = HorizontalAlignment.Left;
+            //ultrasoundItem.HorizontalAlignment = HorizontalAlignment.Left;
+            ultrasoundItem.HorizontalAlignment = HorizontalAlignment.Center;
             ultrasoundItem.VerticalAlignment = VerticalAlignment.Center;
-            imagePanel.Children.Add(ultrasoundItem);
+
+            //imagePanel.Children.Add(ultrasoundItem);
+            ultrasound_imagePanel.Children.Add(ultrasoundItem);
         }
 
         public void addOXY()
@@ -193,17 +219,32 @@ namespace EDITgui
             OXYItem.VerticalAlignment = VerticalAlignment.Top;
             OXYItem.HorizontalAlignment = HorizontalAlignment.Center;
             OXYItem.VerticalAlignment = VerticalAlignment.Center;
-            imagePanel.Children.Add(OXYItem);
+            //imagePanel.Children.Add(OXYItem);
+            OXY_imagePanel.Children.Add(OXYItem);
         }
 
         public void addDeOXY()
         {
-            DeOXYItem = new SlicerImageItem(this, DeOXYmagesDir, width, height);
+            DeOXYItem = new SlicerImageItem(this, DeOXYImagesDir, width, height);
             DeOXYItem.HorizontalAlignment = HorizontalAlignment.Left;
             DeOXYItem.VerticalAlignment = VerticalAlignment.Top;
-            DeOXYItem.HorizontalAlignment = HorizontalAlignment.Right;
+            //DeOXYItem.HorizontalAlignment = HorizontalAlignment.Right;
+            DeOXYItem.HorizontalAlignment = HorizontalAlignment.Center;
             DeOXYItem.VerticalAlignment = VerticalAlignment.Center;
-            imagePanel.Children.Add(DeOXYItem);
+            //imagePanel.Children.Add(DeOXYItem);
+            DeOXY_imagePanel.Children.Add(DeOXYItem);
+        }
+
+        public void addGNR()
+        {
+            GNRItem = new SlicerImageItem(this, GNRImagesDir, width, height);
+            GNRItem.HorizontalAlignment = HorizontalAlignment.Left;
+            GNRItem.VerticalAlignment = VerticalAlignment.Top;
+            //GNRItem.HorizontalAlignment = HorizontalAlignment.Right;
+            GNRItem.HorizontalAlignment = HorizontalAlignment.Center;
+            GNRItem.VerticalAlignment = VerticalAlignment.Center;
+            //imagePanel.Children.Add(GNRItem);
+            GNR_imagePanel.Children.Add(GNRItem);
         }
 
         public void updateImages(int index)
@@ -215,8 +256,9 @@ namespace EDITgui
                 updateFrameLabel();
                 updateMetricsLabel();
             }
-                if (OXYItem != null) OXYItem.setImage(frameIndex);
+            if (OXYItem != null) OXYItem.setImage(frameIndex);
             if (DeOXYItem != null) DeOXYItem.setImage(frameIndex);
+            if (GNRItem != null) GNRItem.setImage(frameIndex);
         }
 
         private void updateFrameLabel()
@@ -282,6 +324,7 @@ namespace EDITgui
             if (ultrasoundItem != null) ultrasoundItem.setNonSelected();
             if (OXYItem != null) OXYItem.setNonSelected();
             if (DeOXYItem != null) DeOXYItem.setNonSelected();
+            if (GNRItem != null) GNRItem.setNonSelected();
         }
 
         //public Slicer3D(Context context)

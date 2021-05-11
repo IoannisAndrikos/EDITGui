@@ -5,7 +5,16 @@
       <GuideModels>
         <GuideModel>
           <Guides>
-            <Guide Alignment="Top" Position="256" />
+            <Guide Alignment="Top" Position="-264" />
+          </Guides>
+        </GuideModel>
+      </GuideModels>
+    </ProjectItemGuide>
+    <ProjectItemGuide TargetFile="mainUIComponents\photoAcousticDataParser.xaml">
+      <GuideModels>
+        <GuideModel>
+          <Guides>
+            <Guide Alignment="Top" Position="-264" />
           </Guides>
         </GuideModel>
       </GuideModels>

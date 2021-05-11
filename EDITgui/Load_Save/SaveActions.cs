@@ -69,7 +69,7 @@ namespace EDITgui
             writeThicknessData(path);
             writeMetricsToTXT(path, context.getImages().getTotalMeanThickness(), FileType.MeanThickness);
 
-            writeTumorData(path);
+            writeTumorData2(path);
 
             //save geometries
             foreach (Geometry geometry in context.getMainWindow().STLGeometries)
@@ -79,8 +79,8 @@ namespace EDITgui
 
             //save Dicom
             if (context.getUltrasoundPart().ultrasoundDicomFile != null) copyFileToSaveStudyFolder(path, context.getUltrasoundPart().ultrasoundDicomFile, SaveActions.FileType.UltrasoundDicomFile);
-            if (context.getPhotoAcousticPart().OXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().OXYDicomFile, SaveActions.FileType.OXYDicomFile);
-            if (context.getPhotoAcousticPart().DeOXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
+            if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile, SaveActions.FileType.OXYDicomFile);
+            if (context.getPhotoAcousticPart().photoacousticImaging.DeOXYDicomFile != null) copyFileToSaveStudyFolder(path, context.getPhotoAcousticPart().photoacousticImaging.DeOXYDicomFile, SaveActions.FileType.DeOXYDicomFile);
 
             //save logfiles
             copyLogFilesToFolderOfStudy(path, context.getStudyFile().getWorkspace());
@@ -138,7 +138,7 @@ namespace EDITgui
         public void writeTumorData(string path)
         {
             string filePath;
-            List<List<List<Point>>> tumors = context.getImages().getTotalTumorPoints();
+            List<List<List<Point>>> tumors = context.getImages().getAllFramesTumorPoints();
             StreamWriter sw;
             for (int i = 0; i <tumors.Count; i++)
             {
@@ -156,6 +156,41 @@ namespace EDITgui
             }
             tumors.Clear();
         }
+
+
+        public void writeTumorData2(string path)
+        {
+            string filePath;
+            List<List<tumorItem>> tumors = context.getImages().getAllFramesTumor().ToList();
+            StreamWriter sw;
+            for (int i = 0; i < tumors.Count; i++)
+            {
+                filePath = getFolderName(path, SaveActions.FileType.Tumors2D, true) + i.ToString() + ".txt";
+                sw = new StreamWriter(filePath);
+                for (int j = 0; j < tumors[i].Count; j++)
+                {
+                    sw.WriteLine("tumor: " + j.ToString());
+                    if (tumors[i][j].group != null)
+                    {
+                        sw.WriteLine("group: " + tumors[i][j].group.ToString());
+                    }
+                    else
+                    {
+                        sw.WriteLine("group: " + "NoGroup");
+                    }
+                   
+                    List<Point> points = tumors[i][j].points.ToList();
+                    for (int k = 0; k < points.Count; k++)
+                    {
+                        sw.WriteLine(points[k].X + " " + points[k].Y);
+                    }
+                    points.Clear();
+                }
+                sw.Close();
+            }
+            tumors.Clear();
+        }
+
 
 
         public void writeMetricsToTXT(string path, List<double> metrics, FileType type)
@@ -242,13 +277,13 @@ namespace EDITgui
                 sw.WriteLine(messages.frame + ": " +  i.ToString() + " " + 
                      context.getImages().getFrameSettings(i).repeats.ToString() +
                     " " + context.getImages().getFrameSettings(i).smoothing.ToString() +
-                    " " + context.getImages().getFrameSettings(i).lamda1.ToString() + 
-                    " " + context.getImages().getFrameSettings(i).lamda2.ToString() + 
+                    " " + context.getImages().getFrameSettings(i).lamda1.ToString("#.#") + 
+                    " " + context.getImages().getFrameSettings(i).lamda2.ToString("#.#") + 
                     " " + context.getImages().getFrameSettings(i).levelSize.ToString() +
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).filtering)).ToString() +
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).probeArtifactCorrection)).ToString() +
-                    " " + context.getImages().getFrameSettings(i).maxThickness.ToString() +
-                    " " + context.getImages().getFrameSettings(i).minThickness.ToString() + 
+                    " " + context.getImages().getFrameSettings(i).maxThickness.ToString("#.#") +
+                    " " + context.getImages().getFrameSettings(i).minThickness.ToString("#.#") + 
                     " " + (Convert.ToInt32(context.getImages().getFrameSettings(i).majorThicknessExistence)).ToString() 
                     );
             }
@@ -264,13 +299,17 @@ namespace EDITgui
 
             if (context.getUltrasoundPart().userPoints.Count ==2)
             {
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = context.getUltrasoundPart().userPoints[0].X });
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = context.getUltrasoundPart().userPoints[0].Y });
+                studyInfo.Add(new StudySetting() { infoName = settingType.StartingClickPointX, infoValue = context.getUltrasoundPart().userPoints[0].X });
+                studyInfo.Add(new StudySetting() { infoName = settingType.StartingClickPointY, infoValue = context.getUltrasoundPart().userPoints[0].Y });
+                studyInfo.Add(new StudySetting() { infoName = settingType.EndingClickPointX, infoValue = context.getUltrasoundPart().userPoints[1].X });
+                studyInfo.Add(new StudySetting() { infoName = settingType.EndingClickPointY, infoValue = context.getUltrasoundPart().userPoints[1].Y });
             }
             else
             {
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointX, infoValue = 0 });
-                studyInfo.Add(new StudySetting() { infoName = settingType.ClickPointY, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.StartingClickPointX, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.StartingClickPointY, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.EndingClickPointY, infoValue = 0 });
+                studyInfo.Add(new StudySetting() { infoName = settingType.EndingClickPointY, infoValue = 0 });
             }
            
             return studyInfo;

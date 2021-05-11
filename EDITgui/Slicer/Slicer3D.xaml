@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDITgui"
-             mc:Ignorable="d" Width="1186.347" Height="236" BorderBrush="#FF335B5B" Foreground="{x:Null}">
+             mc:Ignorable="d" Width="1792.414" Height="236" BorderBrush="#FF335B5B" Foreground="{x:Null}">
     <UserControl.Resources>
         <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
             <Setter Property="Template">
@@ -166,7 +166,7 @@
         <Button x:Name="HideSlicer" Content="✕" HorizontalAlignment="Right" Height="24.5" Margin="0,5,5,0" Style="{DynamicResource ButtonStyle3}" VerticalAlignment="Top" Width="30" Click="HideSlicer_Click" Visibility="Collapsed"/>
         <Button x:Name="visualizeSlicer" Content="✕" HorizontalAlignment="Right" Height="24.5" Style="{DynamicResource ButtonStyle4}" VerticalAlignment="Top" Width="30" Click="VisualizeSlicer_Click" Margin="0,5,5,0" Visibility="Collapsed"/>
         <Button x:Name="openSlicer_button" Content="Slicer" HorizontalAlignment="Left" Height="26" Margin="5,5,0,0" Style="{DynamicResource ButtonStyle2}" VerticalAlignment="Top" Width="35.933" RenderTransformOrigin="0.174,0.796" Click="OpenSlicer_button_Click"/>
-        <StackPanel x:Name="dataPanel" HorizontalAlignment="Center" Height="217" Margin="50,0,0,0" VerticalAlignment="Center" Width="1129.347" Orientation="Horizontal">
+        <StackPanel x:Name="dataPanel" HorizontalAlignment="Center" Height="217" Margin="0" VerticalAlignment="Center" Width="1430.948" Orientation="Horizontal">
             <StackPanel x:Name="frameData" Margin="0" Width="181.5" Background="Black">
                 <Label x:Name="frame_num_label" Content="" Height="25" Width="71" Foreground="White" Margin="0,10,0,0"/>
                 <Label x:Name="bladder_label" Content="Bladder:" Height="25" Width="71" Foreground="#FF335B5B" Margin="0,15,0,0" HorizontalAlignment="Left"/>
@@ -174,7 +174,15 @@
                 <Label x:Name="thickness_label" Content="Outer Wall:" Height="25" Width="71" Foreground="#FF335B5B" Margin="0" HorizontalAlignment="Left"/>
                 <Label x:Name="photoaccoutic_metrics_label" Content="" Foreground="White" FontFamily="Math" Margin="10,0,0,0" Height="55" Background="{x:Null}"/>
             </StackPanel>
-            <Grid x:Name="imagePanel" Height="216" Margin="0" Width="948.241"/>
+            <Grid x:Name="ultrasound_imagePanel" Height="216" Margin="0,0.5" Width="310"/>
+            <Grid x:Name="OXY_imagePanel" Height="216" Margin="0,0.5" Width="310"/>
+            <Grid x:Name="DeOXY_imagePanel" Height="216" Margin="0,0.5" Width="310">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="0*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid x:Name="GNR_imagePanel" Height="216" Margin="0,0.5" Width="310"/>
         </StackPanel>
     </Grid>
 </UserControl>

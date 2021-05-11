@@ -89,10 +89,10 @@ namespace EDITgui
             context.getPhotoAcousticPart().Margin = new Thickness(777, 0, 0, 0);
             context.getPhotoAcousticPart().Width = 738;
 
-            context.getUltrasoundPoints2D().Margin = new Thickness(5, 97.6, 0, 0);
-            context.getUltrasoundPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
-            context.getUltrasoundPoints2D().VerticalAlignment = VerticalAlignment.Top;
-            context.getUltrasoundPoints2D().Height = 454.4;
+            context.getUltrasoundData().Margin = new Thickness(5, 97.6, 0, 0);
+            context.getUltrasoundData().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getUltrasoundData().VerticalAlignment = VerticalAlignment.Top;
+            context.getUltrasoundData().Height = 454.4;
 
 
             //context.getRegistration().Margin = new Thickness(585, 420.279, 0, 0);
@@ -101,10 +101,10 @@ namespace EDITgui
             //context.getRegistration().Height = 133;
 
 
-            context.getPhotoAcousticPoints2D().Margin = new Thickness(11, 95, 0, 0);
-            context.getPhotoAcousticPoints2D().HorizontalAlignment = HorizontalAlignment.Left;
-            context.getPhotoAcousticPoints2D().VerticalAlignment = VerticalAlignment.Top;
-            context.getPhotoAcousticPoints2D().Height = 454.4;
+            context.getPhotoAcousticData().Margin = new Thickness(11, 95, 0, 0);
+            context.getPhotoAcousticData().HorizontalAlignment = HorizontalAlignment.Left;
+            context.getPhotoAcousticData().VerticalAlignment = VerticalAlignment.Top;
+            context.getPhotoAcousticData().Height = 454.4;
 
             this.Panel2D.Children.Add(context.getUltrasoundPart());
             this.Panel2D.Children.Add(context.getPhotoAcousticPart());
@@ -126,7 +126,7 @@ namespace EDITgui
 
             UltrasoundPart.returnBladderSTL += OnAddAvailableGeometry;
             UltrasoundPart.returnSkinSTL += OnAddAvailableGeometry;
-            PhotoAcousticPart.returnThicknessSTL += OnAddAvailableGeometry;
+            PhotoAcousticPart.returnAvailableGeometry += OnAddAvailableGeometry;
         }
 
         public void OnAddAvailableGeometry(Geometry geometry)
@@ -535,7 +535,6 @@ namespace EDITgui
                     context.getSaveActions().doSave();
                 }
             }
-
         }
 
 

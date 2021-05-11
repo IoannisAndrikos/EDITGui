@@ -100,6 +100,8 @@ namespace EDITgui
 
         public string deoxyDCM = "DeOXY.dcm";
 
+        public string GNRDCM = "GNR.dcm";
+
         public string bladderSTL = "Bladder.stl";
 
         public string thicknessSTL = "Thickness.stl";
@@ -113,6 +115,14 @@ namespace EDITgui
         public string registrationTXT = "Registration.txt";
 
         public string layerSTL = "Layer.stl";
+        //--------------------------------------OBJECTS 2D MESSAGES-------------------------------------------
+        public const string outerwallSegmentation = "outerwall_Segmentation";
+
+        public const string bladderSegmentation = "Bladder_Segmentation";
+
+        public const string tumor1Segmentation = "Tumor1_Segmentation";
+
+        public const string tumor2Segmentation = "Tumor2_Segmentation";
         //--------------------------------------OBJECTS 3D MESSAGES-------------------------------------------
         public const string outerWallGeometry = "Outer Wall";
 
@@ -125,9 +135,16 @@ namespace EDITgui
         public const string oxyGeometry = "OXY";
 
         public const string deoxyGeometry = "DeOXY";
+
+        public const string GNRGeometry = "GNRs";
         //--------------------------------------NOTIFY MESSAGES-----------------------------------------------
 
         public string warning = "Warning";
+
+
+        public const string warningConst = "Warning";
+
+        public string thisTumorgroupAlreadyExists = "This tumor group already exists";
 
         public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost.";
 
@@ -144,7 +161,9 @@ namespace EDITgui
         
         public string loadOXYWithoutUltraasound = "Before loading the OXY image modality you should have loaded the ultrasound image modality";
 
-        public string loadDeOXYWithoutUltraasound = "Before loading the DeOXY image modality you should have loaded the ultrasound image modality";
+        public string loadDeOXYWithoutUltrasound = "Before loading the DeOXY image modality you should have loaded the ultrasound image modality";
+
+        public string loadGNRWithoutUltrasound = "Before loading the GNR image modality you should have loaded the ultrasound image modality";
 
         public string getOverwriteExistingStudyQuestion(string path)
         {

@@ -106,7 +106,7 @@ namespace EDITgui
             InitializeComponent();
             this.context = context;
             PhotoAcousticPart.zoomPhotoAccousticChanged += OnPhotoAccousticZoomChanged;
-            applicationGrid.Children.Add(context.getUltrasoundPoints2D()); //add tumor annotation option here
+            applicationGrid.Children.Add(context.getUltrasoundData()); //add tumor annotation option here
             //applicationGrid.Children.Add(context.getRegistration()); //add tumor annotation option here
             doInsertUserPoints();
         }
@@ -155,7 +155,7 @@ namespace EDITgui
                     slider.TickFrequency = 1;
                     slider.Visibility = Visibility.Visible;
                     switch_auto_manual.Visibility = Visibility.Visible;
-                    context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
+                    context.getUltrasoundData().Visibility = Visibility.Visible;
                    // context.getRegistration().Visibility = Visibility.Visible;
                     calibration_x = image.Source.Width / canvasUltrasound.Width;
                     calibration_y = image.Source.Height / canvasUltrasound.Height;
@@ -167,7 +167,7 @@ namespace EDITgui
                     image.Source = null;
                     switch_auto_manual.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
-                    context.getUltrasoundPoints2D().Visibility = Visibility.Collapsed;
+                    context.getUltrasoundData().Visibility = Visibility.Collapsed;
                   //  context.getRegistration().Visibility = Visibility.Collapsed;
                 }
                 doRepeatProcess();
@@ -196,7 +196,7 @@ namespace EDITgui
             slider.TickFrequency = 1;
             slider.Visibility = Visibility.Visible;
             switch_auto_manual.Visibility = Visibility.Visible;
-            context.getUltrasoundPoints2D().Visibility = Visibility.Visible;
+            context.getUltrasoundData().Visibility = Visibility.Visible;
             //context.getRegistration().Visibility = Visibility.Visible;
             calibration_x = image.Source.Width / canvasUltrasound.Width;
             calibration_y = image.Source.Height / canvasUltrasound.Height;
@@ -208,8 +208,8 @@ namespace EDITgui
             context.getImages().InitiallizeFrames(fileCount);
 
             //initialize both image modality tumors
-            context.getUltrasoundPoints2D().initializeTumors(); 
-            context.getPhotoAcousticPoints2D().initializeTumors();
+            context.getUltrasoundData().initializeTumors(); 
+            context.getPhotoAcousticData().initializeTumors();
         }
 
         public void addRegistrationPoint()
@@ -227,13 +227,19 @@ namespace EDITgui
             }
 
             startSpinner();
-            int repeats = int.Parse(Repeats.Text);
-            int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            int levelsetSize = int.Parse(LevelsetSize.Text);
-            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-            bool fixArtifact = chechBox_ArtifactCorrection.IsChecked.Value;
+
+            AlgorithmSettings sets = new AlgorithmSettings();
+
+            sets.repeats = int.Parse(Repeats.Text);
+            sets.smoothing = int.Parse(Smoothing.Text);
+            sets.lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.levelSize = int.Parse(LevelsetSize.Text);
+            sets.filtering = chechBox_FIltering.IsChecked.Value;
+            sets.probeArtifactCorrection = chechBox_ArtifactCorrection.IsChecked.Value;
+
+            context.getImages().setUltrasoundFrameSettingsOfAllSequence(sets);
+
 
             //the code bellow is to avoid an issue when user marks the starting frame after the ending frame
             if (endingFrame < startingFrame)
@@ -244,7 +250,7 @@ namespace EDITgui
             } 
 
             await Task.Run(() => {
-                bladderCvPoints = context.getCore().Bladder2DExtraction(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, startingFrame, endingFrame, userPoints, fixArtifact);
+                bladderCvPoints = context.getCore().Bladder2DExtraction(sets.repeats, sets.smoothing, sets.lamda1, sets.lamda2, sets.levelSize, sets.filtering, startingFrame, endingFrame, userPoints, sets.probeArtifactCorrection);
                 if (!bladderCvPoints.Any()) return; 
                 context.getImages().fillBladderFromBackEnd(bladderCvPoints, this.startingFrame);
             });
@@ -262,18 +268,19 @@ namespace EDITgui
                 return;
             }
 
-            startSpinner();
-            int repeats = int.Parse(Repeats.Text);
-            int smoothing = int.Parse(Smoothing.Text);
-            double lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            double lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            int levelsetSize = int.Parse(LevelsetSize.Text);
-            bool applyEqualizeHist = chechBox_FIltering.IsChecked.Value;
-            bool fixArtifact = chechBox_ArtifactCorrection.IsChecked.Value;
+            AlgorithmSettings sets = new AlgorithmSettings();
+
+            sets.repeats = int.Parse(Repeats.Text);
+            sets.smoothing = int.Parse(Smoothing.Text);
+            sets.lamda1 = double.Parse(Lamda1.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.lamda2 = double.Parse(Lamda2.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.levelSize = int.Parse(LevelsetSize.Text);
+            sets.filtering = chechBox_FIltering.IsChecked.Value;
+            sets.probeArtifactCorrection = chechBox_ArtifactCorrection.IsChecked.Value;
 
             await Task.Run(() =>
             {
-                contourForFix = context.getCore().recalculateBladderOfContour(repeats, smoothing, lamda1, lamda2, levelsetSize, applyEqualizeHist, slider_value, context.getImages().getUniqueFrameCVPoints(context.getImages().getBladderPoints()), fixArtifact);
+                contourForFix = context.getCore().recalculateBladderOfContour(sets.repeats, sets.smoothing, sets.lamda1, sets.lamda2, sets.levelSize, sets.filtering, slider_value, context.getImages().getUniqueFrameCVPoints(context.getImages().getBladderPoints()), sets.probeArtifactCorrection);
                 if (!contourForFix.Any()) return;
                 context.getImages().fillUniqueFrameBladderFromBackEnd(contourForFix);
             });
@@ -375,8 +382,8 @@ namespace EDITgui
                 }
 
                 context.getPhotoAcousticPart().sliderValueChanged(slider_value); //here we pass slider_value to Photoaccoustic part
-                context.getUltrasoundPoints2D().updatePanel(slider_value);
-                context.getPhotoAcousticPoints2D().updatePanel(slider_value);
+                context.getUltrasoundData().updatePanel(slider_value);
+                context.getPhotoAcousticData().updatePanel(slider_value);
 
                 updateFrameAlgorithmSetting();
                 updateCanvas();
@@ -479,7 +486,7 @@ namespace EDITgui
 
         private void drawPolylineOfRest2DObjects()
         {
-            List<UIElement> list = context.getUltrasoundPoints2D().getNoSelectedObject2DPolylines();
+            List<UIElement> list = context.getUltrasoundData().getNoSelectedObject2DPolylines();
             foreach(UIElement pl in list)
             {
                 canvasUltrasound.Children.Add(pl);
@@ -522,43 +529,43 @@ namespace EDITgui
                     else if (contourSeg == ContourSegmentation.FILL_POINTS)
                     {
                         clear_canvas();
-                        if (indexA > context.getUltrasoundPoints2D().getSelectedObject2D().points.Count - 1) indexA = 0;
+                        if (indexA > context.getUltrasoundData().getSelectedObject2D().points.Count - 1) indexA = 0;
 
                         double d1, d2;
                         if (indexA != 0)
                         {
-                            d1 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundPoints2D().getSelectedObject2D().points[indexA - 1].X, 2) + Math.Pow(point.Y - context.getUltrasoundPoints2D().getSelectedObject2D().points[indexA - 1].Y, 2));
+                            d1 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundData().getSelectedObject2D().points[indexA - 1].X, 2) + Math.Pow(point.Y - context.getUltrasoundData().getSelectedObject2D().points[indexA - 1].Y, 2));
                         }
                         else
                         {
-                            int num = context.getUltrasoundPoints2D().getSelectedObject2D().points.Count - 1;
-                            d1 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundPoints2D().getSelectedObject2D().points[num].X, 2) + Math.Pow(point.Y - context.getUltrasoundPoints2D().getSelectedObject2D().points[num].Y, 2));
+                            int num = context.getUltrasoundData().getSelectedObject2D().points.Count - 1;
+                            d1 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundData().getSelectedObject2D().points[num].X, 2) + Math.Pow(point.Y - context.getUltrasoundData().getSelectedObject2D().points[num].Y, 2));
                         }
-                        d2 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundPoints2D().getSelectedObject2D().points[indexA].X, 2) + Math.Pow(point.Y - context.getUltrasoundPoints2D().getSelectedObject2D().points[indexA].Y, 2));
+                        d2 = Math.Sqrt(Math.Pow(point.X - context.getUltrasoundData().getSelectedObject2D().points[indexA].X, 2) + Math.Pow(point.Y - context.getUltrasoundData().getSelectedObject2D().points[indexA].Y, 2));
 
                         if (d2 > d1)
                         {
-                            context.getUltrasoundPoints2D().getSelectedObject2D().points.Insert(indexA++, point);
+                            context.getUltrasoundData().getSelectedObject2D().points.Insert(indexA++, point);
                         }
                         else
                         {
-                            context.getUltrasoundPoints2D().getSelectedObject2D().points.Insert(indexA, point);
+                            context.getUltrasoundData().getSelectedObject2D().points.Insert(indexA, point);
                         }
                         display();
                     }
                     else if (contourSeg == ContourSegmentation.MANUAL)
                     {
-                        context.getUltrasoundPoints2D().getSelectedObject2D().points.Add(point);
+                        context.getUltrasoundData().getSelectedObject2D().points.Add(point);
                         updateCanvas();
                     }
-                    context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                    context.getUltrasoundData().updateSelectedObjectMetrics();
                 }
                 else if (e.ChangedButton == MouseButton.Right && contourSeg == ContourSegmentation.MANUAL)
                 {
-                    if (context.getUltrasoundPoints2D().getSelectedObject2D().points.Any())
+                    if (context.getUltrasoundData().getSelectedObject2D().points.Any())
                     {
-                        context.getUltrasoundPoints2D().getSelectedObject2D().points.RemoveAt(context.getUltrasoundPoints2D().getSelectedObject2D().points.Count - 1);
-                        context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                        context.getUltrasoundData().getSelectedObject2D().points.RemoveAt(context.getUltrasoundData().getSelectedObject2D().points.Count - 1);
+                        context.getUltrasoundData().updateSelectedObjectMetrics();
                         if (contourSeg == ContourSegmentation.MANUAL)
                         {
                             clear_canvas();
@@ -640,9 +647,9 @@ namespace EDITgui
 
                     try
                     {
-                        int j = context.getUltrasoundPoints2D().getSelectedObject2D().points.IndexOf(initialPoisition1);
-                        context.getUltrasoundPoints2D().getSelectedObject2D().points[j] = final_position;
-                        context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                        int j = context.getUltrasoundData().getSelectedObject2D().points.IndexOf(initialPoisition1);
+                        context.getUltrasoundData().getSelectedObject2D().points[j] = final_position;
+                        context.getUltrasoundData().updateSelectedObjectMetrics();
                         context.getPhotoAcousticPart().updateCanvas();
                         //update_centerline();
                     }
@@ -681,12 +688,12 @@ namespace EDITgui
             {
                 List<Point> pointsToRemove = new List<Point>();
                 int count = 0;
-                for (int i = 0; i < context.getUltrasoundPoints2D().getSelectedObject2D().points.Count; i++)
+                for (int i = 0; i < context.getUltrasoundData().getSelectedObject2D().points.Count; i++)
                 {
-                    if (context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
-                        context.getUltrasoundPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getUltrasoundPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                    if (context.getUltrasoundData().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getUltrasoundData().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                        context.getUltrasoundData().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getUltrasoundData().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
                     {
-                        pointsToRemove.Add(context.getUltrasoundPoints2D().getSelectedObject2D().points[i]);
+                        pointsToRemove.Add(context.getUltrasoundData().getSelectedObject2D().points[i]);
                         if (count == 0) indexA = i;
                         count++;
                     }
@@ -694,13 +701,13 @@ namespace EDITgui
                 }
 
                 canvasUltrasound.Children.Remove(rectRemovePoints);
-                if (count == context.getUltrasoundPoints2D().getSelectedObject2D().points.Count)
+                if (count == context.getUltrasoundData().getSelectedObject2D().points.Count)
                 {
                     doManual();
-                    context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                    context.getUltrasoundData().updateSelectedObjectMetrics();
                     return;
                 }
-                context.getUltrasoundPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
+                context.getUltrasoundData().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
                 if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
                 if (pointsToRemove.Any()) context.getSaveActions().dataUpdatedWithoutSave();
                 pointsToRemove.Clear();
@@ -803,7 +810,7 @@ namespace EDITgui
         {
             if(image.Source != null)
             {
-                Selected2DObject selectedObject = context.getUltrasoundPoints2D().getSelectedObject2D();
+                Selected2DObject selectedObject = context.getUltrasoundData().getSelectedObject2D();
                 drawPolylineOfRest2DObjects();
                 draw_polyline(selectedObject);
                 draw_points(selectedObject);
@@ -823,6 +830,18 @@ namespace EDITgui
                     Canvas.SetTop(endingFrameMarker, userPoints[1].Y);
                 }
             }
+        }
+
+        public void eraseImageView()
+        {
+            canvasUltrasound.Children.Clear();
+            ultrasound_studyname_label.Content = "";
+            frame_num_label.Content = "";
+            metrics_label.Content = "";
+            image.Source = null;
+            switch_auto_manual.Visibility = Visibility.Hidden;
+            slider.Visibility = Visibility.Hidden;
+            context.getUltrasoundData().Visibility = Visibility.Collapsed;
         }
 
 
@@ -880,7 +899,7 @@ namespace EDITgui
             Thickness ImageRectangleMargin = image_Rectangle.Margin;
             Thickness ImageBorderMargin = imageborder.Margin;
             Thickness waitMargin = Wait.Margin;
-            Thickness tumorsPanelMargin = context.getUltrasoundPoints2D().Margin;
+            Thickness tumorsPanelMargin = context.getUltrasoundData().Margin;
 
             ImageRectangleMargin.Left = value;
             ImageBorderMargin.Left = value + 1;
@@ -890,7 +909,7 @@ namespace EDITgui
             image_Rectangle.Margin = ImageRectangleMargin;
             imageborder.Margin = ImageBorderMargin;
             Wait.Margin = waitMargin;
-            context.getUltrasoundPoints2D().Margin = tumorsPanelMargin;
+            context.getUltrasoundData().Margin = tumorsPanelMargin;
 
             frame_actions_infos.Width = width;
             ultrasound_Buttons.Width = width;
@@ -906,7 +925,7 @@ namespace EDITgui
         {
             if (this.contourSeg == ContourSegmentation.MANUAL)
             {
-                context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                context.getUltrasoundData().updateSelectedObjectMetrics();
                 doCorrection();
             }
             else if (this.contourSeg == ContourSegmentation.CORRECTION)
@@ -915,7 +934,7 @@ namespace EDITgui
             }
             else if (this.contourSeg == ContourSegmentation.FILL_POINTS)
             {
-                context.getUltrasoundPoints2D().updateSelectedObjectMetrics();
+                context.getUltrasoundData().updateSelectedObjectMetrics();
                 doCorrection();
             }
         }
@@ -956,7 +975,7 @@ namespace EDITgui
            this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
             metrics_label.Visibility = Visibility.Hidden;
-            if (selectedObjectHasPoints()) context.getUltrasoundPoints2D().getSelectedObject2D().points.Clear();
+            if (selectedObjectHasPoints()) context.getUltrasoundData().getSelectedObject2D().points.Clear();
             updateCanvas();
             context.getPhotoAcousticPart().updateCanvas();
         }
@@ -992,7 +1011,7 @@ namespace EDITgui
 
         public bool selectedObjectHasPoints()
         {
-            return (context.getUltrasoundPoints2D().getSelectedObject2D().points.Any());
+            return (context.getUltrasoundData().getSelectedObject2D().points.Any());
         }
 
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace EDITgui
 {
@@ -13,6 +14,7 @@ namespace EDITgui
         int numOfFrames;
 
         List<Frame> frames = new List<Frame>();
+        List<string> tumorGroups = new List<string>();
 
         public ImageSequence(Context context)
         {
@@ -23,11 +25,13 @@ namespace EDITgui
         {
             this.numOfFrames = numOfFrames;
             frames.Clear();
+            tumorGroups.Clear();
             for (int i = 0; i < this.numOfFrames; i++)
             {
                 this.frames.Add(new Frame(i));
             }
         }
+
 
         //---------------------------------- GETTERS ---------------------------------------
         //----------------------------------------------------------------------------------
@@ -51,6 +55,10 @@ namespace EDITgui
             return frames[getSliderValue()].Tumors[index].points;
         }
 
+        public tumorItem getTumor(int index)
+        {
+            return frames[getSliderValue()].Tumors[index];
+        }
 
         public FrameMetrics getBladderMetrics()
         {
@@ -92,8 +100,80 @@ namespace EDITgui
             return frames[index].frameSettings;
         }
 
+        public List<string> getTumorGroups()
+        {
+            return this.tumorGroups;
+        }
+
+        public void removeTumorGroup(string group)
+        {
+            tumorGroups.Remove(group);
+            for(int i = 0; i < frames.Count; i++)
+            {
+                for(int j = 0; j < frames[i].Tumors.Count; j++)
+                {
+                    if (frames[i].Tumors[j].group == group)
+                    {
+                        frames[i].Tumors[j].group = null;
+                    }
+                }
+            }
+        }
+
+        public void addTumorGroup(string group)
+        {
+            tumorGroups.Add(group);
+        }
+
+
+        public SolidColorBrush getProperTumorColor(string group)
+        {
+            int groupIndex = tumorGroups.IndexOf(group);
+
+            switch (groupIndex)
+            {
+                case 0:
+                    return Pallet.magenta;
+                case 1:
+                    return Pallet.yellow;
+                case 2:
+                    return Pallet.orange;
+                case 3:
+                    return Pallet.red;
+                default:
+                    return Pallet.magenta;
+            }
+        }
+
+
         //---------------------------------- SETTERS ---------------------------------------
         //----------------------------------------------------------------------------------
+        public void setUltrasoundFrameSettingsOfAllSequence(AlgorithmSettings newSettings)
+        {
+            foreach (Frame frame in frames)
+            {
+                frame.frameSettings.repeats = newSettings.repeats;
+                frame.frameSettings.smoothing = newSettings.smoothing;
+                frame.frameSettings.lamda1 = newSettings.lamda1;
+                frame.frameSettings.lamda2 = newSettings.lamda2;
+                frame.frameSettings.levelSize = newSettings.levelSize;
+                frame.frameSettings.filtering = newSettings.filtering;
+                frame.frameSettings.probeArtifactCorrection = newSettings.probeArtifactCorrection;
+            }
+
+        }
+
+        public void setPhotoacousticFrameSettingsOfAllSequence(AlgorithmSettings newSettings)
+        {
+            foreach (Frame frame in frames)
+            {
+                frame.frameSettings.minThickness = newSettings.minThickness;
+                frame.frameSettings.maxThickness = newSettings.maxThickness;
+                frame.frameSettings.majorThicknessExistence = newSettings.majorThicknessExistence;
+            }
+        }
+
+     
 
         public void setBladderData(int index, List<Point> points)
         {
@@ -112,15 +192,26 @@ namespace EDITgui
             frames[index].Thickness.meanThickness = meanThickness;
         }
 
-        public void setTumorsData(int index, List<List<Point>> points)
+        public void setTumorsData(int index, List<List<Point>> points, List<string> groups)
         {
             frames[index].Tumors.Clear();
-            for(int i=0; i<points.Count; i++)
+            for (int i=0; i<points.Count; i++)
             {
-                tumorItem item = new tumorItem() { points = points[i], area = context.getMetrics().calulateArea(points[i]), perimeter = context.getMetrics().calulatePerimeter(points[i]) };
+                checkAndUpdateGroupsList(groups[i]);
+                tumorItem item = new tumorItem() { points = points[i], group = groups[i], area = context.getMetrics().calulateArea(points[i]), perimeter = context.getMetrics().calulatePerimeter(points[i]) };
                 frames[index].Tumors.Add(item);
             }
         }
+
+        public void checkAndUpdateGroupsList(string group)
+        {
+            if (group != null && !this.tumorGroups.Contains(group))
+            {
+                Console.WriteLine(group);
+                this.tumorGroups.Add(group);
+            }
+        }
+
 
         //----------------------------------- RECALCULATE METRICS --------------------------------------
         //----------------------------------------------------------------------------------------------
@@ -149,7 +240,7 @@ namespace EDITgui
         public int addTumor()
         {
             int index = frames[getSliderValue()].Tumors.Count;
-            tumorItem item = new tumorItem() { points = new List<Point>(), area = 0, perimeter = 0 };
+            tumorItem item = new tumorItem() { points = new List<Point>(), area = 0,  perimeter = 0 };
             frames[getSliderValue()].Tumors.Add(item);
             return index;
         }
@@ -181,7 +272,7 @@ namespace EDITgui
             return totalPoints;
         }
 
-        public List<List<List<Point>>> getTotalTumorPoints()
+        public List<List<List<Point>>> getAllFramesTumorPoints()
         {
             List<List<List<Point>>> tumors = new List<List<List<Point>>>();
             for (int i = 0; i < frames.Count; i++)
@@ -198,6 +289,23 @@ namespace EDITgui
             }
             return tumors;
         }
+
+
+        public List<List<tumorItem>> getAllFramesTumor()
+        {
+            List<List<tumorItem>> tumors = new List<List<tumorItem>>();
+            for (int i = 0; i < frames.Count; i++)
+            {
+                tumors.Add(new List<tumorItem>());
+                for (int j = 0; j < frames[i].Tumors.Count; j++)
+                {
+                    tumors[i].Add(frames[i].Tumors[j]);
+               
+                }
+            }
+            return tumors;
+        }
+
 
 
         public int getFirtTumorFrame()

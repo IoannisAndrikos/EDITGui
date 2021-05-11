@@ -57,13 +57,13 @@ namespace EDITgui
                     }
                     break;
                 case executionType.extract2DThickness:
-                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
                     }
                     break;
                 case executionType.extract2DTumor:
-                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
                     }
@@ -79,7 +79,7 @@ namespace EDITgui
                     }
                     break;
                 case executionType.recalculateThickness:
-                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
                     }
@@ -89,13 +89,13 @@ namespace EDITgui
                     }
                     break;
                 case executionType.extract3DThickness:
-                    if (context.getPhotoAcousticPart().OXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile == null)
                     {
                         return context.getMessages().noOXYdicom;
                     }
                     break;
                 case executionType.extractOXYDeOXY:
-                    if (context.getPhotoAcousticPart().OXYDicomFile == null || context.getPhotoAcousticPart().DeOXYDicomFile == null)
+                    if (context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile == null || context.getPhotoAcousticPart().photoacousticImaging.DeOXYDicomFile == null)
                     {
                         return context.getMessages().noOXYAndDeOXYImages;
                     }

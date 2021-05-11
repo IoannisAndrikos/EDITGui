@@ -287,6 +287,30 @@ namespace EDITgui
         }
 
 
+        [HandleProcessCorruptedStateExceptions]
+        public string exportGNRImages(string dcmfile, bool enablelogging)
+        {
+            try
+            {
+                editPro.exportGNRImages(dcmfile);
+                if (response.isSuccessful())
+                {
+                    pixelSpacing = response.getNumericData().GetRange(0, 2);
+                    imageSize = response.getNumericData().GetRange(2, 2);
+                    return response.getPath();
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+            }
+            catch (Exception)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return null;
+        }
+
 
         [HandleProcessCorruptedStateExceptions]
         public List<List<EDITCore.CVPoint>> extractThickness(List<List<EDITCore.CVPoint>> bladderCvPoints, double minThickness, double maxThickness, bool bigTumor)
@@ -377,6 +401,29 @@ namespace EDITgui
                     displayFailureMessage(response.getFailure());
                 }
               
+            }
+            catch (Exception e)
+            {
+                displayFailureMessage(context.getMessages().errorOccured);
+            }
+            return null;
+        }
+
+        [HandleProcessCorruptedStateExceptions]
+        public String extractGNRPoints(List<List<EDITCore.CVPoint>> bladderCvPoints, List<List<EDITCore.CVPoint>> thicknessCvPoints, String bladderGeometryPath, String thicknessGeometryPath)
+        {
+            try
+            {
+                editPro.extractGNRPoints(bladderCvPoints, thicknessCvPoints, bladderGeometryPath, thicknessGeometryPath);
+                if (response.isSuccessful())
+                {
+                    return response.getPath();
+                }
+                else
+                {
+                    displayFailureMessage(response.getFailure());
+                }
+
             }
             catch (Exception e)
             {

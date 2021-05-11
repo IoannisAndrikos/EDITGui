@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace EDITgui
 {
@@ -42,14 +43,36 @@ namespace EDITgui
 
     public class tumorItem
     {
+        //public enum tumorType { tumor1, tumor2, tumor3, tumor4 };
+
         public List<Point> points { get; set; }
+        public string group { get; set; }
         public double area { get; set; }
         public double perimeter { get; set; }
+
+        //public SolidColorBrush getProperColor()
+        //{
+        //    switch (group)
+        //    {
+        //        case tumorType.tumor1:
+        //            return ViewAspects.magenta;
+        //        case tumorType.tumor2:
+        //            return ViewAspects.yellow;
+        //        case tumorType.tumor3:
+        //            return ViewAspects.silver;
+        //        case tumorType.tumor4:
+        //            return ViewAspects.magenta;
+        //        default:
+        //            return ViewAspects.magenta;
+        //    }
+        //}
     } 
 
     //this values should be defined into a static file
     public class AlgorithmSettings
     {
+        public AlgorithmSettings() { }
+
         public int repeats = 20;
         public int smoothing = 3;
         public double lamda1 = 1.0;

@@ -47,6 +47,7 @@ namespace EDITgui
 
         public async void loadAvailableData(string path)
         {
+
             List<double> pixelSpacing = new List<double>();
             List<double> imageSize = new List<double>();
             string ultrasoundDicomFile = null;
@@ -102,15 +103,29 @@ namespace EDITgui
                 context.getMetrics().setPixelSpacing(pixelSpacing);
                 context.getUltrasoundPart().AfterLoadUltrasoundDicom(studyName, ultrasoundDicomFile, UltrasoundimagesDir, pixelSpacing, imageSize);
             }
+            else
+            {
+                context.getUltrasoundPart().ultrasoundDicomFile = null;
+                context.getUltrasoundPart().eraseImageView();
+            }
 
             if (OXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                context.getPhotoAcousticPart().AfterLoadOXYDicom(studyName, OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
+                context.getPhotoAcousticPart().photoacousticImaging.LoadOXYDicomOnStudyloading(studyName, OXYDicomFile, OXYImagesDir, pixelSpacing, imageSize);
+            }
+            else
+            {
+                context.getPhotoAcousticPart().photoacousticImaging.OXYDicomFile = null;
+                context.getPhotoAcousticPart().eraseImageView();
             }
 
             if (DeOXYImagesDir != null && pixelSpacing.Any() && imageSize.Any())
             {
-                context.getPhotoAcousticPart().AfterLoadDeOXYDicom(studyName, DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
+                context.getPhotoAcousticPart().photoacousticImaging.LoadDeOXYDicomOnStudyloading(studyName, DeOXYDicomFile, DeOXYImagesDir, pixelSpacing, imageSize);
+            }
+            else
+            {
+                context.getPhotoAcousticPart().photoacousticImaging.DeOXYDicomFile = null;
             }
 
             //The order below plays significant role! Be careful here!
@@ -217,33 +232,71 @@ namespace EDITgui
                 //set settings of study
                 context.getUltrasoundPart().startingFrame = (int)settings[settingType.StartingFrame.ToString()];
                 context.getUltrasoundPart().endingFrame = (int)settings[settingType.EndingFrame.ToString()];
-                Point clickpoint = new Point();
-                clickpoint.X = (double)settings[settingType.ClickPointX.ToString()];
-                clickpoint.Y = (double)settings[settingType.ClickPointY.ToString()];
+                List<Point> clickpoint = new List<Point>();
+
+
+                try
+                {
+                    clickpoint.Add(new Point((double)settings[settingType.StartingClickPointX.ToString()], (double)settings[settingType.StartingClickPointY.ToString()]));
+                }
+                catch (Exception e)
+                {
+                    //old version
+                    clickpoint.Add(new Point((double)settings["ClickPointX"], (double)settings["ClickPointY"]));
+                }
+               
+                try
+                {
+                    clickpoint.Add(new Point((double)settings[settingType.EndingClickPointX.ToString()], (double)settings[settingType.EndingClickPointY.ToString()]));
+                }catch(Exception e)
+                {
+                    //
+                    try
+                    {
+                        clickpoint.Add(new Point((double)settings[settingType.StartingClickPointX.ToString()], (double)settings[settingType.StartingClickPointY.ToString()]));
+                    }
+                    catch (Exception ex)
+                    {
+                        //old version
+                        clickpoint.Add(new Point((double)settings["ClickPointX"], (double)settings["ClickPointY"]));
+                    }
+                }
+
+                //if (context.getUltrasoundPart().startingFrame == -1 || context.getUltrasoundPart().endingFrame == -1)
+                //{
+                //    context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.INSERT_USER_POINTS;
+                //}
+                //else
+                //{
+                //    if (clickpoint[0].X != 0 && clickpoint[0].Y != 0)
+                //    {
+                //        context.getUltrasoundPart().userPoints.Add(clickpoint[0]);
+                //        context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
+                //    }
+
+                //    if (clickpoint[1].X != 0 && clickpoint[1].Y != 0)
+                //    {
+                //        context.getUltrasoundPart().userPoints.Add(clickpoint[1]);
+                //        context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
+                //    }
+
+                //}
+
                 if (context.getUltrasoundPart().startingFrame == -1 || context.getUltrasoundPart().endingFrame == -1)
                 {
                     context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.INSERT_USER_POINTS;
                 }
                 else
                 {
-                    if (clickpoint.X != 0 && clickpoint.Y != 0)
+                    if (clickpoint[0].X != 0 && clickpoint[0].Y != 0 && clickpoint[1].X != 0 && clickpoint[1].Y != 0)
                     {
-                        context.getUltrasoundPart().userPoints.Add(clickpoint);
-                        context.getUltrasoundPart().userPoints.Add(clickpoint);
+                        context.getUltrasoundPart().userPoints.Add(clickpoint[0]);
+                        context.getUltrasoundPart().userPoints.Add(clickpoint[1]);
                         context.getUltrasoundPart().contourSeg = UltrasoundPart.ContourSegmentation.CORRECTION;
                     }
                 }
 
-                //context.getUltrasoundPart().Repeats.Text = ((int)settings[settingType.Repeats.ToString()]).ToString();
-                //context.getUltrasoundPart().Smoothing.Text = ((int)settings[settingType.Smoothing.ToString()]).ToString();
-                //context.getUltrasoundPart().Lamda1.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda1.ToString()]));
-                //context.getUltrasoundPart().Lamda2.Text = string.Format("{0:0.0}", ((double)settings[settingType.Lamda2.ToString()]));
-                //context.getUltrasoundPart().LevelsetSize.Text = ((int)settings[settingType.LevelSize.ToString()]).ToString();
-                //context.getUltrasoundPart().chechBox_FIltering.IsChecked = ToBool((int)settings[settingType.Filtering.ToString()]);
-                //context.getUltrasoundPart().closedSurface.IsChecked = ToBool((int)settings[settingType.ClosedSurface.ToString()]);
-                //context.getCore().fillHoles = context.getUltrasoundPart().closedSurface.IsChecked.Value;
-                //context.getPhotoAcousticPart().minThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.minThickness.ToString()]));
-                //context.getPhotoAcousticPart().maxThickness.Text = string.Format("{0:0.0}", ((double)settings[settingType.maxThickness.ToString()]));
+
             }
             catch (Exception e)
             {
@@ -325,11 +378,17 @@ namespace EDITgui
             string framePointsFile;
             string pointsDir = getFolderName(path, FileType.Tumors2D, false);
             List<List<Point>> points = new List<List<Point>>();
+            List<string> groups = new List<string>();
             if (Directory.Exists(pointsDir))
             {
                 int count = Directory.GetFiles(pointsDir).Length;
                 for (int i = 0; i < count; i++)
                 {
+                    if (i == 101)
+                    {
+                        Console.WriteLine("101");
+                    }
+
                     framePointsFile = pointsDir + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
@@ -343,6 +402,24 @@ namespace EDITgui
                             {
                                 k++;
                                 points.Add(new List<Point>());
+                                groups.Add(null);
+                            }
+                            else if (line.Contains("group"))
+                            {
+                                string[] col = line.Split(' ');
+
+
+                                var firstSpaceIndex = line.IndexOf(" ");
+                                var firstString = line.Substring(0, firstSpaceIndex); // INAGX4
+                                var secondString = line.Substring(firstSpaceIndex + 1); // Agatti Island
+
+
+
+                                if (secondString != "NoGroup")
+                                {
+                                    groups[groups.Count - 1] = secondString;
+                                    //Console.WriteLine(groups[groups.Count - 1]);
+                                }
                             }
                             else
                             {
@@ -353,8 +430,9 @@ namespace EDITgui
                             }
                         }
                         sr.Close();
-                        context.getImages().setTumorsData(i, points);
+                        context.getImages().setTumorsData(i, points, groups);
                         points.Clear();
+                        groups.Clear();
                     }
                 }
             }

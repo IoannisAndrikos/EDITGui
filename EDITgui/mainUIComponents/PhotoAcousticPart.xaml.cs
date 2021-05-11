@@ -42,9 +42,10 @@ namespace EDITgui
 
 
         public delegate void STLThicknessHandler(EDITgui.Geometry geometry);
-        public static event STLThicknessHandler returnThicknessSTL = delegate { };
+        public static event STLThicknessHandler returnAvailableGeometry = delegate { };
 
         Context context;
+        public managePhotoacousticImaging photoacousticImaging;
 
         public enum ContourSegmentation
         {
@@ -53,23 +54,19 @@ namespace EDITgui
             FILL_POINTS
         }
 
-        enum OxyDeOxyState { OXY, DEOXY}
+        public enum OxyDeOxyGNRState { OXY, DEOXY, GNR}
 
         public bool wasThicknessModelExtracted = false;
 
         //-----------for slider----------
-        int slider_value = 0;
-        int fileCount;
-        public string OXYDicomFile = null;
-        public string DeOXYDicomFile = null;
+        public int slider_value = 0;
+        public int fileCount;
         //-------------------------------
 
         //initialization
         public ContourSegmentation contourSeg = ContourSegmentation.CORRECTION;
-        OxyDeOxyState currentOxyDeOxyState = OxyDeOxyState.OXY;
+        public OxyDeOxyGNRState currentOxyDeOxyState = OxyDeOxyGNRState.OXY;
 
-        List<double> pixelSpacing = new List<double>(); //x=pixelSpacing[0] y=pixelSpacing[1]
-        List<double> imageSize = new List<double>();
         double calibration_x;
         double calibration_y;
 
@@ -80,8 +77,6 @@ namespace EDITgui
         List<EDITCore.CVPoint> contourForFix = new List<EDITCore.CVPoint>();
     
         public String thicknessGeometryPath = null;
-        public string OXYimagesDir;
-        public string deOXYimagesDir;
         
         public PhotoAcousticPart()
         {
@@ -94,7 +89,13 @@ namespace EDITgui
         {
             InitializeComponent();
             this.context = context;
-            applicationGrid.Children.Add(context.getPhotoAcousticPoints2D());
+            this.photoacousticImaging = new managePhotoacousticImaging(this.context);
+            photoacousticImaging.Margin = new Thickness(0, 0, 0, 0);
+            photoacousticImaging.HorizontalAlignment = HorizontalAlignment.Left;
+            photoacousticImaging.VerticalAlignment = VerticalAlignment.Top;
+
+            imageModalitiesGrid.Children.Add(photoacousticImaging);
+            applicationGrid.Children.Add(context.getPhotoAcousticData());
             //add tumor annotation option here
             UltrasoundPart.zoomUltrasoundChanged += OnUltrasoundZoomChanged;
             doOXYState();
@@ -107,15 +108,21 @@ namespace EDITgui
             slider_value = value;
             if (slider_value < fileCount)
             {
-                if (currentOxyDeOxyState == OxyDeOxyState.OXY && OXYDicomFile != null )
+                if (currentOxyDeOxyState == OxyDeOxyGNRState.OXY && photoacousticImaging.OXYDicomFile != null )
                 {
-                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + value + ".bmp");
+                    BitmapFromPath(photoacousticImaging.OXY_ImagesDir + Path.DirectorySeparatorChar + value + ".bmp");
+                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
                 }
-                else if (currentOxyDeOxyState == OxyDeOxyState.DEOXY && DeOXYDicomFile != null)
+                else if (currentOxyDeOxyState == OxyDeOxyGNRState.DEOXY && photoacousticImaging.DeOXYDicomFile != null)
                 {
-                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + value + ".bmp");
+                    BitmapFromPath(photoacousticImaging.DeOXY_ImagesDir + Path.DirectorySeparatorChar + value + ".bmp");
+                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
                 }
-                frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
+                else if (currentOxyDeOxyState == OxyDeOxyGNRState.GNR && photoacousticImaging.GNRDicomFile != null)
+                {
+                    BitmapFromPath(photoacousticImaging.GNR_ImagesDir + Path.DirectorySeparatorChar + value + ".bmp");
+                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
+                }
                 //updatePhotoacousticFrameAlgorithmSetting();
                 doCorrection(true, false);
             }
@@ -150,130 +157,7 @@ namespace EDITgui
             updateCanvas();
         }
 
-        private async void LoadΟΧΥDicom_Click(object sender, RoutedEventArgs e)
-        {
-            if (context.getUltrasoundPart().ultrasoundDicomFile == null)
-            {
-                CustomMessageBox.Show(context.getMessages().loadOXYWithoutUltraasound, context.getMessages().warning, MessageBoxButton.OK);
-                return;
-            }
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = context.getMessages().selectDicom;
-            if (openFileDialog.ShowDialog() == true)
-            {
-                startSpinner();
-
-                context.getCore().repeatSegmentation();
-                OXYDicomFile = null;
-
-                await Task.Run(() =>
-                {
-                    string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.OXYDicomFile);
-                    OXYimagesDir = context.getCore().exportOXYImages(dicomPath, true); //enablelogging = true
-                    pixelSpacing = context.getCore().pixelSpacing;
-                    imageSize = context.getCore().imageSize;
-
-                });
-                if (OXYimagesDir != null)
-                {
-                    context.getMetrics().setPixelSpacing(pixelSpacing);
-                    fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
-                    OXYDicomFile = openFileDialog.FileName;
-
-                    makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-                    fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                    BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-                    OXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-                    doRepeatProcess();
-                }
-                doOXYState();
-                stopSpinner();
-            }
-        }
-
-
-        private async void LoadDeOXYDicom_Click(object sender, RoutedEventArgs e)
-        {
-            if (context.getUltrasoundPart().ultrasoundDicomFile == null)
-            {
-                CustomMessageBox.Show(context.getMessages().loadDeOXYWithoutUltraasound, context.getMessages().warning, MessageBoxButton.OK);
-                return;
-            }
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = context.getMessages().selectDicom;
-            if (openFileDialog.ShowDialog() == true)
-            {
-                startSpinner();
-                //clear_canvas();
-                context.getCore().repeatSegmentation();
-                DeOXYDicomFile = null;
-
-                await Task.Run(() =>
-                {
-                    string dicomPath = context.getStudyFile().copyFileToWorkspace(context.getStudyFile().getWorkspaceDicomPath(), openFileDialog.FileName, StudyFile.FileType.DeOXYDicomFile);
-                    deOXYimagesDir = context.getCore().exportDeOXYImages(dicomPath, true); //enablelogging = true
-                    pixelSpacing = context.getCore().pixelSpacing;
-                    imageSize = context.getCore().imageSize;
-                });
-                if (deOXYimagesDir != null)
-                {
-                    context.getMetrics().setPixelSpacing(pixelSpacing);
-                    fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
-                    DeOXYDicomFile = openFileDialog.FileName;
-
-                    makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-                    fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-                    BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
-                    DeOXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-                    // OnrepeatProcess();
-                }
-                doDeOXYState();
-                stopSpinner();
-
-            }
-        }
-
-
-
-        public void AfterLoadOXYDicom(string studyName, string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
-        {
-            this.OXYDicomFile = filename;
-            this.OXYimagesDir = imagesDir;
-            this.pixelSpacing = pixelSpacing;
-            this.imageSize = imageSize;
-            context.getMetrics().setPixelSpacing(pixelSpacing);
-            fitUIAccordingToDicomImageSize(imageSize[1], imageSize[0]);
-            makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-            doOXYState();
-            fileCount = Directory.GetFiles(OXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-            BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
-            OXY_studyname_label.Content = studyName + " " + context.getMessages().oxy;
-            frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-            doRepeatProcess();
-        }
-
-
-        public void AfterLoadDeOXYDicom(string studyName, string filename, string imagesDir, List<double> pixelSpacing, List<double> imageSize)
-        {
-            this.DeOXYDicomFile = filename;
-            this.deOXYimagesDir = imagesDir;
-            this.pixelSpacing = pixelSpacing;
-            this.imageSize = imageSize;
-            context.getMetrics().setPixelSpacing(pixelSpacing);
-            fitUIAccordingToDicomImageSize(this.imageSize[1], this.imageSize[0]);
-            makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-            doDeOXYState();
-            fileCount = Directory.GetFiles(deOXYimagesDir, "*.bmp", SearchOption.AllDirectories).Length;
-            BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp"); //imagesDir + "/0.bmp"
-            DeOXY_studyname_label.Content = studyName + " " + context.getMessages().deoxy;
-            frame_num_label.Content = context.getMessages().frame + ": " + slider_value;
-        }
-
-
+      
         private async void Extract_thikness_Click(object sender, RoutedEventArgs e)
         {
             string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DThickness);
@@ -283,21 +167,28 @@ namespace EDITgui
                 return;
             }
 
-            double minThick = double.Parse(minThickness.Text.Replace(",","."), CultureInfo.InvariantCulture);
-            double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            bool bigTumor = big_tumor.IsChecked.Value;
+            AlgorithmSettings sets = new AlgorithmSettings();
+
+
+           sets.minThickness = double.Parse(minThickness.Text.Replace(",","."), CultureInfo.InvariantCulture);
+           sets.maxThickness = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.majorThicknessExistence = big_tumor.IsChecked.Value;
+
+            context.getImages().setPhotoacousticFrameSettingsOfAllSequence(sets);
+
             List<List<EDITCore.CVPoint>> bladderCVPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
             if (!bladderCVPoints.Any()) return;
 
             startSpinner();
             await Task.Run(() =>
             {
-                thicknessCvPoints = context.getCore().extractThickness(bladderCVPoints, minThick, maxThick, bigTumor);
+                thicknessCvPoints = context.getCore().extractThickness(bladderCVPoints, sets.minThickness, sets.maxThickness, sets.majorThicknessExistence);
                 if (!thicknessCvPoints.Any()) return;
                 context.getImages().fillThicknessFromBackEnd(thicknessCvPoints, context.getCore().meanThickness, context.getUltrasoundPart().startingFrame);
             });
             doCorrection(true, true);
             stopSpinner();
+
         }
 
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
@@ -310,13 +201,16 @@ namespace EDITgui
             }
 
             startSpinner();
-            double minThick = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            double maxThick = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
-            bool bigTumor = big_tumor.IsChecked.Value;
+
+            AlgorithmSettings sets = new AlgorithmSettings();
+
+            sets.minThickness = double.Parse(minThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.maxThickness = double.Parse(maxThickness.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+            sets.majorThicknessExistence = big_tumor.IsChecked.Value;
 
             await Task.Run(() =>
             {
-                contourForFix = context.getCore().recalculateThicknessOfContour(slider_value, context.getImages().getUniqueFrameCVPoints(context.getImages().getBladderPoints()), minThick, maxThick, bigTumor);
+                contourForFix = context.getCore().recalculateThicknessOfContour(slider_value, context.getImages().getUniqueFrameCVPoints(context.getImages().getBladderPoints()), sets.minThickness, sets.maxThickness, sets.majorThicknessExistence);
                 if (!contourForFix.Any()) return;
                 context.getImages().fillUniqueFrameThicknessFromBackEnd(contourForFix, context.getCore().uniqueContourMeanThickness);
             });
@@ -343,7 +237,7 @@ namespace EDITgui
             EDITgui.Geometry thicknessGeometry = new Geometry() { geometryName = Messages.outerWallGeometry, Path = thicknessGeometryPath, actor = null };
             if (thicknessGeometryPath != null)
             {
-                returnThicknessSTL(thicknessGeometry);
+                returnAvailableGeometry(thicknessGeometry);
                 wasThicknessModelExtracted = true;
             }
             stopSpinner();
@@ -372,14 +266,44 @@ namespace EDITgui
             EDITgui.Geometry DeOXYGeometry = new Geometry() { geometryName = Messages.deoxyGeometry, Path = txtPaths[1], actor = null };
             if (txtPaths.Any())
             {
-                returnThicknessSTL(OXYGeometry);
-                returnThicknessSTL(DeOXYGeometry);
+                returnAvailableGeometry(OXYGeometry);
+                returnAvailableGeometry(DeOXYGeometry);
             }
             stopSpinner();
         }
 
 
-        private async void Extract_Tumor_Click(object sender, RoutedEventArgs e)
+        private async void Extract_GNR_Click(object sender, RoutedEventArgs e)
+        {
+            string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extractOXYDeOXY);
+            if (message != null)
+            {
+                CustomMessageBox.Show(message, context.getMessages().warning, MessageBoxButton.OK);
+                return;
+            }
+
+            thicknessCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalThicknessPoints());
+            bladderCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalBladderPoints());
+            if (!thicknessCvPoints.Any() || !bladderCvPoints.Any()) return;
+
+            startSpinner();
+            string path = null;
+            await Task.Run(() => {
+                path = context.getCore().extractGNRPoints(bladderCvPoints, thicknessCvPoints, context.getUltrasoundPart().bladderGeometryPath, thicknessGeometryPath);
+            });
+
+            EDITgui.Geometry GNRGeometry = new Geometry() { geometryName = Messages.GNRGeometry, Path = path, actor = null };
+            if (path!=null)
+            {
+                returnAvailableGeometry(GNRGeometry);
+                
+            }
+            stopSpinner();
+
+        }
+
+        //async
+        private void Extract_Tumor_Click(object sender, RoutedEventArgs e)
         {
             //string message = context.getCheck().getMessage(checkBeforeExecute.executionType.extract2DTumor);
             //if (message != null)
@@ -417,7 +341,7 @@ namespace EDITgui
                 return;
             }
 
-            tumorCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getTotalTumorPoints());
+            tumorCvPoints = context.getImages().getAllFramesCVPoints(context.getImages().getAllFramesTumorPoints());
 
             int startingFrame = context.getImages().getFirtTumorFrame() - context.getUltrasoundPart().startingFrame;
 
@@ -434,7 +358,7 @@ namespace EDITgui
             EDITgui.Geometry TumorGeometry = new Geometry() { geometryName = Messages.tumorGeometry, Path = txtPath, actor = null };
             if (txtPath != null)
             {
-                returnThicknessSTL(TumorGeometry);
+                returnAvailableGeometry(TumorGeometry);
             }
             stopSpinner();
         }
@@ -458,7 +382,7 @@ namespace EDITgui
         {
             if(image.Source != null)
             {
-                Selected2DObject selectedObject = context.getPhotoAcousticPoints2D().getSelectedObject2D();
+                Selected2DObject selectedObject = context.getPhotoAcousticData().getSelectedObject2D();
                 drawPolylineOfRest2DObjects();
                 draw_polyline(selectedObject);
                 draw_points(selectedObject);
@@ -466,6 +390,18 @@ namespace EDITgui
                 metrics_label.Content = selectedObject.metrics;
                 //draw_polyline_ultrasound(context.getImages().getBladderPoints());
             }
+        }
+
+        public void eraseImageView()
+        {
+            canvasPhotoAcoustic.Children.Clear();
+            studyname_label.Content = "";
+            frame_num_label.Content = "";
+            metrics_label.Content = "";
+            image.Source = null;
+            switch_auto_manual.Visibility = Visibility.Hidden;
+            context.getPhotoAcousticData().Visibility = Visibility.Collapsed;
+            photoacousticImaging.uncheckRestCheckboxes();
         }
 
 
@@ -543,7 +479,7 @@ namespace EDITgui
 
         private void drawPolylineOfRest2DObjects()
         {
-            List<UIElement> list = context.getPhotoAcousticPoints2D().getNoSelectedObject2DPolylines();
+            List<UIElement> list = context.getPhotoAcousticData().getNoSelectedObject2DPolylines();
             foreach (UIElement pl in list)
             {
                 canvasPhotoAcoustic.Children.Add(pl);
@@ -563,43 +499,43 @@ namespace EDITgui
                     if (contourSeg == ContourSegmentation.FILL_POINTS)
                     {
                         clear_canvas();
-                        if (indexA > context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count - 1) indexA = 0;
+                        if (indexA > context.getPhotoAcousticData().getSelectedObject2D().points.Count - 1) indexA = 0;
 
                         double d1, d2;
                         if (indexA != 0)
                         {
-                            d1 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[indexA - 1].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[indexA - 1].Y, 2));
+                            d1 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticData().getSelectedObject2D().points[indexA - 1].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticData().getSelectedObject2D().points[indexA - 1].Y, 2));
                         }
                         else
                         {
-                            int num = context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count - 1;
-                            d1 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[num].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[num].Y, 2));
+                            int num = context.getPhotoAcousticData().getSelectedObject2D().points.Count - 1;
+                            d1 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticData().getSelectedObject2D().points[num].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticData().getSelectedObject2D().points[num].Y, 2));
                         }
-                        d2 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[indexA].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticPoints2D().getSelectedObject2D().points[indexA].Y, 2));
+                        d2 = Math.Sqrt(Math.Pow(point.X - context.getPhotoAcousticData().getSelectedObject2D().points[indexA].X, 2) + Math.Pow(point.Y - context.getPhotoAcousticData().getSelectedObject2D().points[indexA].Y, 2));
 
                         if (d2 > d1)
                         {
-                            context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Insert(indexA++, point);
+                            context.getPhotoAcousticData().getSelectedObject2D().points.Insert(indexA++, point);
                         }
                         else
                         {
-                            context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Insert(indexA, point);
+                            context.getPhotoAcousticData().getSelectedObject2D().points.Insert(indexA, point);
                         }
                         display();
                     }
                     else if (contourSeg == ContourSegmentation.MANUAL)
                     {
-                        context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Add(point);
+                        context.getPhotoAcousticData().getSelectedObject2D().points.Add(point);
                     }
-                    context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                    context.getPhotoAcousticData().updateSelectedObjectMetrics();
                     updateCanvas();
                 }
                 else if (e.ChangedButton == MouseButton.Right && contourSeg == ContourSegmentation.MANUAL)
                 {
-                    if (context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Any())
+                    if (context.getPhotoAcousticData().getSelectedObject2D().points.Any())
                     {
-                        context.getPhotoAcousticPoints2D().getSelectedObject2D().points.RemoveAt(context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count - 1);
-                        context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                        context.getPhotoAcousticData().getSelectedObject2D().points.RemoveAt(context.getPhotoAcousticData().getSelectedObject2D().points.Count - 1);
+                        context.getPhotoAcousticData().updateSelectedObjectMetrics();
                         if (contourSeg == ContourSegmentation.MANUAL)
                         {
                             clear_canvas();
@@ -680,9 +616,9 @@ namespace EDITgui
                     //the borders have to be updated in the same try catch block, in order to manage any potential points overlapping
                     try
                     {
-                        int j = context.getPhotoAcousticPoints2D().getSelectedObject2D().points.IndexOf(initialPoisition1);
-                        context.getPhotoAcousticPoints2D().getSelectedObject2D().points[j] = final_position;
-                        context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                        int j = context.getPhotoAcousticData().getSelectedObject2D().points.IndexOf(initialPoisition1);
+                        context.getPhotoAcousticData().getSelectedObject2D().points[j] = final_position;
+                        context.getPhotoAcousticData().updateSelectedObjectMetrics();
                         context.getUltrasoundPart().updateCanvas();
                     }
                     catch { }
@@ -719,12 +655,12 @@ namespace EDITgui
             {
                 List<Point> pointsToRemove = new List<Point>();
                 int count = 0;
-                for (int i = 0; i < context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count; i++)
+                for (int i = 0; i < context.getPhotoAcousticData().getSelectedObject2D().points.Count; i++)
                 {
-                    if (context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
-                        context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
+                    if (context.getPhotoAcousticData().getSelectedObject2D().points[i].X >= Canvas.GetLeft(rectRemovePoints) && context.getPhotoAcousticData().getSelectedObject2D().points[i].Y >= Canvas.GetTop(rectRemovePoints) &&
+                        context.getPhotoAcousticData().getSelectedObject2D().points[i].X <= Canvas.GetLeft(rectRemovePoints) + rectRemovePoints.Width && context.getPhotoAcousticData().getSelectedObject2D().points[i].Y <= Canvas.GetTop(rectRemovePoints) + rectRemovePoints.Height)
                     {
-                        pointsToRemove.Add(context.getPhotoAcousticPoints2D().getSelectedObject2D().points[i]);
+                        pointsToRemove.Add(context.getPhotoAcousticData().getSelectedObject2D().points[i]);
                         if (count == 0) indexA = i;
                         count++;
                     }
@@ -732,13 +668,13 @@ namespace EDITgui
                 }
 
                 canvasPhotoAcoustic.Children.Remove(rectRemovePoints);
-                if (count == context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Count)
+                if (count == context.getPhotoAcousticData().getSelectedObject2D().points.Count)
                 {
                     doManual();
-                    context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                    context.getPhotoAcousticData().updateSelectedObjectMetrics();
                     return;
                 }
-                context.getPhotoAcousticPoints2D().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
+                context.getPhotoAcousticData().getSelectedObject2D().points.RemoveAll(item => pointsToRemove.Contains(item));
                 if (!contourSeg.Equals(ContourSegmentation.MANUAL) && count > 0) doFillPoints();
                 if (pointsToRemove.Any()) context.getSaveActions().dataUpdatedWithoutSave();
                 pointsToRemove.Clear();
@@ -846,7 +782,7 @@ namespace EDITgui
             zoomPhotoAccousticChanged(zoom_out);
         }
 
-        private void fitUIAccordingToDicomImageSize(double height, double width)
+        public void fitUIAccordingToDicomImageSize(double height, double width)
         {
             Thickness waitMargin = Wait.Margin;
             waitMargin.Left = width / 2 - Wait.Width / 2;//344.426 - Math.Abs(736 - width);
@@ -870,7 +806,7 @@ namespace EDITgui
             if (this.contourSeg == ContourSegmentation.MANUAL)
             {
                 doCorrection();
-                context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                context.getPhotoAcousticData().updateSelectedObjectMetrics();
             }
             else if (this.contourSeg == ContourSegmentation.CORRECTION)
             {
@@ -879,7 +815,7 @@ namespace EDITgui
             else if (this.contourSeg == ContourSegmentation.FILL_POINTS)
             {
                 doCorrection();
-                context.getPhotoAcousticPoints2D().updateSelectedObjectMetrics();
+                context.getPhotoAcousticData().updateSelectedObjectMetrics();
             }
         }
 
@@ -914,7 +850,7 @@ namespace EDITgui
             this.switch_auto_manual.doManualState();
             contourSeg = ContourSegmentation.MANUAL;
             metrics_label.Visibility = Visibility.Hidden;
-            if (selectedObjectHasPoints()) context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Clear();
+            if (selectedObjectHasPoints()) context.getPhotoAcousticData().getSelectedObject2D().points.Clear();
             updateCanvas();
             context.getUltrasoundPart().updateCanvas();
         }
@@ -935,7 +871,7 @@ namespace EDITgui
 
         public bool selectedObjectHasPoints()
         {
-            return (context.getPhotoAcousticPoints2D().getSelectedObject2D().points.Any());
+            return (context.getPhotoAcousticData().getSelectedObject2D().points.Any());
         }
 
 
@@ -944,76 +880,104 @@ namespace EDITgui
         {
             switch (currentOxyDeOxyState)
             {
-                case OxyDeOxyState.OXY:
+                case OxyDeOxyGNRState.OXY:
                     doDeOXYState();
                     break;
-                case OxyDeOxyState.DEOXY:
+                case OxyDeOxyGNRState.DEOXY:
                     doOXYState();
                     break;
             }
         }
 
-        private void doOXYState()
+        public void doOXYState()
         {
-            oxy_deoxy_label.Content = "  " + context.getMessages().oxy;
-            oxy_deoxy_switch.setCustomDotToLeftAndBlue();
-            currentOxyDeOxyState = OxyDeOxyState.OXY;
-            if (OXYDicomFile!=null)
+            //oxy_deoxy_label.Content = "  " + context.getMessages().oxy;
+            //oxy_deoxy_switch.setCustomDotToLeftAndBlue();
+            currentOxyDeOxyState = OxyDeOxyGNRState.OXY;
+            if (photoacousticImaging.OXYDicomFile!=null)
             {
-                BitmapFromPath(OXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                BitmapFromPath(photoacousticImaging.OXY_ImagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value;
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-                DeOXY_studyname_label.Visibility = Visibility.Hidden;
-                OXY_studyname_label.Visibility = Visibility.Visible;
+                studyname_label.Content = photoacousticImaging.OXYStudyname;
                 switch_auto_manual.Visibility = Visibility.Visible;
-                context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
+                context.getPhotoAcousticData().Visibility = Visibility.Visible;
                 metrics_label.Visibility = Visibility.Visible;
             }
             else
             {
                 image.Source = null;
                 frame_num_label.Content = "";
-                OXY_studyname_label.Content = "";
-                DeOXY_studyname_label.Content = "";
+                studyname_label.Content = "";
+                metrics_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
-                context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
+                context.getPhotoAcousticData().Visibility = Visibility.Collapsed;
                 metrics_label.Visibility = Visibility.Hidden;
             }
             updateCanvas();
         }
 
-        private void doDeOXYState()
+        public void doDeOXYState()
         {
-            oxy_deoxy_label.Content = context.getMessages().deoxy;
-            oxy_deoxy_switch.setCustomDotToRightAndRed();
-            currentOxyDeOxyState = OxyDeOxyState.DEOXY;
-            if (DeOXYDicomFile!=null)
+            //oxy_deoxy_label.Content = context.getMessages().deoxy;
+            //oxy_deoxy_switch.setCustomDotToRightAndRed();
+            currentOxyDeOxyState = OxyDeOxyGNRState.DEOXY;
+            if (photoacousticImaging.DeOXYDicomFile!=null)
             {
-                BitmapFromPath(deOXYimagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                BitmapFromPath(photoacousticImaging.DeOXY_ImagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
                 frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value;
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
-                OXY_studyname_label.Visibility = Visibility.Hidden;
-                DeOXY_studyname_label.Visibility = Visibility.Visible;
+                studyname_label.Content = photoacousticImaging.DeOXYStudyname;
                 switch_auto_manual.Visibility = Visibility.Visible;
-                context.getPhotoAcousticPoints2D().Visibility = Visibility.Visible;
+                context.getPhotoAcousticData().Visibility = Visibility.Visible;
                 metrics_label.Visibility = Visibility.Visible;
             }
             else
             {
                 image.Source = null;
                 frame_num_label.Content = "";
-                DeOXY_studyname_label.Content = "";
-                OXY_studyname_label.Content = "";
+                studyname_label.Content = "";
+                metrics_label.Content = "";
                 makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
                 switch_auto_manual.Visibility = Visibility.Hidden;
-                context.getPhotoAcousticPoints2D().Visibility = Visibility.Collapsed;
+                context.getPhotoAcousticData().Visibility = Visibility.Collapsed;
                 metrics_label.Visibility = Visibility.Hidden;
             }
             updateCanvas();
         }
 
-        private void makeVisibeOrUnvisibleSliderLeftTickBar(Visibility visibility)
+
+        public void doGNRState()
+        {
+            //oxy_deoxy_label.Content = "  " + context.getMessages().oxy;
+            //oxy_deoxy_switch.setCustomDotToLeftAndBlue();
+            currentOxyDeOxyState = OxyDeOxyGNRState.GNR;
+            if (photoacousticImaging.GNRDicomFile != null)
+            {
+                BitmapFromPath(photoacousticImaging.GNR_ImagesDir + Path.DirectorySeparatorChar + slider_value + ".bmp");
+                frame_num_label.Content = context.getMessages().frame + ":" + " " + slider_value;
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Visible);
+                studyname_label.Content = photoacousticImaging.GNRStudyname;
+                switch_auto_manual.Visibility = Visibility.Visible;
+                context.getPhotoAcousticData().Visibility = Visibility.Visible;
+                metrics_label.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                image.Source = null;
+                frame_num_label.Content = "";
+                studyname_label.Content = "";
+                metrics_label.Content = "";
+                makeVisibeOrUnvisibleSliderLeftTickBar(Visibility.Hidden);
+                switch_auto_manual.Visibility = Visibility.Hidden;
+                context.getPhotoAcousticData().Visibility = Visibility.Collapsed;
+                metrics_label.Visibility = Visibility.Hidden;
+            }
+            updateCanvas();
+        }
+
+        public void makeVisibeOrUnvisibleSliderLeftTickBar(Visibility visibility)
         {
             if (context.getUltrasoundPart().ultrasound_slider.IsLoaded)
             {

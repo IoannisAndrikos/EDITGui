@@ -13,9 +13,9 @@ namespace EDITgui
         private ImageSequence images;
         private UltrasoundPart ultrasoundPart;
         private PhotoAcousticPart photoAcousticPart;
-        private manage2DUltrasound ultrasoundPoints2D;
+        private ultrasoundDataParser ultrasoundData;
         //private Registration registration;
-        private manage2DPhotoAcoustic photoAcousticPoints2D;
+        private photoAcousticDataParser photoAcousticData;
         private metricsCalculations metrics;
         private coreFunctionality core;
         private Settings studySettings;
@@ -26,6 +26,7 @@ namespace EDITgui
         private SaveActions saveActions;
         private Slicer3D slicer;
         private Pallet pallet;
+        private manageTumorGroups manageTumorGroups;
         private Comparator3D comparator;
 
         public Context(MainWindow mainWindow, Login user)
@@ -35,9 +36,9 @@ namespace EDITgui
             this.messages = new Messages();
             this.mainWindow = mainWindow;
             this.images = new ImageSequence(this);
-            this.ultrasoundPoints2D = new manage2DUltrasound(this);
+            this.ultrasoundData = new ultrasoundDataParser(this);
             //this.registration = new Registration(this);
-            this.photoAcousticPoints2D = new manage2DPhotoAcoustic(this);
+            this.photoAcousticData = new photoAcousticDataParser(this);
             this.ultrasoundPart = new UltrasoundPart(this);
             this.photoAcousticPart = new PhotoAcousticPart(this);
             this.metrics = new metricsCalculations(this);
@@ -49,6 +50,7 @@ namespace EDITgui
             this.saveActions = new SaveActions(this);
             this.studyFile = new StudyFile();
             this.pallet = new Pallet(this);
+            this.manageTumorGroups = new manageTumorGroups(this);
             this.comparator = new Comparator3D(this);
         }
 
@@ -78,9 +80,9 @@ namespace EDITgui
             return this.photoAcousticPart;
         }
 
-        public manage2DUltrasound getUltrasoundPoints2D()
+        public ultrasoundDataParser getUltrasoundData()
         {
-            return this.ultrasoundPoints2D;
+            return this.ultrasoundData;
         }
 
         //public Registration getRegistration()
@@ -89,9 +91,9 @@ namespace EDITgui
         //}
 
 
-        public manage2DPhotoAcoustic getPhotoAcousticPoints2D()
+        public photoAcousticDataParser getPhotoAcousticData()
         {
-            return this.photoAcousticPoints2D;
+            return this.photoAcousticData;
         }
 
         public metricsCalculations getMetrics()
@@ -142,6 +144,11 @@ namespace EDITgui
         public Pallet getPallet()
         {
             return this.pallet;
+        }
+
+        public manageTumorGroups getTumorGroups()
+        {
+            return this.manageTumorGroups;
         }
 
         public Comparator3D getComparator()

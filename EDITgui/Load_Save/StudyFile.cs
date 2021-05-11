@@ -22,7 +22,7 @@ namespace EDITgui
         public enum FileType
         {
             bladderPoints, thicknessPoints, settings, algorithmFrameSettings ,Bladder3D, Thickness3D, OXY3D, DeOXY3D, Layer3D, Registration,
-            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, MeanThickness, Tumors2D, Tumors3D
+            UltrasoundDicomFile, OXYDicomFile, DeOXYDicomFile, GNRDicomFile, MeanThickness, Tumors2D, Tumors3D
         }
 
         public string getWorkspace()
@@ -68,6 +68,9 @@ namespace EDITgui
                     break;
                 case FileType.DeOXYDicomFile:
                     filename = messages.deoxyDCM;
+                    break;
+                case FileType.GNRDicomFile:
+                    filename = messages.GNRDCM;
                     break;
                 case FileType.Bladder3D:
                     filename = messages.bladderSTL;
@@ -129,6 +132,7 @@ namespace EDITgui
                 case FileType.UltrasoundDicomFile:
                 case FileType.OXYDicomFile:
                 case FileType.DeOXYDicomFile:
+                case FileType.GNRDicomFile:
                     dir = path + Path.DirectorySeparatorChar + messages.dicomFiles + Path.DirectorySeparatorChar;
                     break;
                 case FileType.MeanThickness:
@@ -157,7 +161,7 @@ namespace EDITgui
 
         public enum settingType
         {
-            StartingFrame, EndingFrame, ClickPointX, ClickPointY, Repeats, Smoothing, Lamda1,
+            StartingFrame, EndingFrame, StartingClickPointX, StartingClickPointY, EndingClickPointX, EndingClickPointY, Repeats, Smoothing, Lamda1,
             Lamda2, LevelSize, Filtering, Logger, ClosedSurface, minThickness, maxThickness
         };
 
