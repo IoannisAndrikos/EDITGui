@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace EDITgui
 {
@@ -25,9 +26,9 @@ namespace EDITgui
             if (tumorGroupsWindow == null)
             {
                 this.tumorGroupsWindow = new TumorGroupsWindow(this);
-                foreach (string tumorName in context.getImages().getTumorGroups())
+                foreach (tumorGroup groupItem in context.getImages().getTumorGroups())
                 {
-                    TumorGroupItem tumorGroupItem = new TumorGroupItem(this.tumorGroupsWindow, tumorName);
+                    TumorGroupItem tumorGroupItem = new TumorGroupItem(this.tumorGroupsWindow, groupItem.groupName, groupItem.color);
                     tumorGroupsWindow.groupItems.Children.Add(tumorGroupItem);
                 }
             }
@@ -35,10 +36,16 @@ namespace EDITgui
 
         public string checkIfGroupAlreadyExists(string group)
         {
-            if (context.getImages().getTumorGroups().Contains(group))
+
+            foreach (tumorGroup tumorGroup in context.getImages().getTumorGroups())
             {
-                return context.getMessages().thisTumorgroupAlreadyExists;
+                if (tumorGroup.groupName == group) return context.getMessages().thisTumorgroupAlreadyExists;
             }
+
+            //if (context.getImages().getTumorGroups().Contains(group))
+            //{
+            //    return context.getMessages().thisTumorgroupAlreadyExists;
+            //}
             return null;
         }
 
@@ -47,6 +54,12 @@ namespace EDITgui
         {
             context.getImages().addTumorGroup(groupName);
         }
+
+        public void updateTumorGroupColor(string groupName, int newColor)
+        {
+            context.getImages().updateTumorGroupColor(groupName, newColor);
+        }
+
 
         public void removeGroup(string groupName)
         {
@@ -59,6 +72,8 @@ namespace EDITgui
             cb.groupOptionsDropdown.SelectedItem = null;
             cb.updateAfterCreatingNewGroup();
         }
+
+
 
     }
 }

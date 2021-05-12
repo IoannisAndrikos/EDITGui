@@ -49,23 +49,6 @@ namespace EDITgui
         public string group { get; set; }
         public double area { get; set; }
         public double perimeter { get; set; }
-
-        //public SolidColorBrush getProperColor()
-        //{
-        //    switch (group)
-        //    {
-        //        case tumorType.tumor1:
-        //            return ViewAspects.magenta;
-        //        case tumorType.tumor2:
-        //            return ViewAspects.yellow;
-        //        case tumorType.tumor3:
-        //            return ViewAspects.silver;
-        //        case tumorType.tumor4:
-        //            return ViewAspects.magenta;
-        //        default:
-        //            return ViewAspects.magenta;
-        //    }
-        //}
     } 
 
     //this values should be defined into a static file

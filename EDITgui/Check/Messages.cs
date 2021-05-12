@@ -94,6 +94,8 @@ namespace EDITgui
 
         public string algorithmsIndexes = "Indexes_of_algorithms.txt";
 
+        public string tumorGroups = "Tumor_groups.txt";
+
         public string ulrasoundDCM = "ultrasound.dcm";
 
         public string oxyDCM = "OXY.dcm";

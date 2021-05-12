@@ -375,6 +375,8 @@ namespace EDITgui
 
         private void loadAvailableTumorsPoints(string path)
         {
+            loadTumorGroups(path);
+
             string framePointsFile;
             string pointsDir = getFolderName(path, FileType.Tumors2D, false);
             List<List<Point>> points = new List<List<Point>>();
@@ -384,11 +386,7 @@ namespace EDITgui
                 int count = Directory.GetFiles(pointsDir).Length;
                 for (int i = 0; i < count; i++)
                 {
-                    if (i == 101)
-                    {
-                        Console.WriteLine("101");
-                    }
-
+                  
                     framePointsFile = pointsDir + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
@@ -413,8 +411,6 @@ namespace EDITgui
                                 var firstString = line.Substring(0, firstSpaceIndex); // INAGX4
                                 var secondString = line.Substring(firstSpaceIndex + 1); // Agatti Island
 
-
-
                                 if (secondString != "NoGroup")
                                 {
                                     groups[groups.Count - 1] = secondString;
@@ -437,6 +433,30 @@ namespace EDITgui
                 }
             }
         }
+
+
+        private void loadTumorGroups(string path)
+        {
+            string tumorGroupsFile = getFolderName(path, FileType.tumorGroups, false) + getProperFileName(FileType.tumorGroups);
+            if (File.Exists(tumorGroupsFile))
+            {
+                StreamReader sr = new StreamReader(tumorGroupsFile);
+                String line;
+                int frame = 0;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] col = line.Split('|');
+                    string[] groupInfo = col[0].Split(':');
+                    string[] colorInfo = col[1].Split(':');
+                    context.getImages().checkAndUpdateGroupsList(groupInfo[1], Int32.Parse(colorInfo[1]));
+                    
+                }
+
+              
+            }
+
+        }
+
 
         private List<double> loadAvailableThicknessMetrics(string path)
         {

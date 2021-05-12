@@ -29,9 +29,13 @@ namespace EDITgui
 
         public static SolidColorBrush cyan = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FFFF"));
         public static SolidColorBrush yellow = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3FF00"));
-        public static SolidColorBrush orange = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFB34D"));
+        public static SolidColorBrush orange = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFB700"));
         public static SolidColorBrush red = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFF3C3C"));
         public static SolidColorBrush magenta = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFEB00FF"));
+        public static SolidColorBrush green = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FF3A"));
+        public static SolidColorBrush blue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF008CFF"));
+        public static SolidColorBrush purple = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFA200FF"));
+        public static SolidColorBrush pink = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFF07D4"));
         public static SolidColorBrush silver = System.Windows.Media.Brushes.Silver;
         //public  SolidColorBrush magenta = System.Windows.Media.Brushes.Magenta;
         public static SolidColorBrush greenMarker = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF00FF00"));

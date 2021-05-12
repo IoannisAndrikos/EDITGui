@@ -14,7 +14,7 @@ namespace EDITgui
         int numOfFrames;
 
         List<Frame> frames = new List<Frame>();
-        List<string> tumorGroups = new List<string>();
+        List<tumorGroup> tumorGroups = new List<tumorGroup>();
 
         public ImageSequence(Context context)
         {
@@ -100,14 +100,14 @@ namespace EDITgui
             return frames[index].frameSettings;
         }
 
-        public List<string> getTumorGroups()
+        public List<tumorGroup> getTumorGroups()
         {
             return this.tumorGroups;
         }
 
         public void removeTumorGroup(string group)
         {
-            tumorGroups.Remove(group);
+            tumorGroups.Remove(tumorGroups.Find(x => x.groupName == group));
             for(int i = 0; i < frames.Count; i++)
             {
                 for(int j = 0; j < frames[i].Tumors.Count; j++)
@@ -122,24 +122,32 @@ namespace EDITgui
 
         public void addTumorGroup(string group)
         {
-            tumorGroups.Add(group);
+            tumorGroup newTumorGroup = new tumorGroup() { groupName = group, color = 0 };
+            tumorGroups.Add(newTumorGroup);
         }
 
+        public void updateTumorGroupColor(string groupName, int newColor)
+        {
+            tumorGroups.Find(x => x.groupName == groupName).color = newColor;
+        }
 
         public SolidColorBrush getProperTumorColor(string group)
         {
-            int groupIndex = tumorGroups.IndexOf(group);
+            tumorGroup tumorGroup = tumorGroups.Find(x => x.groupName == group);
+            if (tumorGroup == null) return Pallet.magenta;
 
-            switch (groupIndex)
+            switch (tumorGroup.color)
             {
                 case 0:
                     return Pallet.magenta;
                 case 1:
                     return Pallet.yellow;
                 case 2:
-                    return Pallet.orange;
+                    return Pallet.green;
                 case 3:
-                    return Pallet.red;
+                    return Pallet.orange;
+                case 4:
+                    return Pallet.blue;
                 default:
                     return Pallet.magenta;
             }
@@ -174,7 +182,7 @@ namespace EDITgui
         }
 
      
-
+  
         public void setBladderData(int index, List<Point> points)
         {
             frames[index].Bladder.points.Clear();
@@ -197,18 +205,22 @@ namespace EDITgui
             frames[index].Tumors.Clear();
             for (int i=0; i<points.Count; i++)
             {
-                checkAndUpdateGroupsList(groups[i]);
+                //checkAndUpdateGroupsList(groups[i]);
                 tumorItem item = new tumorItem() { points = points[i], group = groups[i], area = context.getMetrics().calulateArea(points[i]), perimeter = context.getMetrics().calulatePerimeter(points[i]) };
                 frames[index].Tumors.Add(item);
             }
         }
 
-        public void checkAndUpdateGroupsList(string group)
+        public void checkAndUpdateGroupsList(string group, int colorIndex)
         {
-            if (group != null && !this.tumorGroups.Contains(group))
+            if (group != null) //&& !this.tumorGroups.Contains(group)
             {
-                Console.WriteLine(group);
-                this.tumorGroups.Add(group);
+                foreach(tumorGroup tumorGroup in tumorGroups)
+                {
+                    if (tumorGroup.groupName == group) return;
+                }
+                tumorGroup newTumorGroup = new tumorGroup() { groupName = group, color = colorIndex};
+                this.tumorGroups.Add(newTumorGroup);
             }
         }
 
@@ -499,6 +511,14 @@ namespace EDITgui
             return context.getUltrasoundPart().slider_value;
         }
     }
+
+
+    public class tumorGroup
+    {
+        public string groupName { set; get; }
+        public int color { set; get; }
+    }
+
 
     public class FrameMetrics
     {

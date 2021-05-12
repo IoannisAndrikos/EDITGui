@@ -23,17 +23,27 @@ namespace EDITgui
 
         TumorGroupsWindow TumorGroupsWindow;
 
-        public TumorGroupItem(TumorGroupsWindow tumorGroupsWindow, string groupName)
+        public TumorGroupItem(TumorGroupsWindow tumorGroupsWindow, string newGroupName, int newColor)
         {
             InitializeComponent();
             this.TumorGroupsWindow = tumorGroupsWindow;
-            this.groupName.Content = groupName.ToString();
+            this.groupName.Content = newGroupName;
+            GroupsColors.SelectedIndex = newColor;
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
             TumorGroupsWindow.removeItem(this.groupName.Content.ToString());
             TumorGroupsWindow.groupItems.Children.Remove(this);
+        }
+
+
+        private void GroupColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (GroupsColors.IsDropDownOpen)
+            {
+                TumorGroupsWindow.updateTumorGroupColor(this.groupName.Content.ToString(), GroupsColors.SelectedIndex);
+            }
         }
     }
 }

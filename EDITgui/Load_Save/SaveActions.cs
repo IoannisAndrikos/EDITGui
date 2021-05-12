@@ -160,6 +160,8 @@ namespace EDITgui
 
         public void writeTumorData2(string path)
         {
+            writeTumorGroupsTXT(path);
+
             string filePath;
             List<List<tumorItem>> tumors = context.getImages().getAllFramesTumor().ToList();
             StreamWriter sw;
@@ -172,7 +174,7 @@ namespace EDITgui
                     sw.WriteLine("tumor: " + j.ToString());
                     if (tumors[i][j].group != null)
                     {
-                        sw.WriteLine("group: " + tumors[i][j].group.ToString());
+                        sw.WriteLine("group: " + tumors[i][j].group.ToString()); 
                     }
                     else
                     {
@@ -289,6 +291,21 @@ namespace EDITgui
             }
             sw.Close();
         }
+
+        public void writeTumorGroupsTXT(string path)
+        {
+            string filename = getProperFileName(FileType.tumorGroups);
+            string filePath = getFolderName(path, FileType.tumorGroups, true) + filename;
+
+            StreamWriter sw = new StreamWriter(filePath);
+            foreach (tumorGroup tumorGroup in context.getImages().getTumorGroups())
+            {
+                sw.WriteLine("group:" + tumorGroup.groupName + "|" + "colorIndex:" + tumorGroup.color.ToString());
+            }
+            sw.Close();
+        }
+
+
 
 
         public List<StudySetting> collectAllStudySetings()

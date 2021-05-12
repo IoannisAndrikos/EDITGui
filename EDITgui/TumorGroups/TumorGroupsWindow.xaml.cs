@@ -33,10 +33,17 @@ namespace EDITgui
             this.Visibility = Visibility.Visible;
             this.manageGroups = tumorGroups;
         }
+
         public void removeItem(string group)
         {
             manageGroups.removeGroup(group);
         }
+
+        public void updateTumorGroupColor(string groupName, int newColor)
+        {
+            manageGroups.updateTumorGroupColor(groupName, newColor);
+        }
+
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
@@ -52,7 +59,7 @@ namespace EDITgui
 
             //title = title.Replace(' ', '-');
 
-            TumorGroupItem tumorGroupItem = new TumorGroupItem(this, title);
+            TumorGroupItem tumorGroupItem = new TumorGroupItem(this, title, 0);
             manageGroups.addGroup(title);
             groupItems.Children.Add(tumorGroupItem);
         }

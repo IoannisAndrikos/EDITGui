@@ -57,23 +57,23 @@ namespace EDITgui
         {
             groupOptionsDropdown.Items.Clear();
 
-            foreach (string group in context.getImages().getTumorGroups())
+            foreach (tumorGroup groupItem in context.getImages().getTumorGroups())
             {
                 ComboBoxItem ci = new ComboBoxItem();
                 ci.Style = (Style)FindResource("ComboBoxItemStyle1");
-                ci.Content = group;
+                ci.Content = groupItem.groupName;
                // ci.Selected += new RoutedEventHandler(OnSelectedTumor);
                 ci.Foreground = Brushes.White;
                 groupOptionsDropdown.Items.Add(ci);
        
-                if (group == this.tumorItem.group)
+                if (groupItem.groupName == this.tumorItem.group)
                 {
                     groupOptionsDropdown.SelectedValue = ci;
                 }
             }
             ComboBoxItem newGroup = new ComboBoxItem();
             newGroup.Style = (Style)FindResource("ComboBoxItemStyle1");
-            newGroup.Content = "New";
+            newGroup.Content = "Manage...";
            // newGroup.Selected += new RoutedEventHandler(OnSelectedTumor);
             newGroup.Foreground = Brushes.White;
             groupOptionsDropdown.Items.Add(newGroup);
@@ -103,7 +103,7 @@ namespace EDITgui
             {
                 ComboBoxItem selectedItem = groupOptionsDropdown.SelectedItem as ComboBoxItem;
 
-                if (selectedItem.Content.ToString() == "New")
+                if (selectedItem.Content.ToString() == "Manage...")
                 {
                     context.getTumorGroups().CreateTumorGroupsWindow(this);
                 }
