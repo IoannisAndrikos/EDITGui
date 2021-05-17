@@ -33,8 +33,12 @@ namespace EDITgui
         private Comparator3D comparator;
         vtkIterativeClosestPointTransform icp;
         vtkTransformPolyDataFilter icpTransformFilter;
-
+ 
         public int studyIndex;
+
+        private int rotationZdegrees = 0;
+
+
 
         public GeometryItemsDropdown(Context context, Comparator3D comparator, int index)
         {
@@ -104,7 +108,6 @@ namespace EDITgui
             {
                 geometry = new Geometry() { geometryName = Messages.bladderGeometry, Path = Oblect3DFile, actor = null };
                 OnAddAvailableGeometry(geometry);
-                if(studyIndex > 0) fitGeometryAccordingToBaselineStudy();
                 geometriesWereFound = true;
             }
 
@@ -136,7 +139,11 @@ namespace EDITgui
                 OnAddAvailableGeometry(geometry);
                 geometriesWereFound = true;
             }
-            if (geometriesWereFound) studyMetrics = new metricsItem(this.title.Content.ToString());
+            if (geometriesWereFound)
+            {
+                if (studyIndex > 0) findICPTransformationMatrix();
+                studyMetrics = new metricsItem(this.title.Content.ToString());
+            }
 
             return geometriesWereFound;
         }
@@ -196,7 +203,7 @@ namespace EDITgui
 
         }
 
-        public void visualizeGeometries(Geometry geometry)
+        public void visualizeGeometries(Geometry geometry, bool updateRenderer = true)
         {
             vtkSTLReader reader = vtkSTLReader.New();
             vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
@@ -236,7 +243,22 @@ namespace EDITgui
             if (studyIndex > 0 && icp != null)
             {
                 icpTransformFilter = vtkTransformPolyDataFilter.New();
-                icpTransformFilter.SetInput(polyData);
+                if (rotationZdegrees == 180)
+                {
+                    vtkTransform transform = vtkTransform.New();
+                    transform.RotateZ(rotationZdegrees);
+                    vtkTransformPolyDataFilter rotation = vtkTransformPolyDataFilter.New();
+                    rotation.SetTransform(transform);
+                    rotation.SetInput(polyData);
+                    rotation.Update();
+
+                    icpTransformFilter.SetInput(rotation.GetOutput());
+                }
+                else
+                {
+                    icpTransformFilter.SetInput(polyData);
+                }   
+                
                 icpTransformFilter.SetTransform(icp);
                 icpTransformFilter.Update();
                 mapper.SetInputConnection(icpTransformFilter.GetOutputPort());
@@ -253,14 +275,18 @@ namespace EDITgui
             //translate geometry along with x-axis
             geometry.actor.SetUserTransform(translateAlongWithXAxis);
 
+            context.getPallet().updateGeometryColor(geometry);
+
             if (geometry.checkbox.IsChecked == true)
             {
-                context.getPallet().updateGeometryColor(geometry);
-                comparator.renderer.AddActor(actor);
+                comparator.renderer.AddActor(geometry.actor);
             }
-            comparator.renderer.ResetCamera();
 
-            comparator.renderer.GetRenderWindow().Render();
+            if (updateRenderer)
+            {
+                comparator.renderer.ResetCamera();
+                comparator.renderer.GetRenderWindow().Render();
+            }
         }
 
 
@@ -279,7 +305,7 @@ namespace EDITgui
         }
 
 
-        private void fitGeometryAccordingToBaselineStudy()
+        private void findICPTransformationMatrix()
         {
 
             vtkSTLReader STLreaderTarget = vtkSTLReader.New();
@@ -294,8 +320,26 @@ namespace EDITgui
             vtkPolyData polyDataSolution = vtkPolyData.New();
             polyDataSolution = STLreaderSolution.GetOutput();
 
+
             icp = vtkIterativeClosestPointTransform.New();
-            icp.SetSource(polyDataSolution);
+
+            if (rotationZdegrees == 180)
+            {
+                vtkTransform transform = vtkTransform.New();
+                transform.RotateZ(rotationZdegrees);
+                vtkTransformPolyDataFilter rotation = vtkTransformPolyDataFilter.New();
+                rotation.SetTransform(transform);
+                rotation.SetInput(polyDataSolution);
+
+                rotation.Update();
+
+                icp.SetSource(rotation.GetOutput());
+            }
+            else if (rotationZdegrees == 0)
+            {
+                icp.SetSource(polyDataSolution);
+            }
+          
             icp.SetTarget(polyDataTarget);
             icp.GetLandmarkTransform().SetModeToRigidBody();
             //icp.SetMaximumNumberOfIterations(1000);
@@ -330,6 +374,33 @@ namespace EDITgui
             sr.Close();
 
             return points;
+        }
+
+     
+
+        private void Rotate3D_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (rotationZdegrees == 0)
+            {
+                rotationZdegrees = 180;
+            }
+            else
+            {
+                rotationZdegrees = 0;
+            }
+            findICPTransformationMatrix();
+
+            foreach (Geometry geometry in this.STLGeometries)
+            {
+
+                if (geometry.checkbox.IsChecked == true)
+                {
+                    comparator.renderer.RemoveActor(geometry.actor);
+                    visualizeGeometries(geometry, false);
+                }
+            }
+
+            comparator.renderer.GetRenderWindow().Render();
         }
     }
 }

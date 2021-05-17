@@ -122,6 +122,8 @@ namespace EDITgui
             }
         }
 
+
+
         public void removeStudy(GeometryItemsDropdown study)
         {
             StudiesPanel.Children.RemoveAt(study.studyIndex);
