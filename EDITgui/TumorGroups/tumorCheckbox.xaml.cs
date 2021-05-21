@@ -73,7 +73,7 @@ namespace EDITgui
             }
             ComboBoxItem newGroup = new ComboBoxItem();
             newGroup.Style = (Style)FindResource("ComboBoxItemStyle1");
-            newGroup.Content = "Manage...";
+            newGroup.Content = context.getMessages().manage;
            // newGroup.Selected += new RoutedEventHandler(OnSelectedTumor);
             newGroup.Foreground = Brushes.White;
             groupOptionsDropdown.Items.Add(newGroup);
@@ -103,7 +103,7 @@ namespace EDITgui
             {
                 ComboBoxItem selectedItem = groupOptionsDropdown.SelectedItem as ComboBoxItem;
 
-                if (selectedItem.Content.ToString() == "Manage...")
+                if (selectedItem.Content.ToString() == context.getMessages().manage)
                 {
                     context.getTumorGroups().CreateTumorGroupsWindow(this);
                 }

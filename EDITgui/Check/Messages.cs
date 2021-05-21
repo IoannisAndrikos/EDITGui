@@ -19,6 +19,8 @@ namespace EDITgui
 
         public string saveStudy  = "Save Current Study";
 
+        public string manage = "Manage...";
+
         public string area  = "Area";
 
         public string perimeter  = "Perimeter";
@@ -142,7 +144,6 @@ namespace EDITgui
         //--------------------------------------NOTIFY MESSAGES-----------------------------------------------
 
         public string warning = "Warning";
-
 
         public const string warningConst = "Warning";
 

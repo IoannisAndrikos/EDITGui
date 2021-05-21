@@ -195,7 +195,7 @@ namespace EDITgui
             context.getPhotoAcousticPart().fileCount = Directory.GetFiles(OXY_ImagesDir, "*.bmp", SearchOption.AllDirectories).Length;
             context.getPhotoAcousticPart().BitmapFromPath(OXY_ImagesDir + Path.DirectorySeparatorChar + context.getPhotoAcousticPart().slider_value + ".bmp");
             //context.getPhotoAcousticPart().OXY_studyname_label.Content = studyName + " " + context.getMessages().oxy;
-            DeOXYStudyname = studyName + " " + context.getMessages().oxy;
+            OXYStudyname = studyName + " " + context.getMessages().oxy;
             context.getPhotoAcousticPart().frame_num_label.Content = context.getMessages().frame + ": " + context.getPhotoAcousticPart().slider_value;
             context.getPhotoAcousticPart().doRepeatProcess();
             selectOXY();

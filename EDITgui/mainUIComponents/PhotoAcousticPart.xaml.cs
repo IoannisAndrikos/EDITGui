@@ -214,7 +214,7 @@ namespace EDITgui
                 if (!contourForFix.Any()) return;
                 context.getImages().fillUniqueFrameThicknessFromBackEnd(contourForFix, context.getCore().uniqueContourMeanThickness);
             });
-            updateCanvas();
+            doCorrection(true, true);
             stopSpinner();
         }
 

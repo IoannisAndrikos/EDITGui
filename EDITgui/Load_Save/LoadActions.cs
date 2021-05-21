@@ -316,16 +316,16 @@ namespace EDITgui
                 {
                     string[] col = line.Split(' ');
                     frame = Int32.Parse(col[1]);
-                    context.getImages().getFrameSettings(frame).repeats = Int32.Parse(col[2]);
-                    context.getImages().getFrameSettings(frame).smoothing = Int32.Parse(col[3]);
+                    context.getImages().getFrameSettings(frame).repeats = Int32.Parse(col[2], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).smoothing = Int32.Parse(col[3], CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).lamda1 = Double.Parse(col[4], CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).lamda2 = Double.Parse(col[5], CultureInfo.InvariantCulture);
-                    context.getImages().getFrameSettings(frame).levelSize = Int32.Parse(col[6]);
-                    context.getImages().getFrameSettings(frame).filtering = ToBool(Int32.Parse(col[7]));
-                    context.getImages().getFrameSettings(frame).probeArtifactCorrection = ToBool(Int32.Parse(col[8]));
+                    context.getImages().getFrameSettings(frame).levelSize = Int32.Parse(col[6], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).filtering = ToBool(Int32.Parse(col[7], CultureInfo.InvariantCulture));
+                    context.getImages().getFrameSettings(frame).probeArtifactCorrection = ToBool(Int32.Parse(col[8], CultureInfo.InvariantCulture));
                     context.getImages().getFrameSettings(frame).maxThickness = Double.Parse(col[9], CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).minThickness = Double.Parse(col[10], CultureInfo.InvariantCulture);
-                    context.getImages().getFrameSettings(frame).majorThicknessExistence = ToBool(Int32.Parse(col[11]));
+                    context.getImages().getFrameSettings(frame).majorThicknessExistence = ToBool(Int32.Parse(col[11], CultureInfo.InvariantCulture));
                 }
 
                 context.getUltrasoundPart().updateFrameAlgorithmSetting();
