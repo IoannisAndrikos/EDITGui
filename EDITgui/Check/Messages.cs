@@ -158,6 +158,12 @@ namespace EDITgui
             return "Are sure for changing the system mode from " + currentMode.ToString() + " to " + newMode.ToString() + ". Any changes that you have already performed will be lost.";
         }
 
+
+        public string specialCharacterWarning(string character)
+        {
+            return "The given name can not contain the character [" + character + "]";
+        }
+
         public string changeAutoManualMode = "Are sure for changing the process mode. Any changes that you have already performed will be lost.";
 
         public string addTumorWithoutBladderAnnotation = "Before proceeding with the tumor annotation you should have performed the bladder annotation";

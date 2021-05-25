@@ -523,7 +523,7 @@ namespace EDITgui
             {
                 context.getSaveActions().doSave();
             }
-            else if(!context.getSaveActions().checkIfStudyWasSaved())
+            else //if(!context.getSaveActions().checkIfStudyWasSaved())
             {
                 MessageBoxResult result = CustomMessageBox.Show(context.getMessages().getOverwriteExistingStudyQuestion(context.getLoadActions().getLoadedStudyPath()), context.getMessages().warning, MessageBoxButton.YesNoCancel);
                 if (result == MessageBoxResult.Yes)

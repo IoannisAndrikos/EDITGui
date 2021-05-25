@@ -171,16 +171,16 @@ namespace EDITgui
                 sw = new StreamWriter(filePath);
                 for (int j = 0; j < tumors[i].Count; j++)
                 {
+                    //Be careful here! The names here should match with the names in loadActions class  
                     sw.WriteLine("tumor: " + j.ToString());
                     if (tumors[i][j].group != null)
                     {
-                        sw.WriteLine("group: " + tumors[i][j].group.ToString()); 
+                        sw.WriteLine("tumor_Group: " + tumors[i][j].group.ToString());
                     }
                     else
                     {
-                        sw.WriteLine("group: " + "NoGroup");
+                        sw.WriteLine("tumor_Group: " + "NoGroup");
                     }
-                   
                     List<Point> points = tumors[i][j].points.ToList();
                     for (int k = 0; k < points.Count; k++)
                     {

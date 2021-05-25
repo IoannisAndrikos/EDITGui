@@ -318,13 +318,13 @@ namespace EDITgui
                     frame = Int32.Parse(col[1]);
                     context.getImages().getFrameSettings(frame).repeats = Int32.Parse(col[2], CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).smoothing = Int32.Parse(col[3], CultureInfo.InvariantCulture);
-                    context.getImages().getFrameSettings(frame).lamda1 = Double.Parse(col[4], CultureInfo.InvariantCulture);
-                    context.getImages().getFrameSettings(frame).lamda2 = Double.Parse(col[5], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).lamda1 = Double.Parse(col[4].Replace(",", "."), CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).lamda2 = Double.Parse(col[5].Replace(",", "."), CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).levelSize = Int32.Parse(col[6], CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).filtering = ToBool(Int32.Parse(col[7], CultureInfo.InvariantCulture));
                     context.getImages().getFrameSettings(frame).probeArtifactCorrection = ToBool(Int32.Parse(col[8], CultureInfo.InvariantCulture));
-                    context.getImages().getFrameSettings(frame).maxThickness = Double.Parse(col[9], CultureInfo.InvariantCulture);
-                    context.getImages().getFrameSettings(frame).minThickness = Double.Parse(col[10], CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).maxThickness = Double.Parse(col[9].Replace(",","."), CultureInfo.InvariantCulture);
+                    context.getImages().getFrameSettings(frame).minThickness = Double.Parse(col[10].Replace(",", "."), CultureInfo.InvariantCulture);
                     context.getImages().getFrameSettings(frame).majorThicknessExistence = ToBool(Int32.Parse(col[11], CultureInfo.InvariantCulture));
                 }
 
@@ -386,7 +386,6 @@ namespace EDITgui
                 int count = Directory.GetFiles(pointsDir).Length;
                 for (int i = 0; i < count; i++)
                 {
-                  
                     framePointsFile = pointsDir + i.ToString() + ".txt";
                     if (File.Exists(framePointsFile))
                     {
@@ -396,20 +395,19 @@ namespace EDITgui
                         int k = -1;
                         while ((line = sr.ReadLine()) != null)
                         {
-                            if (line.Contains("tumor"))
+                            if (line.Contains("tumor:"))
                             {
                                 k++;
                                 points.Add(new List<Point>());
                                 groups.Add(null);
                             }
-                            else if (line.Contains("group"))
+                            else if (line.Contains("tumor_Group:"))
                             {
                                 string[] col = line.Split(' ');
 
-
                                 var firstSpaceIndex = line.IndexOf(" ");
-                                var firstString = line.Substring(0, firstSpaceIndex); // INAGX4
-                                var secondString = line.Substring(firstSpaceIndex + 1); // Agatti Island
+                                var firstString = line.Substring(0, firstSpaceIndex); 
+                                var secondString = line.Substring(firstSpaceIndex + 1);
 
                                 if (secondString != "NoGroup")
                                 {
@@ -448,7 +446,7 @@ namespace EDITgui
                     string[] col = line.Split('|');
                     string[] groupInfo = col[0].Split(':');
                     string[] colorInfo = col[1].Split(':');
-                    context.getImages().checkAndUpdateGroupsList(groupInfo[1], Int32.Parse(colorInfo[1]));
+                    context.getImages().checkAndUpdateGroupsList(groupInfo[1], Int32.Parse(colorInfo[1], CultureInfo.InvariantCulture));
                     
                 }
 
