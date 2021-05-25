@@ -36,6 +36,7 @@ namespace EDITgui
 
         public string checkIfGroupAlreadyExists(string group)
         {
+            if(group == "") return context.getMessages().emptyTumorGroupName;
 
             foreach (tumorGroup tumorGroup in context.getImages().getTumorGroups())
             {

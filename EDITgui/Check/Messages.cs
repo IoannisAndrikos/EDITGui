@@ -149,6 +149,8 @@ namespace EDITgui
 
         public string thisTumorgroupAlreadyExists = "This tumor group already exists";
 
+        public string emptyTumorGroupName = "Tumor group name cannot be empty";
+
         public string makeUserAwareOfRepeatProcess = "Are sure for repeating the process. Any changes that you have already performed will be lost.";
 
         public string getMessageAfterChangingSystemMode(MainWindow.Mode currentMode, MainWindow.Mode newMode)

@@ -347,7 +347,7 @@ namespace EDITgui
             icp.Modified();
             icp.Update();
 
-            Console.WriteLine(icp.GetMatrix());
+            //Console.WriteLine(icp.GetMatrix());
         }
 
         private vtkPoints txtPointsToPolyData(string filename)

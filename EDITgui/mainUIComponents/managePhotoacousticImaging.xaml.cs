@@ -90,7 +90,7 @@ namespace EDITgui
                 }
                 this.OXY_Checkbox.IsEnabled = true;
                 this.OXY_Checkbox.IsChecked = true;
-                // context.getPhotoAcousticPart().doOXYState();
+                context.getPhotoAcousticPart().doOXYState();
                 context.getPhotoAcousticPart().stopSpinner();
             }
         }
@@ -131,10 +131,11 @@ namespace EDITgui
                     //context.getPhotoAcousticPart().DeOXY_studyname_label.Content = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     DeOXYStudyname = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                     context.getPhotoAcousticPart().frame_num_label.Content = context.getMessages().frame + ": " + context.getPhotoAcousticPart().slider_value;
+                    
                 }
                 this.DeOXY_Checkbox.IsEnabled = true;
                 this.DeOXY_Checkbox.IsChecked = true;
-                //context.getPhotoAcousticPart().doDeOXYState();
+                context.getPhotoAcousticPart().doDeOXYState();
                 context.getPhotoAcousticPart().stopSpinner();
             }
         }

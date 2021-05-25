@@ -27,7 +27,7 @@ namespace EDITgui
         {
             InitializeComponent();
             this.TumorGroupsWindow = tumorGroupsWindow;
-            this.groupName.Content = newGroupName;
+            this.groupName.Content = newGroupName.Replace("_","__");
             GroupsColors.SelectedIndex = newColor;
         }
 
@@ -42,7 +42,9 @@ namespace EDITgui
         {
             if (GroupsColors.IsDropDownOpen)
             {
-                TumorGroupsWindow.updateTumorGroupColor(this.groupName.Content.ToString(), GroupsColors.SelectedIndex);
+                
+
+                TumorGroupsWindow.updateTumorGroupColor(this.groupName.Content.ToString().Replace("__", "_"), GroupsColors.SelectedIndex);
             }
         }
     }

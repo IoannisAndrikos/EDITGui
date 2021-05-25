@@ -152,7 +152,7 @@ namespace EDITgui
         public void doRepeatProcess()
         {
             thicknessCvPoints.Clear();
-            metrics_label.Visibility = Visibility.Hidden;
+            //metrics_label.Visibility = Visibility.Hidden;
             contourSeg = ContourSegmentation.CORRECTION;
             updateCanvas();
         }

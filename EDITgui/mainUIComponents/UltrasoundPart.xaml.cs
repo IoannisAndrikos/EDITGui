@@ -125,7 +125,6 @@ namespace EDITgui
             openFileDialog.Title = context.getMessages().selectDicom;
             if (openFileDialog.ShowDialog() == true)
             {
-                metrics_label.Visibility = Visibility.Hidden;
                 startSpinner();
                 clear_canvas();
                 context.getCore().repeatSegmentation();
@@ -164,6 +163,7 @@ namespace EDITgui
                 {
                     ultrasound_studyname_label.Content = "";
                     frame_num_label.Content = "";
+                    metrics_label.Content = "";
                     image.Source = null;
                     switch_auto_manual.Visibility = Visibility.Hidden;
                     slider.Visibility = Visibility.Hidden;
@@ -303,7 +303,7 @@ namespace EDITgui
         {
             userPoints.Clear();
             initializeBladderList();
-            metrics_label.Visibility = Visibility.Hidden;
+            //metrics_label.Visibility = Visibility.Hidden;
             context.getCore().repeatSegmentation();
             startingFrame = -1;
             endingFrame = -1;
@@ -815,6 +815,11 @@ namespace EDITgui
                 draw_polyline(selectedObject);
                 draw_points(selectedObject);
                 metrics_label.Foreground = selectedObject.polylineColor;
+                if (metrics_label.IsVisible)
+                {
+                    int a = 7;
+                }
+
                 metrics_label.Content = selectedObject.metrics;
 
                 if (slider_value == startingFrame && !context.getImages().getBladderPoints().Any() && userPoints.Count > 0)

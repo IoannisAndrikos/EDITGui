@@ -50,6 +50,7 @@ namespace EDITgui
             //check should be implemented here!!!!!!
             string title = groupTitle_textBox.Text;
 
+
             string message = manageGroups.checkIfGroupAlreadyExists(title);
             if (message != null)
             {
